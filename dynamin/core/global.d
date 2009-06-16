@@ -200,9 +200,9 @@ string toRomanNumerals(int num) {
 	if(num > 3999 || num < 0)
 		throw new IllegalArgumentException("ToRomanNumerals():" ~
 			"highest convertable roman numeral is 3999");
-	auto combos = [new int[0], [0], [0,0], [0,0,0], [0,1],
+	static combos = [[0][0..0], [0], [0,0], [0,0,0], [0,1],
 	[1], [1,0], [1,0,0], [1,0,0,0], [0,2]];
-	auto letters = ['I', 'V', 'X', 'L', 'C', 'D', 'M'];
+	static letters = ['I', 'V', 'X', 'L', 'C', 'D', 'M'];
 	string str = "";
 	int letterOffset = 0;
 	while(num > 0) {
