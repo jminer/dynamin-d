@@ -202,7 +202,7 @@ string toRomanNumerals(int num) {
 			"highest convertable roman numeral is 3999");
 	static combos = [[0][0..0], [0], [0,0], [0,0,0], [0,1],
 	[1], [1,0], [1,0,0], [1,0,0,0], [0,2]];
-	static letters = ['I', 'V', 'X', 'L', 'C', 'D', 'M'];
+	static letters = "IVXLCDM";
 	string str = "";
 	int letterOffset = 0;
 	while(num > 0) {
