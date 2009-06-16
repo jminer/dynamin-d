@@ -30,7 +30,7 @@ import dynamin.all_core;
 import dynamin.all_painting;
 import dynamin.all_gui;
 import dynamin.gui.control;
-import dynamin.gui.backend;
+import dynamin.gui_backend;
 import dynamin.gui.container;
 import dynamin.gui.events;
 import tango.io.Stdout;
