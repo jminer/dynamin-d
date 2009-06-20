@@ -25,11 +25,8 @@
 
 module dynamin.gui.file_dialog;
 
-import dynamin.c.windows;
 import dynamin.all_core;
-import dynamin.gui.window;
-import tango.io.Stdout;
-import Utf = tango.text.convert.Utf;
+import dynamin.gui_backend;
 
 // not used by programs
 struct FileDialogFilter {
@@ -50,6 +47,8 @@ struct FileDialogFilter {
  * $(IMAGE ../web/example_file_dialog.png)
  */
 abstract class FileDialog {
+private:
+	mixin FileDialogBackend;
 protected:
 	bool _multipleSelection;
 	string _initialFileName;
@@ -58,6 +57,14 @@ protected:
 	string[] _files;
 	FileDialogFilter[] _filters;
 	int _selectedFilter;
+
+	uint fileDialogType;
+	enum {
+		Open, Save
+	}
+	invariant() {
+		assert(fileDialogType == Open || fileDialogType == Save);
+	}
 public:
 	/**
 	 * Adds a filter that only shows files with the specified extensions.
@@ -143,107 +150,14 @@ public:
 	string[] files() { return _files; }
 	/// Gets the first of the files selected by the user.
 	string file() { return _files[0]; }
-	protected int getXFileName(OPENFILENAME* ofn);
+
 	// TODO: parameters
-	// TODO: should ShowDialog take any parameters?
+	// TODO: should showDialog take any parameters?
 	//       what should happen if no owner is set?
 	//       Windows Forms sets the owner to the currently active window in the application
 	//       do the same? or have no owner (really annoying, as window can get below)?
 	DialogResult showDialog() {
-		OPENFILENAME ofn;
-		ofn.lStructSize = OPENFILENAME.sizeof;
-		//ofn.hwndOwner = ;
-
-		bool allFilesFilter = false;
-		foreach(filter; _filters)
-			if(filter.extensions.length == 0)
-				allFilesFilter = true;
-		if(!allFilesFilter) addFilter("All Files (*.*)");
-
-		string filterStr;
-		foreach(filter; _filters) {
-			if(filter.shouldShow)
-				continue;
-			string[] exts = filter.extensions.dup;
-			if(exts.length == 0)
-				exts = [cast(string)"*.*"];
-			else
-				for(int i = 0; i < exts.length; ++i)
-					exts[i] = "*." ~ exts[i];
-			filterStr ~= filter.name ~ "\0" ~ exts.join(";") ~ "\0";
-		}
-		filterStr ~= "\0";
-		ofn.lpstrFilter = filterStr.toWcharPtr();
-		ofn.nFilterIndex = _selectedFilter + 1;
-		wchar[] filesBufferW = Utf.toString16(_initialFileName~"\0");
-		filesBufferW.length = 4096;
-		scope(exit) delete filesBufferW;
-		ofn.lpstrFile = filesBufferW.ptr;
-		ofn.nMaxFile = filesBufferW.length;
-		ofn.lpstrInitialDir = _directory.toWcharPtr();
-		ofn.lpstrTitle = _text.toWcharPtr();
-		ofn.Flags = OFN_EXPLORER;
-		//if(canChooseLinks)
-		//	ofn.Flags |= OFN_NODEREFERENCELINKS;
-		ofn.Flags |= OFN_FILEMUSTEXIST;
-		ofn.Flags |= OFN_HIDEREADONLY;
-		ofn.Flags |= OFN_OVERWRITEPROMPT;
-		if(_multipleSelection)
-			ofn.Flags |= OFN_ALLOWMULTISELECT;
-
-		if(!getXFileName(&ofn)) {
-			if(CommDlgExtendedError() == FNERR_BUFFERTOOSMALL)
-				MessageBoxW(null, "Too many files picked.", "Error", 0);
-			return DialogResult.Cancel;
-		}
-
-		_selectedFilter = ofn.nFilterIndex - 1;
-		// must zero FFFF chars here because the
-		// parsing here assumes the unused part of the string is zeroed
-		foreach(i, c; filesBufferW)
-			if(c == 0xFFFF)
-				filesBufferW[i] = 0;
-		int index; // index of null char right after the last non-null char
-		for(index = filesBufferW.length; index > 0; --index)
-			if(filesBufferW[index-1] != 0)
-				break;
-		auto filesBuffer = Utf.toString(filesBufferW[0..index]);
-		scope(exit) delete filesBuffer;
-		if(filesBuffer.contains('\0')) { // multiple files
-			auto arr = filesBuffer.split("\0");
-			_directory = arr[0];
-			// make sure directory ends with a backslash
-			// "C:\" does but "C:\Program Files" does not
-			if(!_directory.endsWith("\\"))
-				_directory ~= "\\";
-			_files = new string[arr.length-1];
-			for(int i = 1; i < arr.length; ++i) {
-				if(arr[i].contains('\\')) // a dereferenced link--absolute
-					_files[i-1] = arr[i];
-				else
-					_files[i-1] = _directory ~ arr[i];
-			}
-		} else { //single file
-			assert(filesBuffer.contains('\\'));
-			_directory = filesBuffer[0..filesBuffer.findLast("\\")].dup;
-			_files = [filesBuffer.dup];
-		}
-
-		// if "All Files (*.*)" filter is not selected
-		if(_filters[selectedFilter].extensions.length > 0) {
-			// go over every chosen file and add the selected filter's
-			// extension if the file doesn't already have one from the selected filter
-			for(int i = 0; i < _files.length; ++i) {
-				bool validExt = false;
-				foreach(ext; _filters[selectedFilter].extensions)
-					if(_files[i].downcase().endsWith(ext.downcase()))
-						validExt = true;
-				if(!validExt)
-					_files[i] ~= "." ~ _filters[selectedFilter].extensions[0].downcase();
-			}
-		}
-
-		return DialogResult.OK;
+		return backend_showDialog();
 	}
 }
 
@@ -252,9 +166,7 @@ class OpenFileDialog : FileDialog {
 	this() {
 		_multipleSelection = true;
 		// different settings
-	}
-	protected int getXFileName(OPENFILENAME* ofn) {
-		return GetOpenFileName(ofn);
+		fileDialogType = Open;
 	}
 }
 
@@ -263,8 +175,6 @@ class SaveFileDialog : FileDialog {
 	this() {
 		_multipleSelection = false;
 		// different settings
-	}
-	protected int getXFileName(OPENFILENAME* ofn) {
-		return GetSaveFileName(ofn);
+		fileDialogType = Save;
 	}
 }

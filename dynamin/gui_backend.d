@@ -29,7 +29,7 @@ version(Windows) {
 	public import dynamin.gui.windows_clipboard;
 	public import dynamin.gui.windows_cursor;
 	//public import dynamin.gui.windows_directory_dialog;
-	//public import dynamin.gui.windows_file_dialog;
+	public import dynamin.gui.windows_file_dialog;
 	//public import dynamin.gui.windows_screen;
 	public import dynamin.gui.windows_window;
 } else {
