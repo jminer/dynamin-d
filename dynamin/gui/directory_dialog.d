@@ -50,6 +50,7 @@ public:
 		throw new Exception("Sorry, DirectoryDialog.directory(string) not yet working");
 		_directory = str;
 	}
+
 	DialogResult showDialog() {
 		BROWSEINFO bi;
 		//bi.hwndOwner = ;

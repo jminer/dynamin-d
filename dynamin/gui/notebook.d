@@ -182,6 +182,7 @@ public:
 		}
 		// if here, do nothing
 	}
+
 	bool multipleLines() { return _multipleLines; }
 	void multipleLines(bool b) {
 		if(b == false)

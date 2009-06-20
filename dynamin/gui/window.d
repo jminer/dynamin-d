@@ -211,6 +211,7 @@ public:
 	Panel content() {
 		return _content;
 	}
+
 	/**
 	 * If the handle has not yet been created, calling this will cause it to be.
 	 * Under the Windows backend, returns a HWND.
@@ -225,10 +226,13 @@ public:
 			"controls must be accessed and changed only on the event thread");
 		return _handle;
 	}
+
 	bool handleCreated() { return backend_handleCreated; }
+
 	void recreateHandle() {
 		backend_recreateHandle();
 	}
+
 	override protected Graphics quickCreateGraphics() {
 		if(!handleCreated)
 			return null;
@@ -248,8 +252,9 @@ public:
 	}
 	override bool topLevel() { return true; }
 	override Container parent() { return null; }
-	// TODO: because you should always be able to click a window from the taskbar,
-	//       then show it on taskbar if window has an owner, but don't if it does not
+	// TODO: because you should always be able to click a window from
+	//       the taskbar, then show it on taskbar if window has an owner,
+	//       but don't if it does not
 	void owner(Window w) {
 		_owner = w;
 		if(!handleCreated)
@@ -262,6 +267,7 @@ public:
 		_visible = b;
 		backend_visible = b;
 	}
+
 	/**
 	 * Gets or sets what border this window will have around its contents.
 	 * The default is WindowBorderStyle.Normal.
@@ -274,12 +280,14 @@ public:
 		_borderStyle = border;
 		backend_borderStyle = border;
 	}
+
 	alias Control.repaint repaint;
 	void repaint(Rect rect) {
 		if(!handleCreated)
 			return;
 		backend_repaint(rect);
 	}
+
 	/**
 	 * An array of rectangles in screen coordinates that the window will be
 	 * snapped to.
@@ -292,11 +300,13 @@ public:
 	void snapRect(Rect rect) {
 		snapRects = [rect];
 	}
+
 	/**
 	 * The SnapDistance specifies how close a window has to be to a
 	 * snap rectangle for the window to snap to it. The default is 10 pixels.
 	 */
 	uint snapDistance = 10;
+
 	/**
 	 * Gets or sets whether this window can be resized by the user.
 	 * The default is true.
@@ -309,6 +319,7 @@ public:
 			return;
 		backend_resizable = b;
 	}
+
 	// TODO: 1.0  MinSize -> contentMinSize  MaxSize -> contentMaxSize
 	alias Control.location location;
 	void location(Point pt) {
@@ -338,6 +349,7 @@ public:
 			return;
 		backend_text = str;
 	}
+
 	/**
 	 * Moves this window to the specified position relative to
 	 * the specified control. If no control is specified, the

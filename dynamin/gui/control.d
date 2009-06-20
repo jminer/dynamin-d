@@ -181,6 +181,7 @@ public:
 		painting.callHandlers(e);
 		e.graphics.restore();
 	}
+
 	this() {
 		moved = new Event!()(&whenMoved);
 		resized = new Event!()(&whenResized);
@@ -210,6 +211,7 @@ public:
 		_foreColor = Color.Black;
 		_font = new Font("Tahoma", 11);
 	}
+
 	protected Graphics quickCreateGraphics() {
 		if(_parent is null)
 			return null;
@@ -217,6 +219,7 @@ public:
 		g.translate(location);
 		return g;
 	}
+
 	/**
 	 * Sets the specified Graphics' font and source to this control's font
 	 * and foreground color. Also, clips to this control's rectangle.
@@ -227,6 +230,7 @@ public:
 		g.font = font;
 		g.source = foreColor;
 	}
+
 	/**
 	 * Creates a Graphics, calls the specified delegate with it, and deletes
 	 * it to release resources.
@@ -237,12 +241,14 @@ public:
 		dg(g);
 		delete g;
 	}
+
 	/**
 	 *
 	 */
 	bool focused() {
 		return _focused;
 	}
+
 	/**
 	 *
 	 */
@@ -262,6 +268,7 @@ public:
 			repaint();
 		}
 	}
+
 	/**
 	 * Returns whether this control is on the screen. A control is
 	 * on screen if one of its ancestors is a top level window. Whether or
@@ -271,6 +278,7 @@ public:
 	bool onScreen() {
 		return _parent && _parent.onScreen;
 	}
+
 	/**
 	 * Gets the location of this control in screen coordinates. An exception is
 	 * thrown if this control is not on the screen.
@@ -280,6 +288,7 @@ public:
 			throw new Exception("control is not on screen");
 		return _parent.screenLocation + location;
 	}
+
 	/**
 	 * Converts the specified point in content coordinates into screen
 	 * coordinates. An exception is thrown if this control is not on the screen.
@@ -289,6 +298,7 @@ public:
 			throw new Exception("control is not on screen");
 		return _parent.contentToScreen(pt + location);
 	}
+
 	/**
 	 * Converts the specified point in screen coordinates into content
 	 * coordinates. An exception is thrown if this control is not on the screen.
@@ -298,6 +308,7 @@ public:
 			throw new Exception("control is not on screen");
 		return _parent.screenToContent(pt) - location; // TODO: borders
 	}
+
 	/**
 	 * Converts the specified point in this control's content coordinates
 	 * into the specified control's content coordinates. An exception is
@@ -306,6 +317,7 @@ public:
 	Point contentToContent(Point pt, Control c) {
 		return c.screenToContent(contentToScreen(pt));
 	}
+
 	/**
 	 * Returns whether the specified point is inside this control.
 	 */
@@ -316,6 +328,7 @@ public:
 	bool contains(real x, real y) {
 		return contains(Point(x, y));
 	}
+
 	bool topLevel() { return false; }
 	// TODO: return NativeControl/Window?
 	Control getTopLevel() {
@@ -324,6 +337,7 @@ public:
 			c = c.parent;
 		return c.topLevel ? c : null;
 	}
+
 	/**
 	 * Gets this control's parent.
 	 */
@@ -332,8 +346,10 @@ public:
 		_parent = c;
 		//ParentChanged(new EventArgs); // TODO: add event
 	}
+
 	/**
-	 * Gets or sets whether is control is visible. The default is true, except on top-level windows.
+	 * Gets or sets whether is control is visible. The default is true, except
+	 * on top-level windows.
 	 */
 	//void visible(bool b) { visible = b; }
 	bool visible() { return _visible; }
@@ -401,6 +417,7 @@ public:
 	 * This property should be overridden in subclasses to return a best size.
 	 */
 	Size bestSize() { return Size(100, 100); }
+
 	/**
 	 * Gets the distance from the top of this control to the baseline of
 	 * the first line of this control's text. If this control does not have
@@ -429,6 +446,7 @@ public:
 	bool elasticY() { return _elasticY; }
 	/// ditto
 	void elasticY(bool b) { _elasticY = b; }
+
 	/**
 	 * Gets or sets the text that this control shows.
 	 */
@@ -477,6 +495,7 @@ public:
 		_font = f;
 		repaint();
 	}
+
 	Cursor cursor() {
 		return _cursor;
 	}
@@ -497,7 +516,8 @@ public:
 	 * are no other system events to be processed, a painting event will called.
 	 */
 	void repaint(Rect rect) {
-		// TODO: make sure that parts clipped off by the parent are not invalidated
+		// TODO: make sure that parts clipped off by the parent are
+		//       not invalidated
 		if(_parent)
 			_parent.repaint(rect + location);
 	}

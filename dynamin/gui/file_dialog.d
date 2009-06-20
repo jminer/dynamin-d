@@ -103,10 +103,12 @@ public:
 		_filters.length = _filters.length + 1;
 		_filters[_filters.length-1] = filter;
 	}
+
 	/// Gets or sets the selected filter. An index of 0 is the first one added.
 	int selectedFilter() { return _selectedFilter; }
 	/// ditto
 	void selectedFilter(int index) { _selectedFilter = index; }
+
 	/**
 	 * Gets or sets whether more than one file can be selected.
 	 * The default is true for an OpenFileDialog and false for SaveFileDialog.
@@ -114,10 +116,12 @@ public:
 	bool multipleSelection() { return _multipleSelection; }
 	/// ditto
 	void multipleSelection(bool b) { _multipleSelection = b;	}
+
 	/// Gets or sets the text that is displayed in the dialog's title bar.
 	string text() { return _text; }
 	/// ditto
 	void text(string str) { _text = str; }
+
 	/**
 	 * Sets the text in the file name text box to the specified string.
 	 * Example:
@@ -129,6 +133,7 @@ public:
 		// TODO: make sure str is not a path?
 		_initialFileName = str;
 	}
+
 	/**
 	 * Sets the directory that the FileDialog shows. If this is null,
 	 * the default directory is used when the dialog is first shown.
@@ -142,6 +147,7 @@ public:
 	string directory() {
 		return _directory;
 	}
+
 	/**
 	 * Gets the files selected by the user.
 	 * If the user did not type a file name extension, the correct one
@@ -154,8 +160,8 @@ public:
 	// TODO: parameters
 	// TODO: should showDialog take any parameters?
 	//       what should happen if no owner is set?
-	//       Windows Forms sets the owner to the currently active window in the application
-	//       do the same? or have no owner (really annoying, as window can get below)?
+	//       WinForms sets the owner to the currently active window in the app
+	//       do the same? or have no owner (annoying, as window can get below)?
 	DialogResult showDialog() {
 		return backend_showDialog();
 	}

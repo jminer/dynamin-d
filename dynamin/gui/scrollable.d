@@ -231,6 +231,7 @@ public:
 
 		whenValueChanged(null);
 	}
+
 	/**
 	 * Gets or sets which scroll bars are shown. The default is Each.
 	 */
@@ -239,6 +240,7 @@ public:
 	void visibleScrollBars(VisibleScrollBars bars) { // TODO: rename? SBPolicy?
 		_scrollBars = bars;
 	}
+
 	/**
 	 * Gets whether the horizontal scroll bar is currently shown.
 	 */
@@ -281,6 +283,7 @@ public:
 				_content.bestSize.width > _availableRect.width;
 		}
 	}
+
 	/**
 	 * Gets the combined width of all the controls docked on the left side of
 	 * this scrollable.
@@ -300,7 +303,9 @@ public:
 	Rect contentVisibleRect() {
 		return _visibleRect;
 	}
+
 	Panel content() { return _content; }
+
 	BorderSize borderSize() {
 		return Theme.current.Scrollable_borderSize(this);
 	}

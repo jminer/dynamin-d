@@ -114,6 +114,7 @@ public:
 			super.dispatchMouseDragged(e);
 		}
 	}
+
 	/**
 	 * Gets the child control at the specified point. If there are
 	 * multiple child controls at the point, the topmost control is returned.
@@ -138,6 +139,7 @@ public:
 		}
 		return null;
 	}
+
 	/**
 	 * Never returns null. If there is no descendant at the specified point,
 	 * this container will be returned.
@@ -167,6 +169,7 @@ public:
 			}
 		}
 	}
+
 	/**
 	 * Gets or sets the minimum size of this window. A minimum width or
 	 * height of 0 means that there is no minimum width or height.
@@ -187,6 +190,7 @@ public:
 	real minWidth() { return _minSize.width; }
 	///
 	real minHeight() { return _minSize.height; }
+
 	/**
 	 * Gets or sets the maximum size of this window. A maximum width or
 	 * height of 0 means that there is no maximum width or height.
@@ -207,6 +211,7 @@ public:
 	real maxWidth() { return _maxSize.width; }
 	///
 	real maxHeight() { return _maxSize.height; }
+
 	/**
 	 * Causes this container to position its child controls. Called on every
 	 * resize. Usually, this function will get each child's best size, and
@@ -215,6 +220,7 @@ public:
 	 */
 	void layout() {
 	}
+
 	protected void add(Control child) {
 		if(child.parent)
 			child.parent.remove(child);
@@ -223,12 +229,14 @@ public:
 		repaint();
 		//ControlAdded(EventArgs e); // TODO: add event
 	}
+
 	protected void remove(Control child) {
 		_children.remove(child);
 		child.parent = null;
 		repaint();
 		//ControlRemoved(EventArgs e); // TODO: add event
 	}
+
 	protected int opApply(int delegate(inout Control item) dg) {
 		for(uint i = 0; i < _children.count; ++i) {
 			auto tmp = _children[i];
