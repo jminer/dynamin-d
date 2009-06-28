@@ -2,8 +2,8 @@ module dynamin.c.windows;
 
 /*
  * A binding to at least the part of the Windows API that Dynamin uses. This
- * binding is obviously very incomplete but does contain several functions
- * that the standard Windows binding does not contain.
+ * binding is obviously very incomplete but does contain _many_ functions
+ * that the Phobos and Tango Windows bindings do not contain.
  */
 
 version(Windows) {
