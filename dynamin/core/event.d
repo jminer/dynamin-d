@@ -28,10 +28,7 @@ module dynamin.core.event;
 import tango.io.Stdout;
 import dynamin.core.global;
 import tango.core.Exception;
-import tango.core.Traits;
-
-// TODO: mixin Event!(WhenMoved) Moved;
-// TODO: mixin Event!(WhenMoved, DispatchMoved) Moved;
+public import tango.core.Traits;
 
 /**
  * A class used to notify handlers of an event. It is similar to .NET's events.
@@ -111,7 +108,7 @@ public:
 		handlers.length = handlers.length + 1;
 		handlers[length-1] = handler;
 		// TODO: use a list?
-		//handlers.Add(handler);
+		//handlers.add(handler);
 	}
 	/// ditto
 	void opAddAssign(void delegate() handler) {
@@ -157,10 +154,10 @@ public:
 	}
 }
 
-
-public import tango.core.Traits;
-template Event2(alias mainHandler) {
-protected:
+// usage: mixin Event!(whenMoved) moved;
+//        mixin Event!(whenMoved, dispatchMoved) moved;
+template Event2(alias mainHandler, alias dispatcher) {
+private:
 	alias ParameterTupleOf!(mainHandler)[0] ArgsType;
 	/// void delegate(ArgsType e)
 	public alias void delegate(ArgsType e) Handler;
@@ -177,8 +174,7 @@ public:
 	void opCall(ArgsType e) {
 		if(e is null)
 			Stdout("Warning: EventArgs null").newline;
-		callHandlers(e);
-		callMainHandler(e);
+		dispatcher(e);
 	}
 	/**
 	 * Adds the specified handler to this event. The handler will be called
@@ -189,7 +185,7 @@ public:
 		handlers.length = handlers.length + 1;
 		handlers[length-1] = handler;
 		// TODO: use a list?
-		//handlers.Add(handler);
+		//handlers.add(handler);
 	}
 	/// ditto
 	void opAddAssign(void delegate() handler) {
@@ -216,7 +212,7 @@ public:
 			handler(e);
 	}
 	/**
-	 * Calls the main handler unless the StopEventArgs.Stopped has been
+	 * Calls the main handler unless the StopEventArgs.stopped has been
 	 * set to true.
 	 * Only use this method from a method that does custom dispatching.
 	 */
@@ -226,6 +222,15 @@ public:
 		if(stopEventArgs is null || !stopEventArgs.stopped)
 			mainHandler(e);
 	}
+}
+
+template Event2(alias mainHandler) {
+	alias ParameterTupleOf!(mainHandler)[0] ArgsType;
+	void defaultDispatch(ArgsType e) {
+		callHandlers(e);
+		callMainHandler(e);
+	}
+	mixin Event2!(mainHandler, defaultDispatch);
 }
 
 /// The base class for passing arguments to event handlers.
