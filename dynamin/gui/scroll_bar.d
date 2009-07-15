@@ -163,10 +163,10 @@ debug(ScrollBar) {
 		               [buttonSz, track1Sz, thumbSz, track2Sz, buttonSz]);
 	}
 public:
-	/// This event occurs after Value has been changed.
-	Event!() valueChanged;
 	/// Override this method in a subclass to handle the ValueChanged event.
 	protected void whenValueChanged(EventArgs e) { }
+	/// This event occurs after Value has been changed.
+	Event!() valueChanged;
 
 	override Size bestSize() {
 		if(cast(VScrollBar)this)

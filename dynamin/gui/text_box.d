@@ -107,10 +107,10 @@ public:
 	}
 	override int baseline() { return 14; }
 
-	/// This event occurs after the selection has changed.
-	Event!() SelectionChanged;
 	/// Override this method in a subclass to handle the SelectionChanged event.
 	protected void whenSelectionChanged(EventArgs e) { }
+	/// This event occurs after the selection has changed.
+	Event!() SelectionChanged;
 
 	this() {
 		SelectionChanged = new Event!()(&whenSelectionChanged);

@@ -99,10 +99,10 @@ protected:
 		layout();
 	}
 public:
-	/// This event occurs after a different tab is selected.
-	Event!() selectionChanged;
 	/// Override this method in a subclass to handle the SelectionChanged event.
 	protected void whenSelectionChanged(EventArgs e) {
+	/// This event occurs after a different tab is selected.
+	Event!() selectionChanged;
 		if(_content !is null)
 			_children.remove(_content);
 		_content = null;

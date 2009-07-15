@@ -58,10 +58,10 @@ protected:
 	}
 
 public:
-	/// This event occurs after .
-	Event!() checkedChanged;
 	/// Override this method in a subclass to handle the SelectedChanged event.
 	protected void whenCheckedChanged(EventArgs e) { }
+	/// This event occurs after .
+	Event!() checkedChanged;
 	this() {
 		checkedChanged = new Event!()(&whenCheckedChanged);
 		_focusable = true;

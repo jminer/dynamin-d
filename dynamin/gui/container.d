@@ -45,15 +45,15 @@ protected:
 		layout();
 	}
 public:
-	/// This event occurs after the control's minimum size has been changed.
-	Event!() minSizeChanged;
 	/// Override this method in a subclass to handle the minSizeChanged event.
 	protected void whenMinSizeChanged(EventArgs e) { }
+	/// This event occurs after the control's minimum size has been changed.
+	Event!() minSizeChanged;
 
-	/// This event occurs after the control's maximum size has been changed.
-	Event!() maxSizeChanged;
 	/// Override this method in a subclass to handle the maxSizeChanged event.
 	protected void whenMaxSizeChanged(EventArgs e) { }
+	/// This event occurs after the control's maximum size has been changed.
+	Event!() maxSizeChanged;
 
 	this() {
 		minSizeChanged = new Event!()(&whenMinSizeChanged);

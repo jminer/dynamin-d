@@ -78,10 +78,10 @@ protected:
 	}
 public:
 
-	/// This event occurs after the selection has changed.
-	Event!() selectionChanged;
 	/// Override this method in a subclass to handle the SelectionChanged event.
 	protected void whenSelectionChanged(EventArgs e) { }
+	/// This event occurs after the selection has changed.
+	Event!() selectionChanged;
 
 	void listItemsChanged() {
 		super.layout();

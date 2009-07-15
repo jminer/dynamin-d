@@ -73,74 +73,6 @@ protected:
 	Container _parent;
 	bool _elasticX, _elasticY;
 public:
-	/// This event occurs after the control has been moved.
-	Event!() moved;
-	/// Override this method in a subclass to handle the Moved event.
-	protected void whenMoved(EventArgs e) { }
-
-	/// This event occurs after the control has been resized.
-	Event!() resized;
-	/// Override this method in a subclass to handle the Resized event.
-	protected void whenResized(EventArgs e) { }
-
-	/// This event occurs after the mouse has entered the control.
-	Event!() mouseEntered;
-	/// Override this method in a subclass to handle the MouseEntered event.
-	protected void whenMouseEntered(EventArgs e) { }
-
-	/// This event occurs after the mouse has left the control.
-	Event!() mouseLeft;
-	/// Override this method in a subclass to handle the MouseLeft event.
-	protected void whenMouseLeft(EventArgs e) { }
-
-	/// This event occurs after a mouse button is pressed.
-	Event!(MouseEventArgs) mouseDown;
-	/// Override this method in a subclass to handle the MouseDown event.
-	protected void whenMouseDown(MouseEventArgs e) { }
-
-	/// This event occurs after a mouse button is released.
-	Event!(MouseEventArgs) mouseUp;
-	/// Override this method in a subclass to handle the MouseUp event.
-	protected void whenMouseUp(MouseEventArgs e) { }
-
-	/// This event occurs after the mouse has been moved.
-	Event!(MouseEventArgs) mouseMoved;
-	/// Override this method in a subclass to handle the MouseMoved event.
-	protected void whenMouseMoved(MouseEventArgs e) { }
-
-	/// This event occurs after the mouse has been moved.
-	Event!(MouseEventArgs) mouseDragged;
-	/// Override this method in a subclass to handle the MouseMoved event.
-	protected void whenMouseDragged(MouseEventArgs e) { }
-
-	/// This event occurs after the mouse wheel has been turned.
-	Event!(MouseTurnedEventArgs) mouseTurned;
-	/// Override this method in a subclass to handle the MouseTurned event.
-	protected void whenMouseTurned(MouseTurnedEventArgs e) { }
-
-	/// This event occurs after a key is pressed.
-	Event!(KeyEventArgs) keyDown;
-	/// Override this method in a subclass to handle the KeyDown event.
-	protected void whenKeyDown(KeyEventArgs e) { }
-
-	/// This event occurs after a character key is pressed.
-	Event!(KeyTypedEventArgs) keyTyped;
-	/// Override this method in a subclass to handle the KeyTyped event.
-	protected void whenKeyTyped(KeyTypedEventArgs e) { }
-
-	/// This event occurs after a key is released.
-	Event!(KeyEventArgs) keyUp;
-	/// Override this method in a subclass to handle the KeyUp event.
-	protected void whenKeyUp(KeyEventArgs e) { }
-
-	/// This event occurs when the control needs to be painted.
-	Event!(PaintingEventArgs) painting;
-	/// Override this method in a subclass to handle the painting event.
-	protected void whenPainting(PaintingEventArgs e) {
-		e.graphics.source = backColor;
-		e.graphics.paint();
-	}
-
 	protected void dispatchMouseEntered(EventArgs e) {
 		Cursor.setCurrent(this, _cursor);
 		mouseEntered.callHandlers(e);
@@ -181,6 +113,74 @@ public:
 		painting.callHandlers(e);
 		e.graphics.restore();
 	}
+
+	/// Override this method in a subclass to handle the Moved event.
+	protected void whenMoved(EventArgs e) { }
+	/// This event occurs after the control has been moved.
+	Event!() moved;
+
+	/// Override this method in a subclass to handle the Resized event.
+	protected void whenResized(EventArgs e) { }
+	/// This event occurs after the control has been resized.
+	Event!() resized;
+
+	/// Override this method in a subclass to handle the MouseEntered event.
+	protected void whenMouseEntered(EventArgs e) { }
+	/// This event occurs after the mouse has entered the control.
+	Event!() mouseEntered;
+
+	/// Override this method in a subclass to handle the MouseLeft event.
+	protected void whenMouseLeft(EventArgs e) { }
+	/// This event occurs after the mouse has left the control.
+	Event!() mouseLeft;
+
+	/// Override this method in a subclass to handle the MouseDown event.
+	protected void whenMouseDown(MouseEventArgs e) { }
+	/// This event occurs after a mouse button is pressed.
+	Event!(MouseEventArgs) mouseDown;
+
+	/// Override this method in a subclass to handle the MouseUp event.
+	protected void whenMouseUp(MouseEventArgs e) { }
+	/// This event occurs after a mouse button is released.
+	Event!(MouseEventArgs) mouseUp;
+
+	/// Override this method in a subclass to handle the MouseMoved event.
+	protected void whenMouseMoved(MouseEventArgs e) { }
+	/// This event occurs after the mouse has been moved.
+	Event!(MouseEventArgs) mouseMoved;
+
+	/// Override this method in a subclass to handle the MouseMoved event.
+	protected void whenMouseDragged(MouseEventArgs e) { }
+	/// This event occurs after the mouse has been moved.
+	Event!(MouseEventArgs) mouseDragged;
+
+	/// Override this method in a subclass to handle the MouseTurned event.
+	protected void whenMouseTurned(MouseTurnedEventArgs e) { }
+	/// This event occurs after the mouse wheel has been turned.
+	Event!(MouseTurnedEventArgs) mouseTurned;
+
+	/// Override this method in a subclass to handle the KeyDown event.
+	protected void whenKeyDown(KeyEventArgs e) { }
+	/// This event occurs after a key is pressed.
+	Event!(KeyEventArgs) keyDown;
+
+	/// Override this method in a subclass to handle the KeyTyped event.
+	protected void whenKeyTyped(KeyTypedEventArgs e) { }
+	/// This event occurs after a character key is pressed.
+	Event!(KeyTypedEventArgs) keyTyped;
+
+	/// Override this method in a subclass to handle the KeyUp event.
+	protected void whenKeyUp(KeyEventArgs e) { }
+	/// This event occurs after a key is released.
+	Event!(KeyEventArgs) keyUp;
+
+	/// Override this method in a subclass to handle the painting event.
+	protected void whenPainting(PaintingEventArgs e) {
+		e.graphics.source = backColor;
+		e.graphics.paint();
+	}
+	/// This event occurs when the control needs to be painted.
+	Event!(PaintingEventArgs) painting;
 
 	this() {
 		moved = new Event!()(&whenMoved);
