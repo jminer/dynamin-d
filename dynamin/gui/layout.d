@@ -410,7 +410,7 @@ string getToken(string str) {
 
 	// TODO: // for line comments?
 	skipWS(str);
-	if("()~[]-".contains(str[0])) {
+	if("()[]*~".contains(str[0])) {
 		return str[0..1];
 	} else if(idChars.contains(str[0])) {
 		int i = 1;
@@ -477,9 +477,9 @@ uint parseBody(ref string layout, ref string bcode) {
 	uint count = 0;
 	assert(nextToken(layout) == "(", "open parenthesis expected");
 	while(nextToken(layout) != ")") {
-		if(getToken(layout) == "~")
+		if(getToken(layout) == "*")
 			bcode = bcode ~ "panel.addFiller();\n";
-		else if(getToken(layout) == "-")
+		else if(getToken(layout) == "~")
 			bcode = bcode ~ "panel.addSpacer();\n";
 		else
 			bcode = bcode ~ parseLayout(layout);
@@ -530,7 +530,7 @@ panel.add(c2);
 panel.endLayout();
 return panel;
 }()`);
-static assert(createLayout("V(c1 ~ c2 H(c3 -) c4)") ==
+static assert(createLayout("V(c1 * c2 H(c3 ~) c4)") ==
 `delegate LayoutPanel() {
 auto panel = new LayoutPanel;
 panel.startLayout(1);
