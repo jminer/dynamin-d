@@ -99,7 +99,7 @@ protected:
 		layout();
 	}
 public:
-	/// Override this method in a subclass to handle the SelectionChanged event.
+	/// Override this method in a subclass to handle the selectionChanged event.
 	protected void whenSelectionChanged(EventArgs e) {
 		if(_content !is null)
 			_children.remove(_content);
@@ -111,10 +111,10 @@ public:
 		layout();
 	}
 	/// This event occurs after a different tab is selected.
-	Event!() selectionChanged;
+	Event!(whenSelectionChanged) selectionChanged;
 
 	this() {
-		selectionChanged = new Event!()(&whenSelectionChanged);
+		selectionChanged.mainHandler = &whenSelectionChanged;
 
 		_tabPages = new List!(TabPage)(&whenTabPagesChanged);
 		_focusable = true;

@@ -134,13 +134,13 @@ protected:
 	}
 
 public:
-	/// Override this method in a subclass to handle the Clicked event.
+	/// Override this method in a subclass to handle the clicked event.
 	protected void whenClicked(EventArgs e) { }
 	/// This event occurs after the button has been clicked.
-	Event!() clicked;
+	Event!(whenClicked) clicked;
 
 	this() {
-		clicked = new Event!()(&whenClicked);
+		clicked.mainHandler = &whenClicked;
 		_focusable = true;
 	}
 	this(string text) {

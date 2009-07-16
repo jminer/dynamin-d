@@ -69,7 +69,7 @@ protected:
 	// stores the location of the thumb as a percentage of the track
 	real _thumbPos;
 	this() {
-		valueChanged = new Event!()(&whenValueChanged);
+		valueChanged.mainHandler = &whenValueChanged;
 
 		_track1 = new ScrollBarTrack;
 		_track2 = new ScrollBarTrack;
@@ -166,7 +166,7 @@ public:
 	/// Override this method in a subclass to handle the ValueChanged event.
 	protected void whenValueChanged(EventArgs e) { }
 	/// This event occurs after Value has been changed.
-	Event!() valueChanged;
+	Event!(whenValueChanged) valueChanged;
 
 	override Size bestSize() {
 		if(cast(VScrollBar)this)

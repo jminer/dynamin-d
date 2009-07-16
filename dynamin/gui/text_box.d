@@ -107,13 +107,13 @@ public:
 	}
 	override int baseline() { return 14; }
 
-	/// Override this method in a subclass to handle the SelectionChanged event.
+	/// Override this method in a subclass to handle the selectionChanged event.
 	protected void whenSelectionChanged(EventArgs e) { }
 	/// This event occurs after the selection has changed.
-	Event!() SelectionChanged;
+	Event!(whenSelectionChanged) selectionChanged;
 
 	this() {
-		SelectionChanged = new Event!()(&whenSelectionChanged);
+		selectionChanged.mainHandler = &whenSelectionChanged;
 
 		super();
 		_focusable = true;

@@ -48,16 +48,16 @@ public:
 	/// Override this method in a subclass to handle the minSizeChanged event.
 	protected void whenMinSizeChanged(EventArgs e) { }
 	/// This event occurs after the control's minimum size has been changed.
-	Event!() minSizeChanged;
+	Event!(whenMinSizeChanged) minSizeChanged;
 
 	/// Override this method in a subclass to handle the maxSizeChanged event.
 	protected void whenMaxSizeChanged(EventArgs e) { }
 	/// This event occurs after the control's maximum size has been changed.
-	Event!() maxSizeChanged;
+	Event!(whenMaxSizeChanged) maxSizeChanged;
 
 	this() {
-		minSizeChanged = new Event!()(&whenMinSizeChanged);
-		maxSizeChanged = new Event!()(&whenMaxSizeChanged);
+		minSizeChanged.mainHandler = &whenMinSizeChanged;
+		maxSizeChanged.mainHandler = &whenMaxSizeChanged;
 		_children = new ControlList();
 
 		elasticX = true;
