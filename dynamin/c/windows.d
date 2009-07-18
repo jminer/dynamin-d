@@ -809,7 +809,9 @@ BOOL TranslateMessage(MSG* lpMsg);
 LRESULT DispatchMessageA(MSG* lpMsg);
 LRESULT DispatchMessageW(MSG* lpMsg);
 
-BOOL PostMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+BOOL PostMessageA(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+
+BOOL PostMessageW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 void PostQuitMessage(int nExitCode);
 
@@ -1612,6 +1614,7 @@ version(UNICODE) {
 	alias GetSaveFileNameW		   GetSaveFileName;
 	alias GetMessageW			   GetMessage;
 	alias DispatchMessageW		   DispatchMessage;
+	alias PostMessageW             PostMessage;
 	alias SendMessageW             SendMessage;
 	alias LoadImageW			   LoadImage;
 	alias GetObjectW               GetObject;
@@ -1653,6 +1656,7 @@ version(UNICODE) {
 	alias GetSaveFileNameA		   GetSaveFileName;
 	alias GetMessageA			   GetMessage;
 	alias DispatchMessageA		   DispatchMessage;
+	alias PostMessageA             PostMessage;
 	alias SendMessageA             SendMessage;
 	alias LoadImageA			   LoadImage;
 	alias EnumFontFamiliesExA	   EnumFontFamiliesEx;
