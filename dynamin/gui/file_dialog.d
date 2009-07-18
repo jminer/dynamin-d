@@ -115,7 +115,7 @@ public:
 	 */
 	bool multipleSelection() { return _multipleSelection; }
 	/// ditto
-	void multipleSelection(bool b) { _multipleSelection = b;	}
+	void multipleSelection(bool b) { _multipleSelection = b; }
 
 	/// Gets or sets the text that is displayed in the dialog's title bar.
 	string text() { return _text; }

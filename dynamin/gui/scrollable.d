@@ -126,9 +126,9 @@ protected:
  * -----
  * class YourControl : Scrollable {
  *   protected override void whenContentPainting(PaintingEventArgs e) {
- * 	   with(e.graphics) {
- * 	     drawText("Hello World", 5, 5);
- * 	   }
+ *     with(e.graphics) {
+ *       drawText("Hello World", 5, 5);
+ *     }
  *   }
  * }
  * -----
