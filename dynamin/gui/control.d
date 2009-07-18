@@ -520,7 +520,8 @@ public:
 	 *
 	 * The control will not be repainted before this method returns; rather,
 	 * the area is just marked as needing to be repainted. The next time there
-	 * are no other system events to be processed, a painting event will called.
+	 * are no other system events to be processed, a painting event will
+	 * be called.
 	 */
 	void repaint(Rect rect) {
 		// TODO: make sure that parts clipped off by the parent are
