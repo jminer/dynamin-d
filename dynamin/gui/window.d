@@ -37,10 +37,12 @@ import tango.io.Stdout;
 import tango.core.Exception;
 import tango.core.Thread;
 
+///
 static class Application {
 static:
 	mixin ApplicationBackend;
 	package Thread eventThread;
+	/// Starts event processing. Must be called from main().
 	void run(Window w = null) {
 		Window.hasProcessedEvents = true;
 
@@ -51,12 +53,25 @@ static:
 
 		backend_run(w);
 	}
-	//void invoke(void delegate() dg) {
-		//
-	//}
-	//void invokeNow(void delegate() dg)
+	/**
+	 * Calls the specified delegate on the event thread and returns without
+	 * waiting for the delegate to finish. Since the delegate is not called
+	 * immediately, it must not live on the stack. Instead, it could be a
+	 * method of a class. In D2, delegates generally are on the heap.
+	 */
+	void invoke(void delegate() dg) {
+		backend_invoke(dg);
+	}
+	/**
+	 * Calls the specified delegate on the event thread and blocks until
+	 * the delegate finishes.
+	 */
+	void invokeNow(void delegate() dg) {
+		backend_invokeNow(dg);
+	}
 }
 
+///
 enum DialogResult {
 	///
 	OK,
@@ -223,7 +238,7 @@ public:
 			recreateHandle();
 		assert(Thread.getThis() is Application.eventThread ||
 				Application.eventThread is null,
-			"controls must be accessed and changed only on the event thread");
+			"Controls must be accessed and changed only on the event thread. Use invokeNow() from other threads.");
 		return _handle;
 	}
 

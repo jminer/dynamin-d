@@ -34,6 +34,7 @@ public import dynamin.gui.window;
 public import dynamin.gui.key;
 public import dynamin.all_painting;
 public import tango.io.Stdout;
+public import tango.core.sync.Semaphore;
 
 ///
 enum WindowsVersion {
@@ -117,8 +118,16 @@ template ApplicationBackend() {
 			DispatchMessage(&msg);
 		}
 	}
-}
+	void backend_invoke(void delegate() dg) {
+		PostMessage(msgWnd, WM_USER + 7,
+			cast(word)dg.ptr, cast(word)dg.funcptr);
+	}
+	void backend_invokeNow(void delegate() dg) {
+		SendMessage(msgWnd, WM_USER + 7,
+			cast(word)dg.ptr, cast(word)dg.funcptr);
+	}
 
+}
 /*
  * The reason backends use the backend_ prefix and:
  * mixin Backend();
@@ -965,6 +974,12 @@ LRESULT dynaminMsgWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_POWERBROADCAST:
 		if(wParam == PBT_APMRESUMESUSPEND || wParam == PBT_APMRESUMECRITICAL)
 			Environment.backend_increaseTimerRes();
+		return 0;
+	case WM_USER + 7:
+		void delegate() dg;
+		dg.ptr = cast(void*)wParam;
+		dg.funcptr = cast(void function())lParam;
+		dg();
 		return 0;
 	case WM_TIMER:
 	case WM_CHANGECBCHAIN:

@@ -813,7 +813,11 @@ BOOL PostMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void PostQuitMessage(int nExitCode);
 
-LRESULT SendMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT SendMessageW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+
+BOOL InSendMessage();
+
+BOOL ReplyMessage(LRESULT lResult);
 //}}}
 
 //{{{ clipboard functions
@@ -1590,6 +1594,7 @@ MMRESULT waveOutSetPlaybackRate(HWAVEOUT hwo, DWORD dwRate);
 //}}}
 
 version(UNICODE) {
+	alias MessageBoxW              MessageBox;
 	alias RegisterClassExW		   RegisterClassEx;
 	alias CreateWindowExW		   CreateWindowEx;
 	alias DefWindowProcW		   DefWindowProc;
@@ -1607,6 +1612,7 @@ version(UNICODE) {
 	alias GetSaveFileNameW		   GetSaveFileName;
 	alias GetMessageW			   GetMessage;
 	alias DispatchMessageW		   DispatchMessage;
+	alias SendMessageW             SendMessage;
 	alias LoadImageW			   LoadImage;
 	alias GetObjectW               GetObject;
 	alias EnumFontFamiliesExW	   EnumFontFamiliesEx;
@@ -1629,6 +1635,7 @@ version(UNICODE) {
 	alias TEXTMETRICW    TEXTMETRIC;
 	alias OSVERSIONINFOW OSVERSIONINFO;
 } else {
+	alias MessageBoxA              MessageBox;
 	alias RegisterClassExA		   RegisterClassEx;
 	alias CreateWindowExA		   CreateWindowEx;
 	alias DefWindowProcA		   DefWindowProc;
@@ -1646,6 +1653,7 @@ version(UNICODE) {
 	alias GetSaveFileNameA		   GetSaveFileName;
 	alias GetMessageA			   GetMessage;
 	alias DispatchMessageA		   DispatchMessage;
+	alias SendMessageA             SendMessage;
 	alias LoadImageA			   LoadImage;
 	alias EnumFontFamiliesExA	   EnumFontFamiliesEx;
 	alias SystemParametersInfoA	   SystemParametersInfo;
