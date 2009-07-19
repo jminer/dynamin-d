@@ -356,6 +356,23 @@ public:
 	void rectangle(real x, real y, real width, real height) {
 		cairo_rectangle(cr, x, y, width, height);
 	}
+	/**
+	 * Adds a rectangle with rounded corners as a sub-path--a line will
+	 * not connect it to the current point.
+	 */
+	void roundedRectangle(Rect rect, real radius) {
+		roundedRectangle(rect.x, rect.y, rect.width, rect.height, radius);
+	}
+	/// ditto
+	void roundedRectangle(real x, real y, real width, real height, real radius) {
+		alias radius r;
+		cairo_new_sub_path(cr);
+		arc(x+r,       y+r,        r, Pi,     3*Pi/2);
+		arc(x+width-r, y+r,        r, 3*Pi/2, 0);
+		arc(x+width-r, y+height-r, r, 0,      Pi/2);
+		arc(x+r,       y+height-r, r, Pi/2,   Pi);
+		closePath();
+	}
 	///
 	void closePath() {
 		cairo_close_path(cr);
