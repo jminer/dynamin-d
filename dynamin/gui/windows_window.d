@@ -39,12 +39,13 @@ public import tango.core.sync.Semaphore;
 ///
 enum WindowsVersion {
 	///
-	Windows95,  ///
-	Windows98,  ///
-	WindowsMe,  ///
-	Windows2000,///
-	WindowsXP,  ///
-	WindowsVista
+	Windows95,   ///
+	Windows98,   ///
+	WindowsMe,   ///
+	Windows2000, ///
+	WindowsXP,   ///
+	WindowsVista,///
+	Windows7
 }
 /**
  * Returns true if the version of Windows that is runninng now is the
@@ -70,6 +71,7 @@ bool checkWindowsVersion(WindowsVersion ver) {
 	case WindowsVersion.Windows2000:  major = 5; minor = 0; break;
 	case WindowsVersion.WindowsXP:    major = 5; minor = 1; break;
 	case WindowsVersion.WindowsVista: major = 6; minor = 0; break;
+	case WindowsVersion.Windows7:     major = 6; minor = 1; break;
 	}
 	return info.dwMajorVersion > major ||
 		(info.dwMajorVersion == major && info.dwMinorVersion >= minor);
