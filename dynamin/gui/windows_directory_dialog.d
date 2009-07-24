@@ -28,22 +28,25 @@ module dynamin.gui.windows_directory_dialog;
 public import Utf = tango.text.convert.Utf;
 
 template DirectoryDialogBackend() {
+	extern(Windows) static int setSelectedDirectory(HWND hwnd,
+			UINT uMsg, LPARAM lParam, LPARAM lpData) {
+		if(uMsg == BFFM_INITIALIZED)
+			SendMessage(hwnd, BFFM_SETSELECTION, true, lpData);
+		return 0;
+	}
+
 	DialogResult backend_showDialog() {
 		BROWSEINFO bi;
 		//bi.hwndOwner = ;
 		bi.lpszTitle = "Choose a folder:";
 		bi.ulFlags |= BIF_RETURNONLYFSDIRS;
 		bi.ulFlags |= BIF_USENEWUI;
-
-		//IShellFolder shf;
-		//SHGetDesktopFolder(&shf);
-		//ITEMIDLIST* pidlInit;
-		//shf.ParseDisplayName(null, null, toWcharPtr(directory), null, &pidlInit, null);
-		//shf.Release();
-		//bi.pidlRoot = pidlInit;
+		if(directory) {
+			bi.lpfn = &setSelectedDirectory;
+			bi.lParam = cast(LPARAM)toWcharPtr(directory);
+		}
 
 		ITEMIDLIST* pidl = SHBrowseForFolder(&bi);
-		//CoTaskMemFree(pidlInit);
 		if(!pidl)
 			return DialogResult.Cancel;
 		wchar[MAX_PATH+1] dirBuffer; // MAX_PATH is 260
