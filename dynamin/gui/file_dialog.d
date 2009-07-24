@@ -143,7 +143,7 @@ public:
 	void directory(string str) {
 		_directory = str;
 	}
-	/// TODO: Should this be SelectedDirectory ?
+	/// TODO: Should this be selectedDirectory ?
 	string directory() {
 		return _directory;
 	}
@@ -164,6 +164,26 @@ public:
 	//       do the same? or have no owner (annoying, as window can get below)?
 	DialogResult showDialog() {
 		return backend_showDialog();
+	}
+	private void ensureAllFilesFilter() {
+		foreach(filter; _filters)
+			if(filter.extensions.length == 0)
+				return;
+		addFilter("All Files (*.*)");
+	}
+	private void maybeAddExt(ref string file) {
+		auto selFilter = _filters[selectedFilter];
+
+		// return if the "All Files (*.*)" filter is selected
+		if(selFilter.extensions.length == 0)
+			return;
+
+		// return if the file already has an extension from the selected filter
+		foreach(ext; selFilter.extensions)
+			if(file.downcase().endsWith(ext.downcase()))
+				return;
+
+		file ~= "." ~ selFilter.extensions[0].downcase();
 	}
 }
 

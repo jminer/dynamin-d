@@ -436,6 +436,13 @@ template ApplicationBackend() {
 			}
 		}
 	}
+	void backend_invoke(void delegate() dg) {
+		// TODO:
+	}
+	void backend_invokeNow(void delegate() dg) {
+		// TODO:
+	}
+
 }
 //}}}
 

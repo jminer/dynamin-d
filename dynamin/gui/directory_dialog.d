@@ -25,12 +25,8 @@
 
 module dynamin.gui.directory_dialog;
 
-import dynamin.c.windows;
 import dynamin.all_core;
-import dynamin.gui.window;
-import tango.io.Stdout;
-import Utf = tango.text.convert.Utf;
-//import std.c.windows.com;
+import dynamin.gui_backend;
 
 /**
  *
@@ -39,54 +35,27 @@ import Utf = tango.text.convert.Utf;
  *
  * $(IMAGE ../web/example_directory_dialog.png)
  */
-class DirectoryDialog { // use FILE_CHOOSER_ACTION_SELECT_FOLDER
+class DirectoryDialog { // TODO: rename to FolderDialog
 private:
+	mixin DirectoryDialogBackend;
+	string _text;
 	string _directory;
 public:
+	/// Gets or sets the text that is displayed in the dialog's title bar.
+	string text() { return _text; }
+	/// ditto
+	void text(string str) { _text = str; }
+
+	/// Gets or sets the selected directory.
 	string directory() {
 		return _directory;
 	}
+	/// ditto
 	void directory(string str) {
-		throw new Exception("Sorry, DirectoryDialog.directory(string) not yet working");
 		_directory = str;
 	}
 
 	DialogResult showDialog() {
-		BROWSEINFO bi;
-		//bi.hwndOwner = ;
-		bi.lpszTitle = "Choose a folder:";
-		bi.ulFlags |= BIF_RETURNONLYFSDIRS;
-		bi.ulFlags |= BIF_USENEWUI;
-
-		// TODO: I can't get this #!@#! COM stuff working...
-		//IShellFolder* shf;
-		//SHGetDesktopFolder(&shf);
-		//ITEMIDLIST* pidlInit;
-		//shf.ParseDisplayName(null, null, toWcharPointer(directory), null, &pidlInit, null);
-		//shf.Release();
-		//bi.pidlRoot = pidlInit;
-
-		ITEMIDLIST* pidl = SHBrowseForFolder(&bi);
-		//CoTaskMemFree(pidlInit);
-		if(!pidl)
-			return DialogResult.Cancel;
-		wchar[MAX_PATH+1] dirBuffer; // MAX_PATH is 260
-		if(!SHGetPathFromIDList(pidl, dirBuffer.ptr)) {
-			Stdout("GetPathFromIDList() failed").newline;
-			return DialogResult.Cancel;
-		}
-		CoTaskMemFree(pidl);
-		int index = MAX_PATH;
-		foreach(i, c; dirBuffer)
-			if(c == 0) { // find first null
-				index = i;
-				if(dirBuffer[i-1] != '\\') {
-					dirBuffer[i] = '\\';
-					index++;
-				}
-				break;
-			}
-		_directory = Utf.toString(dirBuffer[0..index]);
-		return DialogResult.OK;
+		return backend_showDialog();
 	}
 }

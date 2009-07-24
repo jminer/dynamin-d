@@ -28,15 +28,15 @@ module dynamin.gui_backend;
 version(Windows) {
 	public import dynamin.gui.windows_clipboard;
 	public import dynamin.gui.windows_cursor;
-	//public import dynamin.gui.windows_directory_dialog;
+	public import dynamin.gui.windows_directory_dialog;
 	public import dynamin.gui.windows_file_dialog;
 	//public import dynamin.gui.windows_screen;
 	public import dynamin.gui.windows_window;
 } else {
 	public import dynamin.gui.x_clipboard;
 	public import dynamin.gui.x_cursor;
-	//public import dynamin.gui.x_directory_dialog;
-	//public import dynamin.gui.x_file_dialog;
+	public import dynamin.gui.x_directory_dialog;
+	public import dynamin.gui.x_file_dialog;
 	//public import dynamin.gui.x_screen;
 	public import dynamin.gui.x_window;
 }

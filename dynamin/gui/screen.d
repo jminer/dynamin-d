@@ -62,7 +62,7 @@ Size screenSize() { // TODO: move
 }
 
 } else {
-import dynamin.gui.backend;
+import dynamin.gui_backend;
 Rect desktopRect() { // TODO: move
 	int* data = cast(int*)getXWindowProperty(display,
 		XRootWindow(display, XDefaultScreen(display)), XA._NET_WORKAREA);

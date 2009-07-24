@@ -36,8 +36,8 @@ public import dynamin.gui.layout;
 public import dynamin.gui.cursor;
 public import dynamin.gui.clipboard;
 public import dynamin.gui.screen;
-version(Windows) public import dynamin.gui.directory_dialog;
-version(Windows) public import dynamin.gui.file_dialog;
+public import dynamin.gui.directory_dialog;
+public import dynamin.gui.file_dialog;
 
 public import dynamin.gui.label;
 public import dynamin.gui.button;
@@ -52,6 +52,7 @@ public import dynamin.gui.text_box;
 
 public import dynamin.gui.theme;
 public import dynamin.gui.basic_theme;
+public import dynamin.gui.silver_theme;
 public import dynamin.gui.windows_theme;
 
 void aHack() { Theme.current; }

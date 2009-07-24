@@ -34,12 +34,7 @@ template FileDialogBackend() {
 		ofn.lStructSize = OPENFILENAME.sizeof;
 		//ofn.hwndOwner = ;
 
-		bool allFilesFilter = false;
-		foreach(filter; _filters)
-			if(filter.extensions.length == 0)
-				allFilesFilter = true;
-		if(!allFilesFilter) addFilter("All Files (*.*)");
-
+		ensureAllFilesFilter();
 		string filterStr;
 		foreach(filter; _filters) {
 			if(filter.shouldShow)
@@ -70,7 +65,7 @@ template FileDialogBackend() {
 		ofn.Flags |= OFN_FILEMUSTEXIST;
 		ofn.Flags |= OFN_HIDEREADONLY;
 		ofn.Flags |= OFN_OVERWRITEPROMPT;
-		if(_multipleSelection)
+		if(_multipleSelection && fileDialogType == Open)
 			ofn.Flags |= OFN_ALLOWMULTISELECT;
 
 		auto GetFileName = fileDialogType == Open ?
@@ -106,25 +101,13 @@ template FileDialogBackend() {
 					_files[i-1] = arr[i];
 				else
 					_files[i-1] = _directory ~ arr[i];
+				maybeAddExt(_files[i-1]);
 			}
 		} else { //single file
 			assert(filesBuffer.contains('\\'));
 			_directory = filesBuffer[0..filesBuffer.findLast("\\")].dup;
 			_files = [filesBuffer.dup];
-		}
-
-		// if "All Files (*.*)" filter is not selected
-		if(_filters[selectedFilter].extensions.length > 0) {
-			// go over every chosen file and add the selected filter's
-			// extension if the file doesn't already have one from the selected filter
-			for(int i = 0; i < _files.length; ++i) {
-				bool validExt = false;
-				foreach(ext; _filters[selectedFilter].extensions)
-					if(_files[i].downcase().endsWith(ext.downcase()))
-						validExt = true;
-				if(!validExt)
-					_files[i] ~= "." ~ _filters[selectedFilter].extensions[0].downcase();
-			}
+			maybeAddExt(_files[0]);
 		}
 
 		return DialogResult.OK;
