@@ -35,11 +35,10 @@ template DirectoryDialogBackend() {
 		bi.ulFlags |= BIF_RETURNONLYFSDIRS;
 		bi.ulFlags |= BIF_USENEWUI;
 
-		// TODO: I can't get this #!@#! COM stuff working...
-		//IShellFolder* shf;
+		//IShellFolder shf;
 		//SHGetDesktopFolder(&shf);
 		//ITEMIDLIST* pidlInit;
-		//shf.ParseDisplayName(null, null, toWcharPointer(directory), null, &pidlInit, null);
+		//shf.ParseDisplayName(null, null, toWcharPtr(directory), null, &pidlInit, null);
 		//shf.Release();
 		//bi.pidlRoot = pidlInit;
 

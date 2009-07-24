@@ -1378,7 +1378,7 @@ BOOL SHGetPathFromIDListW(ITEMIDLIST* pidl, LPWSTR pszPath);
 
 HRESULT SHGetFolderPathW(HWND hwnd, int csidl, HANDLE hToken, DWORD dwFlags, LPWSTR pszPath);
 
-HRESULT SHGetDesktopFolder(IShellFolder** ppshf);
+HRESULT SHGetDesktopFolder(IShellFolder* ppshf);
 
 struct GUID {
 align(1):
@@ -1390,19 +1390,16 @@ align(1):
 alias GUID IID;
 alias GUID CLSID;
 
-// I can't get this #!@#! COM stuff working...
 interface IUnknown {
-extern(Windows):
 	HRESULT QueryInterface(IID* riid, void** ppvObject);
 	ULONG AddRef();
 	ULONG Release();
 }
-alias void* LPBC;
+alias void IBindCtx;
 interface IShellFolder : IUnknown {
-extern(Windows):
 	HRESULT ParseDisplayName(
 		HWND hwnd,
-		LPBC pbc,
+		IBindCtx* pbc,
 		wchar* pszDisplayName,
 		ULONG* pchEaten,
 		ITEMIDLIST** ppidl,
