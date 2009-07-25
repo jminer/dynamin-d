@@ -756,8 +756,8 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		int delta = -cast(short)HIWORD(wParam);
 		auto screenPt = Point(LOWORD(lParam), HIWORD(lParam));
 		auto des = c.getDescendantAtPoint(c.screenToContent(screenPt));
-		des.mouseTurned(
-			new MouseTurnedEventArgs(delta, delta*scrollLines/120.0) );
+		scope args = new MouseTurnedEventArgs(delta, delta*scrollLines/120.0);
+		des.mouseTurned(args);
 		return 0;
 	case WM_SYSKEYDOWN:
 		//Stdout.format("WM_SYSKEYDOWN: {:x}", cast(int)wParam).newline;
@@ -766,8 +766,9 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_KEYDOWN:
 		//Stdout.format("WM_KEYDOWN:    {:x}", cast(int)wParam).newline;
 		Control focused = c.focusedControl ? c.focusedControl : c;
-		focused.keyDown(new KeyEventArgs(
-			VKToKey(wParam), cast(bool)(lParam & (1 << 30)) ));
+		scope args = new KeyEventArgs(
+			VKToKey(wParam), cast(bool)(lParam & (1 << 30)) );
+		focused.keyDown(args);
 		return 0;
 	case WM_SYSKEYUP:
 		//Stdout.format("WM_SYSKEYUP: {:x}", cast(int)wParam).newline;
@@ -776,7 +777,8 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_KEYUP:
 		//Stdout.format("WM_KEYUP:    {:x}", cast(int)wParam).newline;
 		Control focused = c.focusedControl ? c.focusedControl : c;
-		focused.keyUp(new KeyEventArgs( VKToKey(wParam), false ));
+		scope args = new KeyEventArgs( VKToKey(wParam), false );
+		focused.keyUp(args);
 		return 0;
 	case WM_CHAR:
 		// DO NOT use the repeat count from the lParam to send multiple events
@@ -793,7 +795,8 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		bool repeat;
 		repeat = cast(bool)(lParam & (1 << 30));
 		Control focused = c.focusedControl ? c.focusedControl : c;
-		focused.keyTyped(new KeyTypedEventArgs(cast(dchar)wParam, repeat));
+		scope args = new KeyTypedEventArgs(cast(dchar)wParam, repeat);
+		focused.keyTyped(args);
 		return 0;
 	case WM_PRINT:
 		paintToHDC(cast(HDC)wParam, getControl(hwnd), null);
