@@ -74,7 +74,7 @@ public:
 	MouseButton button() { return _button; }
 	string toString() {
 		return format("MouseEventArgs [x={}, y={}, button={}]",
-			_x, _y, _button);
+			x, y, _button);
 	}
 }
 ///
