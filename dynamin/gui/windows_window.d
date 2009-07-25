@@ -197,6 +197,9 @@ template WindowBackend() {
 	void backend_borderStyle(WindowBorderStyle border) {
 		backend_updateWindowStyles();
 	}
+	void backend_setCurrentCursor(Cursor cur) {
+		SetCursor(cur.handle);
+	}
 	void backend_repaint(Rect rect) {
 		RECT wrect;
 		wrect.left = cast(int)(rect.x-_borderSize.left);

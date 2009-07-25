@@ -35,106 +35,75 @@ public import dynamin.gui.control;
 
 template CursorBackend() {
 	HCURSOR _handle;
-	bool isBuiltin = false;
 	this(HCURSOR h) {
 		_handle = h;
-		isBuiltin = true;
 	}
+	public HCURSOR handle() { return _handle; }
 static:
-	void backend_SetCurrent(Control c, Cursor cur) {
-		assert(cur.isBuiltin); // TODO: allow custom cursors
-		SetCursor(cur._handle);
+	Cursor backend_getCursor(int curRes) {
+		HCURSOR hcur = LoadImage(null, MAKEINTRESOURCE(curRes),
+				IMAGE_CURSOR,  0, 0, LR_SHARED | LR_DEFAULTSIZE);
+		if(hcur is null)
+			Stdout.format("LoadImage() failed loading cursor {}", curRes).newline;
+		return new Cursor(hcur);
 	}
-	Cursor none = null;
-	Cursor arrow = null;
-	Cursor waitArrow = null;
-	Cursor wait = null;
-	Cursor text = null;
-	Cursor hand = null;
-	Cursor move = null;
-	Cursor resizeHoriz = null;
-	Cursor resizeVert = null;
-	Cursor resizeBackslash = null;
-	Cursor resizeSlash = null;
-	Cursor drag = null; // from resource
-	Cursor invalidDrag = null;
-	Cursor reversedArrow = null; // from resource
-	Cursor crosshair = null;
-
-	Cursor backend_maybeLoad(Cursor* cache, int curRes) {
-		if(*cache is null) {
-			HCURSOR hcur = LoadImage(null, MAKEINTRESOURCE(curRes),
-					IMAGE_CURSOR,  0, 0, LR_SHARED | LR_DEFAULTSIZE);
-			if(hcur is null)
-				Stdout.format("LoadImage() failed loading cursor {}", curRes).newline;
-			else
-				*cache = new Cursor(hcur);
-		}
-		return *cache;
-	}
-	Cursor backend_maybeLoad(Cursor* cache, wchar[] name) {
-		if(*cache is null) {
-			HCURSOR hcur = LoadImage(GetModuleHandle(null), name.ptr,
-				IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE);
-			if(hcur is null)
-				Stdout.format("LoadImage() failed loading cursor {}", name).newline;
-			else
-				*cache = new Cursor(hcur);
-		}
-		return *cache;
+	Cursor backend_getCursor(wchar[] name) {
+		HCURSOR hcur = LoadImage(GetModuleHandle(null), name.ptr,
+			IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE);
+		if(hcur is null)
+			Stdout.format("LoadImage() failed loading cursor {}", name).newline;
+		return new Cursor(hcur);
 	}
 	Cursor backend_None() {
-		if(none is null)
-			none = new Cursor(cast(HCURSOR)null);
-		return none;
+		return new Cursor(cast(HCURSOR)null);
 	}
 	Cursor backend_Arrow() {
-		return backend_maybeLoad(&arrow, OCR_NORMAL);
+		return backend_getCursor(OCR_NORMAL);
 	}
 	Cursor backend_WaitArrow() {
-		return backend_maybeLoad(&waitArrow, OCR_APPSTARTING);
+		return backend_getCursor(OCR_APPSTARTING);
 	}
 	Cursor backend_Wait() {
-		return backend_maybeLoad(&wait, OCR_WAIT);
+		return backend_getCursor(OCR_WAIT);
 	}
 	Cursor backend_Text() {
-		return backend_maybeLoad(&text, OCR_IBEAM);
+		return backend_getCursor(OCR_IBEAM);
 	}
 	Cursor backend_Hand() {
-		return backend_maybeLoad(&hand, OCR_HAND); // Windows 98 & newer
+		return backend_getCursor(OCR_HAND); // Windows 98 & newer
 	}
 	Cursor backend_Move() {
-		return backend_maybeLoad(&move, OCR_SIZEALL);
+		return backend_getCursor(OCR_SIZEALL);
 	}
 	Cursor backend_ResizeHoriz() {
-		return backend_maybeLoad(&resizeHoriz, OCR_SIZEWE);
+		return backend_getCursor(OCR_SIZEWE);
 	}
 	Cursor backend_ResizeVert() {
-		return backend_maybeLoad(&resizeVert, OCR_SIZENS);
+		return backend_getCursor(OCR_SIZENS);
 	}
 	Cursor backend_ResizeBackslash() {
-		return backend_maybeLoad(&resizeBackslash, OCR_SIZENWSE);
+		return backend_getCursor(OCR_SIZENWSE);
 	}
 	Cursor backend_ResizeSlash() {
-		return backend_maybeLoad(&resizeSlash, OCR_SIZENESW);
+		return backend_getCursor(OCR_SIZENESW);
 	}
 	Cursor backend_Drag() {
 		if(checkWindowsVersion(WindowsVersion.WindowsVista))
-			return backend_maybeLoad(&drag, "AeroDragCur");
+			return backend_getCursor("AeroDragCur");
 		else
-			return backend_maybeLoad(&drag, "DragCur");
+			return backend_getCursor("DragCur");
 	}
 	Cursor backend_InvalidDrag() {
-		return backend_maybeLoad(&invalidDrag, OCR_NO);
+		return backend_getCursor(OCR_NO);
 	}
 	Cursor backend_ReversedArrow() {
 		if(checkWindowsVersion(WindowsVersion.WindowsVista))
-			return backend_maybeLoad(&drag, "AeroReversedArrowCur");
+			return backend_getCursor("AeroReversedArrowCur");
 		else
-			return backend_maybeLoad(&drag, "ReversedArrowCur");
+			return backend_getCursor("ReversedArrowCur");
 	}
 	Cursor backend_Crosshair() {
-		return backend_maybeLoad(&crosshair, OCR_CROSS);
+		return backend_getCursor(OCR_CROSS);
 	}
 }
 

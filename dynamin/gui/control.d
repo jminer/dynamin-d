@@ -74,7 +74,7 @@ protected:
 	bool _elasticX, _elasticY;
 public:
 	protected void dispatchMouseEntered(EventArgs e) {
-		Cursor.setCurrent(this, _cursor);
+		setCurrentCursor(_cursor);
 		mouseEntered.callHandlers(e);
 		mouseEntered.callMainHandler(e);
 	}
@@ -503,15 +503,24 @@ public:
 		repaint();
 	}
 
+	void setCurrentCursor(Cursor cur) {
+		if(parent)
+			parent.setCurrentCursor(cur);
+	}
+	/**
+	 * Gets or sets the mouse cursor that will be shown when the mouse
+	 * is over this control.
+	 */
 	Cursor cursor() {
 		return _cursor;
 	}
+	/// ditto
 	void cursor(Cursor cur) {
 		if(_cursor is cur)
 			return;
 		_cursor = cur;
 		if(getHotControl() is this)
-			Cursor.setCurrent(this, _cursor);
+			setCurrentCursor(_cursor);
 	}
 
 	/**

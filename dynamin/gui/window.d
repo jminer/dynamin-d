@@ -30,6 +30,7 @@ import dynamin.all_core;
 import dynamin.all_painting;
 import dynamin.all_gui;
 import dynamin.gui.control;
+import dynamin.gui.cursor;
 import dynamin.gui_backend;
 import dynamin.gui.container;
 import dynamin.gui.events;
@@ -294,6 +295,12 @@ public:
 			throw new IllegalArgumentException("Window.borderStyle(): invalid border style");
 		_borderStyle = border;
 		backend_borderStyle = border;
+	}
+
+	override void setCurrentCursor(Cursor cur) {
+		if(!handleCreated)
+			return;
+		backend_setCurrentCursor(cur);
 	}
 
 	alias Control.repaint repaint;

@@ -29,20 +29,38 @@ import tango.io.Stdout;
 import dynamin.gui_backend;
 
 ///
-class Cursor {
+final class Cursor {
 private:
 	mixin CursorBackend;
-public:
 static:
-	void setCurrent(Control c, Cursor cur) {
-		backend_SetCurrent(c, cur);
+	Cursor _none = null;
+	Cursor _arrow = null;
+	Cursor _waitArrow = null;
+	Cursor _wait = null;
+	Cursor _text = null;
+	Cursor _hand = null;
+	Cursor _move = null;
+	Cursor _resizeHoriz = null;
+	Cursor _resizeVert = null;
+	Cursor _resizeBackslash = null;
+	Cursor _resizeSlash = null;
+	Cursor _drag = null;
+	Cursor _invalidDrag = null;
+	Cursor _reversedArrow = null;
+	Cursor _crosshair = null;
+	// handles caching for backends
+	Cursor maybeLoad(Cursor function() loadCursor, ref Cursor cache) {
+		if(cache is null)
+			cache = loadCursor();
+		return cache;
 	}
+public:
 	/**
 	 * Gets a blank cursor used for an activity, such as typing, with which
 	 * the cursor may interfere.
 	 */
 	Cursor None() {
-		return backend_None;
+		return maybeLoad(&backend_None, _none);
 	}
 	/**
 	 * Gets the cursor used normally.
@@ -52,7 +70,7 @@ static:
 	 * $(IMAGE ../web/example_arrow_cursor.png)
 	 */
 	Cursor Arrow() {
-		return backend_Arrow;
+		return maybeLoad(&backend_Arrow, _arrow);
 	}
 	/**
 	 * Gets the cursor used when the computer is accomplishing some
@@ -63,7 +81,7 @@ static:
 	 * $(IMAGE ../web/example_wait_arrow_cursor.png)
 	 */
 	Cursor WaitArrow() {
-		return backend_WaitArrow;
+		return maybeLoad(&backend_WaitArrow, _waitArrow);
 	}
 	/**
 	 * Gets the cursor used when the computer is accomplishing some
@@ -74,7 +92,7 @@ static:
 	 * $(IMAGE ../web/example_wait_cursor.png)
 	 */
 	Cursor Wait() {
-		return backend_Wait;
+		return maybeLoad(&backend_Wait, _wait);
 	}
 	/**
 	 * Gets the cursor used when the mouse is over selectable text.
@@ -87,7 +105,7 @@ static:
 	 * $(IMAGE ../web/example_text_cursor.png)
 	 */
 	Cursor Text() {
-		return backend_Text;
+		return maybeLoad(&backend_Text, _text);
 	}
 	/**
 	 * Gets the cursor used when the mouse is over a link.
@@ -97,7 +115,7 @@ static:
 	 * $(IMAGE ../web/example_hand_cursor.png)
 	 */
 	Cursor Hand() {
-		return backend_Hand;
+		return maybeLoad(&backend_Hand, _hand);
 	}
 	/**
 	 * Gets the cursor used when moving something.
@@ -107,7 +125,7 @@ static:
 	 * $(IMAGE ../web/example_move_cursor.png)
 	 */
 	Cursor Move() {
-		return backend_Move;
+		return maybeLoad(&backend_Move, _move);
 	}
 	/**
 	 * Gets the cursor used when resizing the left or right
@@ -118,7 +136,7 @@ static:
 	 * $(IMAGE ../web/example_resize_horiz_cursor.png)
 	 */
 	Cursor ResizeHoriz() {
-		return backend_ResizeHoriz;
+		return maybeLoad(&backend_ResizeHoriz, _resizeHoriz);
 	}
 	/**
 	 * Gets the cursor used when resizing the top or bottom
@@ -129,7 +147,7 @@ static:
 	 * $(IMAGE ../web/example_resize_vert_cursor.png)
 	 */
 	Cursor ResizeVert() {
-		return backend_ResizeVert;
+		return maybeLoad(&backend_ResizeVert, _resizeVert);
 	}
 	/**
 	 * Gets the cursor used when resizing the top-left or bottom-right
@@ -140,7 +158,7 @@ static:
 	 * $(IMAGE ../web/example_resize_backslash_cursor.png)
 	 */
 	Cursor ResizeBackslash() {
-		return backend_ResizeBackslash;
+		return maybeLoad(&backend_ResizeBackslash, _resizeBackslash);
 	}
 	/**
 	 * Gets the cursor used when resizing the bottom-left or top-right
@@ -151,7 +169,7 @@ static:
 	 * $(IMAGE ../web/example_resize_slash_cursor.png)
 	 */
 	Cursor ResizeSlash() {
-		return backend_ResizeSlash;
+		return maybeLoad(&backend_ResizeSlash, _resizeSlash);
 	}
 	/**
 	 * Gets the cursor used when the mouse is over something that
@@ -162,7 +180,7 @@ static:
 	 * $(IMAGE ../web/example_drag_cursor.png)
 	 */
 	Cursor Drag() {
-		return backend_Drag;
+		return maybeLoad(&backend_Drag, _drag);
 	}
 	/**
 	 * Gets the cursor used when the mouse is over something that
@@ -173,7 +191,7 @@ static:
 	 * $(IMAGE ../web/example_invalid_drag_cursor.png)
 	 */
 	Cursor InvalidDrag() {
-		return backend_InvalidDrag;
+		return maybeLoad(&backend_InvalidDrag, _invalidDrag);
 	}
 	/**
 	 * Gets the cursor used when the mouse is over a gutter that
@@ -184,7 +202,7 @@ static:
 	 * $(IMAGE ../web/example_reversed_arrow_cursor.png)
 	 */
 	Cursor ReversedArrow() {
-		return backend_ReversedArrow;
+		return maybeLoad(&backend_ReversedArrow, _reversedArrow);
 	}
 	/**
 	 * Gets the cursor that is sometimes used for selecting.
@@ -194,7 +212,7 @@ static:
 	 * $(IMAGE ../web/example_crosshair_cursor.png)
 	 */
 	Cursor Crosshair() {
-		return backend_Crosshair;
+		return maybeLoad(&backend_Crosshair, _crosshair);
 	}
 }
 

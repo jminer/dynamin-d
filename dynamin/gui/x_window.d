@@ -538,6 +538,10 @@ template WindowBackend() {
 		backend_update_MOTIF_WM_HINTS();
 		backend_nativeToBorderSize();
 	}
+	void backend_setCurrentCursor(Cursor cur) {
+		XDefineCursor(display, _handle, cur.handle);
+	}
+
 	static _InvalidRect[] invalidRects;
 	void backend_repaint(Rect rect) {
 		invalidRects.length = invalidRects.length+1;
