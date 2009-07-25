@@ -682,14 +682,14 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			pt = c.contentToContent(pt, captor);
 		else
 			captor = c;
-		scope event = new MouseEventArgs(
+		scope args = new MouseEventArgs(
 			pt.x, pt.y, MouseButton.None);
 		if(wParam &
 			(MK_LBUTTON | MK_MBUTTON | MK_RBUTTON |
 			MK_XBUTTON1 | MK_XBUTTON2)) {
-			captor.mouseDragged(event);
+			captor.mouseDragged(args);
 		} else {
-			captor.mouseMoved(event);
+			captor.mouseMoved(args);
 		}
 		return 0;
 	case WM_MOUSELEAVE:
