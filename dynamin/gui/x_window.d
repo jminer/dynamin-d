@@ -355,8 +355,13 @@ template ApplicationBackend() {
 					captor.mouseMoved(args);
 				break;
 			case EnterNotify:
+				auto enterEv = ev.xcrossing;
+				scope args = new MouseEventArgs(enterEv.x+c.borderSize.left,
+					enterEv.y+c.borderSize.top, MouseButton.None);
+				c.mouseMoved(args);
 				break;
 			case LeaveNotify:
+				setHotControl(null);
 				break;
 			case FocusIn:
 				break;
