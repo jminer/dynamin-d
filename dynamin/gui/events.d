@@ -80,9 +80,11 @@ public:
 ///
 class MouseTurnedEventArgs : StopEventArgs {
 	double _scrollAmount;
+	bool _scrollScreen;
 public:
-	this(double scrollAmount) {
+	this(double scrollAmount, bool scrollScreen) {
 		_scrollAmount = scrollAmount;
+		_scrollScreen = scrollScreen;
 	}
 	/**
 	 * The amount that a control should scroll in response to this event.
@@ -104,11 +106,11 @@ public:
 	 * scrollScreen will return false.
 	 */
 	bool scrollScreen() {
-		return false;
+		return _scrollScreen;
 	}
 	string toString() {
 		return format("MouseTurnedEventArgs [scrollAmount={}, scrollScreen={}]",
-			_scrollAmount, scrollScreen);
+			_scrollAmount, _scrollScreen);
 	}
 }
 ///

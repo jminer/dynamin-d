@@ -751,12 +751,13 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_MOUSEWHEEL:
 		int scrollLines;
 		SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &scrollLines, 0);
-		if(scrollLines == 0xFFFFFFFF)
+		bool sScreen = (scrollLines == 0xFFFFFFFF);
+		if(sScreen)
 			scrollLines = 3;
 		int delta = -cast(short)HIWORD(wParam);
 		auto screenPt = Point(LOWORD(lParam), HIWORD(lParam));
 		auto des = c.getDescendantAtPoint(c.screenToContent(screenPt));
-		scope args = new MouseTurnedEventArgs(delta*scrollLines/120.0);
+		scope args = new MouseTurnedEventArgs(delta*scrollLines/120.0, sScreen);
 		des.mouseTurned(args);
 		return 0;
 	case WM_SYSKEYDOWN:
