@@ -357,6 +357,15 @@ enum {
 //}}}
 
 //{{{ keyboard functions
+int XRefreshKeyboardMapping(
+	XMappingEvent* event_map);
+
+int XQueryKeymap(
+	Display* display,
+	ubyte* keys_return);
+
+KeySym XLookupKeysym(XKeyEvent* key_event, int index);
+
 KeyCode XKeysymToKeycode(Display* display, KeySym keysym);
 
 KeySym XKeycodeToKeysym(
