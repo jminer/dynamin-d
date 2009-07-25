@@ -72,6 +72,10 @@ public:
 	real y() { return _location.y; }
 	///
 	MouseButton button() { return _button; }
+	string toString() {
+		return format("MouseEventArgs [x={}, y={}, button={}]",
+			_x, _y, _button);
+	}
 }
 ///
 class MouseTurnedEventArgs : StopEventArgs {
@@ -108,6 +112,10 @@ public:
 	bool scrollScreen() {
 		return false;
 	}
+	string toString() {
+		return format("MouseTurnedEventArgs [scrollAmount={}, scrollScreen={}]",
+			_scrollAmount, scrollScreen);
+	}
 }
 ///
 class KeyEventArgs : StopEventArgs {
@@ -129,6 +137,9 @@ public:
 	 *          if the key was just pressed
 	 */
 	bool repeat() { return _repeat; }
+	string toString() {
+		return format("KeyEventArgs [key={}, repeat={}]", _key, _repeat);
+	}
 }
 ///
 class KeyTypedEventArgs : StopEventArgs {
