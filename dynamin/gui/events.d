@@ -79,17 +79,11 @@ public:
 }
 ///
 class MouseTurnedEventArgs : StopEventArgs {
-	int _delta;
 	double _scrollAmount;
 public:
-	this(int delta, double scrollAmount) {
-		_delta = delta;
+	this(double scrollAmount) {
 		_scrollAmount = scrollAmount;
 	}
-	/*
-	 * This is the amount the mouse wheel was turned.
-	 */
-	//int delta() { return _delta; }
 	/**
 	 * The amount that a control should scroll in response to this event.
 	 * In a text control, this is the number of lines to scroll.

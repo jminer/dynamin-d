@@ -756,7 +756,7 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		int delta = -cast(short)HIWORD(wParam);
 		auto screenPt = Point(LOWORD(lParam), HIWORD(lParam));
 		auto des = c.getDescendantAtPoint(c.screenToContent(screenPt));
-		scope args = new MouseTurnedEventArgs(delta, delta*scrollLines/120.0);
+		scope args = new MouseTurnedEventArgs(delta*scrollLines/120.0);
 		des.mouseTurned(args);
 		return 0;
 	case WM_SYSKEYDOWN:
