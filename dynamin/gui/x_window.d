@@ -162,54 +162,97 @@ static this() {
 		Stdout("warning: WM does not support _NET_WORKAREA").newline;
 }
 
-struct _InvalidRect {
-	XWindow window;
-	int x, y, width, height;
-	_InvalidRect getUnion(_InvalidRect rect) {
-		auto x2 = min(x, rect.x);
-		auto y2 = min(y, rect.y);
-		_InvalidRect rect2;
-		rect2.window = window;
-		rect2.width = max(x+width, rect.x+rect.width)-x2;
-		rect2.height = max(y+height, rect.y+rect.height)-y2;
-		rect2.x = x2;
-		rect2.y = y2;
-		return rect2;
-	}
-}
-/+struct InvalidRect {
-	XWindow window;
+struct InvalidRect {
+	Window window;
 	int x, y, width, height;
 }
 
 static class PaintQueue {
+import tango.util.container.LinkedList;
+import dynamin.painting.graphics;
+import dynamin.gui.events;
 static:
-	//LinkedList!(InvalidRect) rects;
-	InvalidRect[] rects;
+	LinkedList!(InvalidRect) rects;
 	static this() {
-		//rects = new LinkedList!(InvalidRect)(20);
-		rects.length = 20;
-		rects.length = 0;
+		rects = new LinkedList!(InvalidRect)();
 	}
-	void add(XWindow win, int x, int y, int width, int height) {
-		rects.length = rects.length + 1;
-		rects[$-1].window = win;
-		rects[$-1].x = x;
-		rects[$-1].y = y;
-		rects[$-1].width = width;
-		rects[$-1].height = height;
+	void add(Window win, int x, int y, int width, int height) {
+		auto iter = rects.iterator;
+		InvalidRect* r;
+		while((r = iter.next()) !is null) {
+			if(r.window == win && shouldMerge(r.x, r.y, r.width, r.height,
+					x, y, width, height)) {
+				join(r.x, r.y, r.width, r.height,
+					x, y, width, height);
+				return;
+			}
+		}
+		InvalidRect rect;
+		rect.window = win;
+		rect.x = x;
+		rect.y = y;
+		rect.width = width;
+		rect.height = height;
+		rects.add(rect);
 	}
 	bool shouldMerge(int x1, int y1, int width1, int height1,
 		int x2, int y2, int width2, int height2) {
 		return x2 <= x1 + width1 && y2 <= y1 + height1 &&
 			x2 + width2 >= x1 && y2 + height2 >= y1;
 	}
-	void Union(inout int x, inout int y, inout int width, inout int height,
-		int x2, int y2, int width2, int height2) {
+	void join(inout int x, inout int y, inout int width, inout int height,
+			int x2, int y2, int width2, int height2) {
+		auto minx = min(x, x2);
+		auto miny = min(y, y2);
+		width = max(x+width, x2+width2)-minx;
+		height = max(y+height, y2+height2)-miny;
+		x = minx;
+		y = miny;
 	}
-	void compress() {
+	void paint() {
+		if(rects.size == 0)
+			return;
+		auto iter = rects.iterator;
+		InvalidRect* r;
+		while((r = iter.next()) !is null)
+			paint(r);
+		rects.clear();
 	}
-}+/
+	void paint(InvalidRect* rect) {
+		auto surfaceWin = cairo_xlib_surface_create(
+			display, rect.window.handle,
+			XDefaultVisual(display, XDefaultScreen(display)),
+			cast(int)rect.window.width, cast(int)rect.window.height);
+		// TODO: ^ should be contentWidth/height or got from evWindow
+		auto crWin = cairo_create(surfaceWin);
+		cairo_surface_destroy(surfaceWin);
+
+		auto surfaceBuff = cairo_surface_create_similar(surfaceWin, CAIRO_CONTENT_COLOR, rect.width, rect.height);
+		auto crBuff = cairo_create(surfaceBuff);
+		cairo_translate(crBuff,
+			-rect.x-rect.window.borderSize.left,
+			-rect.y-rect.window.borderSize.top);
+		cairo_surface_destroy(surfaceBuff);
+
+		cairo_set_source_rgb(crBuff, rect.window.content.backColor.R/255.0, rect.window.content.backColor.G/255.0, rect.window.content.backColor.B/255.0);
+		cairo_paint(crBuff);
+
+		cairo_set_source_rgb(crBuff, 0, 0, 0);
+		cairo_set_line_width(crBuff, 1.0);
+
+		auto g = new Graphics(crBuff);
+		scope args = new PaintingEventArgs(g);
+		rect.window.painting(args);
+		delete g;
+
+		cairo_set_source_surface(crWin, surfaceBuff, rect.x, rect.y);
+		cairo_rectangle(crWin, rect.x, rect.y, rect.width, rect.height);
+		cairo_fill(crWin);
+
+		cairo_destroy(crBuff);
+		cairo_destroy(crWin);
+	}
+}
 
 Key prevKey = Key.None;
 
@@ -222,32 +265,8 @@ template ApplicationBackend() {
 		}
 		XEvent ev;
 		while(isWindowVisible()) {
-			if(XEventsQueued(display, QueuedAlready) == 0) {
-				_InvalidRect[] rects = Window.invalidRects;
-				Window.invalidRects.length = 0;
-				while(rects.length > 0) {
-					auto rect = rects[0];
-					// TODO: fix this...right now it gens one Expose with
-					// the union of invalid rects
-					for(int i = rects.length-1; i >= 0; --i) {
-						if(rect.window == rects[i].window) {
-							rect = rect.getUnion(rects[i]);
-
-							arrayCopy!(_InvalidRect)(rects, i+1, rects, i, rects.length-i-1);
-							rects.length = rects.length-1;
-						}
-					}
-					ev.xexpose.type = Expose;
-					ev.xexpose.display = display;
-					ev.xexpose.window = rect.window;
-					ev.xexpose.x = rect.x;
-					ev.xexpose.y = rect.y;
-					ev.xexpose.width = rect.width;
-					ev.xexpose.height = rect.height;
-					ev.xexpose.count = -2; // came from here
-					XPutBackEvent(display, &ev);
-				}
-			}
+			if(XEventsQueued(display, QueuedAlready) == 0)
+				PaintQueue.paint();
 			XNextEvent(display, &ev);
 			auto evDisplay = ev.xany.display;
 			auto evWindow = ev.xany.window;
@@ -279,15 +298,6 @@ template ApplicationBackend() {
 				c.mapped = true;
 				break;
 			case UnmapNotify:
-				_InvalidRect[] rects = Window.invalidRects;
-				for(int i = rects.length-1; i >= 0; --i) {
-					if(rects[i].window == evWindow) {
-						arrayCopy!(_InvalidRect)(
-							rects, i+1, rects, i, rects.length-i-1);
-						rects.length = rects.length-1;
-					}
-				}
-				Window.invalidRects = rects;
 				c.mapped = false;
 				break;
 			case DestroyNotify:
@@ -376,56 +386,8 @@ template ApplicationBackend() {
 			case FocusOut:
 				break;
 			case Expose:
-				// TODO: move the painting code out of here and:
-				//  make a PaintQueue class and put this here:
-				//  PaintQueue.add(c, exposeEv.x, exposeEv.y, exposeEv.width, exposeEv.height);
-				// then, in Window.repaint(), have this:
-				//  PaintQueue.add(this, cast(int)x, cast(int)exposeEv.y, cast(int)exposeEv.width, cast(int)exposeEv.height);
-				// Have a PaintQueue.Compress method that merges
-				// all invalidated rects that touch or overlap.
-				// In the if(!XPending(..)) above, just loop over all the
-				// rects in the PaintQueue, painting them.
-				auto exposeEv = ev.xexpose;
-				if(exposeEv.count != -2) {
-					c.repaint(exposeEv.x, exposeEv.y, exposeEv.width, exposeEv.height);
-					break;
-				}
-				//printf("repainting x=%d, y=%d, width=%d, height=%d\n",
-				//	exposeEv.x, exposeEv.y, exposeEv.width, exposeEv.height);
-
-				auto surfaceWin = cairo_xlib_surface_create(
-					evDisplay, evWindow,
-					XDefaultVisual(evDisplay, XDefaultScreen(evDisplay)),
-					cast(int)c.width, cast(int)c.height);
-				// TODO: ^ should be contentWidth/height or got from evWindow
-				auto crWin = cairo_create(surfaceWin);
-				cairo_surface_destroy(surfaceWin);
-
-				auto surfaceBuff = cairo_surface_create_similar(surfaceWin, CAIRO_CONTENT_COLOR, exposeEv.width, exposeEv.height);
-				// TODO: use cairo_translate instead, I guess, as
-				// I had to change the Windows backend to it...
-				cairo_surface_set_device_offset(surfaceBuff, -exposeEv.x-c._borderSize.left, -exposeEv.y-c._borderSize.top);
-				auto crBuff = cairo_create(surfaceBuff);
-				cairo_surface_destroy(surfaceBuff);
-
-				cairo_set_source_rgb(crBuff, w.content.backColor.R/255.0, w.content.backColor.G/255.0, w.content.backColor.B/255.0);
-				cairo_paint(crBuff);
-
-				cairo_set_source_rgb(crBuff, 0, 0, 0);
-				cairo_set_line_width(crBuff, 1.0);
-
-				auto g = new Graphics(crBuff);
-				scope args = new PaintingEventArgs(g);
-				c.painting(args);
-				delete g;
-
-				cairo_surface_set_device_offset(surfaceBuff, -exposeEv.x, -exposeEv.y);
-				cairo_set_source_surface(crWin, surfaceBuff, 0, 0);
-				cairo_rectangle(crWin, exposeEv.x, exposeEv.y, exposeEv.width, exposeEv.height);
-				cairo_fill(crWin);
-
-				cairo_destroy(crBuff);
-				cairo_destroy(crWin);
+				auto exposeEv = &ev.xexpose;
+				PaintQueue.add(c, exposeEv.x, exposeEv.y, exposeEv.width, exposeEv.height);
 				break;
 			case PropertyNotify:
 				auto propertyEv = ev.xproperty;
@@ -725,15 +687,11 @@ template WindowBackend() {
 		XDefineCursor(display, _handle, cur.handle);
 	}
 
-	static _InvalidRect[] invalidRects;
 	void backend_repaint(Rect rect) {
-		invalidRects.length = invalidRects.length+1;
-		invalidRects[$-1].window = _handle;
-		invalidRects[$-1].x = cast(int)(rect.x-borderSize.left);
-		invalidRects[$-1].y = cast(int)(rect.y-borderSize.top);
-		invalidRects[$-1].width = cast(int)rect.width+1;
-		invalidRects[$-1].height = cast(int)rect.height+1;
-		//printf("invalidating x=%.1f, y=%.1f, width=%.1f, height=%.1f\n", rect.X, rect.Y, rect.width, rect.height);
+		PaintQueue.add(this,
+			cast(int)(rect.x-borderSize.left), cast(int)(rect.y-borderSize.top),
+			cast(int)rect.width+1, cast(int)rect.height+1);
+		//Stdout.format("invalidating x={}, y={}, width={}, height={}", rect.x, rect.y, rect.width, rect.height).newline;
 	}
 	void backend_resizable(bool b) {
 		backend_updateWM_NORMAL_HINTS();
