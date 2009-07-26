@@ -332,8 +332,16 @@ template ApplicationBackend() {
 				focused.keyUp(args);
 				break;
 			case ButtonPress:
-				//Button4 is wheel scroll up
-				//Button5 is wheel scroll down
+				// 4 = scroll up,   5 = scroll down
+				// 6 = scroll left, 7 = scroll right
+				auto b = ev.xbutton.button;
+				if(b == 4 || b == 5) {
+					scope args = new MouseTurnedEventArgs(b == 4 ? -3:3, false);
+					c.getDescendantAtPoint(
+						ev.xbutton.x+c._borderSize.left,
+						ev.xbutton.y+c._borderSize.top).mouseTurned(args);
+					break;
+				}
 				createMouseEvent((MouseEventArgs args) { c.mouseDown(args); });
 				break;
 			case ButtonRelease:
