@@ -277,7 +277,7 @@ template ApplicationBackend() {
 			//{{{ helper functions
 			void createMouseEvent(void delegate(MouseEventArgs args) func) {
 				MouseButton button;
-				auto buttonEv = ev.xbutton;
+				auto buttonEv = &ev.xbutton;
 				switch(buttonEv.button) {
 				case 1: button = MouseButton.Left; break;
 				case 2: button = MouseButton.Middle; break;
@@ -304,7 +304,7 @@ template ApplicationBackend() {
 				setControl(evWindow, null);
 				break;
 			case ClientMessage:
-				auto clientEv = ev.xclient;
+				auto clientEv = &ev.xclient;
 				if(clientEv.message_type != XA.WM_PROTOCOLS)
 					break;
 				if(clientEv.data.l[0] == XA.WM_DELETE_WINDOW) {
@@ -358,7 +358,7 @@ template ApplicationBackend() {
 				createMouseEvent((MouseEventArgs args) { c.mouseUp(args); });
 				break;
 			case MotionNotify:
-				auto motionEv = ev.xmotion;
+				auto motionEv = &ev.xmotion;
 				Control captor = getCaptorControl();
 				Point pt = Point(motionEv.x+c.borderSize.left, motionEv.y+c.borderSize.top);
 				if(captor)
@@ -373,7 +373,7 @@ template ApplicationBackend() {
 					captor.mouseMoved(args);
 				break;
 			case EnterNotify:
-				auto enterEv = ev.xcrossing;
+				auto enterEv = &ev.xcrossing;
 				scope args = new MouseEventArgs(enterEv.x+c.borderSize.left,
 					enterEv.y+c.borderSize.top, MouseButton.None);
 				c.mouseMoved(args);
@@ -390,18 +390,18 @@ template ApplicationBackend() {
 				PaintQueue.add(c, exposeEv.x, exposeEv.y, exposeEv.width, exposeEv.height);
 				break;
 			case PropertyNotify:
-				auto propertyEv = ev.xproperty;
+				auto propertyEv = &ev.xproperty;
 				if(propertyEv.atom == XA._NET_FRAME_EXTENTS &&
 					propertyEv.state != PropertyDelete)
 					c.backend_nativeToBorderSize();
 				break;
 			case ConfigureNotify:
-				auto configureEv = ev.xconfigure;
+				auto configureEv = &ev.xconfigure;
 				c.repaint();
 				c.backend_nativeToLocationSize();
 				break;
 			case SelectionRequest:
-				auto selReqEv = ev.xselectionrequest;
+				auto selReqEv = &ev.xselectionrequest;
 				XEvent fullEv;
 				auto selEv = &fullEv.xselection;
 				selEv.type = SelectionNotify;
