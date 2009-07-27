@@ -237,7 +237,7 @@ public:
 		//ControlRemoved(EventArgs e); // TODO: add event
 	}
 
-	protected int opApply(int delegate(inout Control item) dg) {
+	int opApply(int delegate(inout Control item) dg) {
 		for(uint i = 0; i < _children.count; ++i) {
 			auto tmp = _children[i];
 			if(int result = dg(tmp))
@@ -245,7 +245,7 @@ public:
 		}
 		return 0;
 	}
-	protected int opApply(int delegate(inout uint index, inout Control item) dg) {
+	int opApply(int delegate(inout uint index, inout Control item) dg) {
 		for(uint i = 0; i < _children.count; ++i) {
 			auto tmp = _children[i];
 			if(int result = dg(i, tmp))

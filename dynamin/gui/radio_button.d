@@ -45,7 +45,7 @@ protected:
 		if(!topLevel)
 			return null;
 		RadioButton[] radios;
-		void collectFromPanel(Panel container) {
+		void collectFromPanel(Container container) {
 			foreach(control; container) {
 				if(auto r = cast(RadioButton)control) {
 					if(r.group != group)
@@ -54,7 +54,7 @@ protected:
 					radios[$-1] = r;
 					if(r.checked)
 						checkedIndex = radios.length-1;
-				} else if(auto c = cast(Panel)control)
+				} else if(auto c = cast(Container)control)
 					collectFromPanel(c);
 			}
 		}

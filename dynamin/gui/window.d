@@ -154,7 +154,7 @@ protected:
 	Window _owner;
 	WindowBorderStyle _borderStyle;
 	bool _resizable = true;
-	Panel _content;
+	Container _content;
 	Control _focusedControl;
 	package Control focusedControl() { return _focusedControl; }
 	package void focusedControl(Control c) {
@@ -180,7 +180,7 @@ public:
 		this.text = text;
 	}
 
-	void content(Panel panel) {
+	void content(Container panel) {
 		if(panel is null)
 			throw new IllegalArgumentException("content must not be null");
 		// TODO: remove handlers
@@ -224,7 +224,7 @@ public:
 		_content.size = _size-_borderSize;
 		ignoreResize = false;
 	}
-	Panel content() {
+	Container content() {
 		return _content;
 	}
 
