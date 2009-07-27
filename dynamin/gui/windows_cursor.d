@@ -89,18 +89,18 @@ static:
 	}
 	Cursor backend_Drag() {
 		if(checkWindowsVersion(WindowsVersion.WindowsVista))
-			return backend_getCursor("AeroDragCur");
+			return backend_getCursor("rAeroDragCur");
 		else
-			return backend_getCursor("DragCur");
+			return backend_getCursor("rDragCur");
 	}
 	Cursor backend_InvalidDrag() {
 		return backend_getCursor(OCR_NO);
 	}
 	Cursor backend_ReversedArrow() {
 		if(checkWindowsVersion(WindowsVersion.WindowsVista))
-			return backend_getCursor("AeroReversedArrowCur");
+			return backend_getCursor("rAeroReversedArrowCur");
 		else
-			return backend_getCursor("ReversedArrowCur");
+			return backend_getCursor("rReversedArrowCur");
 	}
 	Cursor backend_Crosshair() {
 		return backend_getCursor(OCR_CROSS);
