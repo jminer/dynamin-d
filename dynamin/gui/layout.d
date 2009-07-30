@@ -112,7 +112,10 @@ struct LayoutGroup {
 			}
 			return e;
 		case LayoutType.Filler:
-			return Elasticity.Semi;
+			if(!parent || parent.numColumns > 1 || children.length == 1)
+				return Elasticity.Semi;
+			else
+				return Elasticity.No;
 		case LayoutType.Spacer:
 			return Elasticity.No;
 		}
@@ -133,7 +136,10 @@ struct LayoutGroup {
 			}
 			return e;
 		case LayoutType.Filler:
-			return Elasticity.Semi;
+			if(!parent || parent.numRows > 1 || children.length == 1)
+				return Elasticity.Semi;
+			else
+				return Elasticity.No;
 		case LayoutType.Spacer:
 			return Elasticity.No;
 		}
