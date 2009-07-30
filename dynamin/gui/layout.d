@@ -688,7 +688,7 @@ unittest {
 
 	// semielastic
 	panel = mixin(createLayout(`T[2]( H(*label1) tb1 H(*button1) tb2 )`));
-	assert(panel.bestSize == Size(70+100+sp*3, 20+30+sp*3));
+	assert(panel.bestSize == Size(80+100+sp*3, 20+30+sp*3));
 	assert(panel.elasticX == true);
 	assert(panel.elasticY == false);
 	panel.size = [500, 500];
