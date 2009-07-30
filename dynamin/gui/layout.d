@@ -169,6 +169,13 @@ struct LayoutGroup {
 		case LayoutType.Control:
 			return control.baseline;
 		case LayoutType.Table:
+			if(numRows != 1)
+				return 0;
+			scope colsInfo = new ColRowInfo[numColumns];
+			scope rowsInfo = new ColRowInfo[numRows];
+			TableInfo info;
+			getTableSizes(colsInfo, rowsInfo, info);
+			return cast(int)rowsInfo[0].baseline;
 		case LayoutType.Filler:
 		case LayoutType.Spacer:
 			return 0;
