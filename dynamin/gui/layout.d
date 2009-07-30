@@ -582,7 +582,123 @@ return panel;
 //}}}
 
 unittest {
-	// TODO: set to basic theme
-	// test a few basic layouts and verify pixel locations and sizes
+	class FakeButton : Control {
+		Size bestSize() { return Size(80, 30); }
+		bool elasticX() { return false; }
+		bool elasticY() { return false; }
+		int baseline() { return 20; }
+	}
+	class FakeTextBox : Control {
+		Size bestSize() { return Size(100, 20); }
+		bool elasticX() { return true; }
+		bool elasticY() { return false; }
+		int baseline() { return 18; }
+	}
+	class FakeListBox : Control {
+		Size bestSize() { return Size(100, 300); }
+		bool elasticX() { return false; }
+		bool elasticY() { return true; }
+		int baseline() { return 15; }
+	}
+	class FakeLabel : Control {
+		Size bestSize() { return Size(70, 15); }
+		bool elasticX() { return false; }
+		bool elasticY() { return false; }
+		int baseline() { return 13; }
+	}
+	auto button1 = new FakeButton();
+	auto tb1 = new FakeTextBox();
+	auto tb2 = new FakeTextBox();
+	auto lb1 = new FakeListBox();
+	auto label1 = new FakeLabel();
+	auto label2 = new FakeLabel();
+
+	Panel panel;
+	auto sp = 8; // TODO: get from same place as layout
+
+	// vertical layout
+	panel = mixin(createLayout(`V( label1 button1 )`));
+	assert(panel.bestSize == Size(80+sp*2, 30+15+sp*3));
+	assert(panel.elasticX == false);
+	assert(panel.elasticY == false);
+	panel.size = [1000, 1000];
+	assert(label1.location == Point(sp, sp));
+	assert(label1.size == label1.bestSize);
+	assert(button1.location == Point(sp, 15+sp*2));
+	assert(button1.size == button1.bestSize);
+
+	// horizontal layout
+	panel = mixin(createLayout(`H( label1 button1 * )`));
+	assert(panel.bestSize == Size(80+70+sp*3, 30+sp*2));
+	assert(panel.elasticX == false);
+	assert(panel.elasticY == false);
+	panel.size = [1000, 1000];
+	assert(label1.location == Point(sp, 20-13+sp));
+	assert(label1.size == label1.bestSize);
+	assert(button1.location == Point(70+sp*2, sp));
+	assert(button1.size == button1.bestSize);
+
+	// filler is last priority
+	panel = mixin(createLayout(`H( * label1 tb1 )`));
+	assert(panel.bestSize == Size(70+100+sp*3, 20+sp*2));
+	assert(panel.elasticX == true);
+	assert(panel.elasticY == false);
+	panel.size = [500, 1000];
+	assert(label1.location == Point(sp, 18-13+sp));
+	assert(label1.size == label1.bestSize);
+	assert(tb1.location == Point(70+sp*2, sp));
+	assert(tb1.size == Size(panel.width-70-sp*3, tb1.bestSize.height));
+
+	// extra space is distributed evenly between elastic controls
+	panel = mixin(createLayout(`V( H( tb1 label1 tb2 ) H( * label2 button1) )`));
+	assert(panel.bestSize == Size(270+sp*4, 20+30+sp*3));
+	assert(panel.elasticX == true);
+	assert(panel.elasticY == false);
+	panel.size = [500, 1000];
+	assert(tb1.location == Point(sp, sp));
+	assert(tb1.size == Size((panel.width-70-sp*4) / 2, 20));
+	assert(label1.location == Point(tb1.width+sp*2, 18-13+sp));
+	assert(label1.size == label1.bestSize);
+	assert(tb2.location == Point(tb1.width+70+sp*3, sp));
+	assert(tb2.size == Size(tb1.width, 20));
+	assert(label2.location == Point(panel.width-80-70-sp*2, 20+(20-13)+sp*2));
+	assert(label2.size == label2.bestSize);
+	assert(button1.location == Point(panel.width-80-sp, 20+sp*2));
+	assert(button1.size == button1.bestSize);
+
+	// extra space is distributed evenly between filler
+	panel = mixin(createLayout(`V( * label1 * label2 * )`));
+	assert(panel.bestSize == Size(70+sp*2, 15+15+sp*3));
+	assert(panel.elasticX == false);
+	assert(panel.elasticY == false);
+	panel.size = [500, 120];
+	assert(label1.location == Point(sp, 30));
+	assert(label1.size == label1.bestSize);
+	assert(label2.location == Point(sp, 75));
+	assert(label2.size == label2.bestSize);
+
+	// spacing
+	panel = mixin(createLayout(`H( ~ label1 ~ button1 ~ )`));
+	assert(panel.bestSize == Size(70+80+sp*6, 30+sp*2));
+	assert(panel.elasticX == false);
+	assert(panel.elasticY == false);
+	panel.size = [500, 500];
+	assert(label1.location == Point(sp*2, 20-13+sp));
+	assert(button1.location == Point(70+sp*4, sp));
+
+	// semielastic
+	panel = mixin(createLayout(`T[2]( H(*label1) tb1 H(*button1) tb2 )`));
+	assert(panel.bestSize == Size(70+100+sp*3, 20+30+sp*3));
+	assert(panel.elasticX == true);
+	assert(panel.elasticY == false);
+	panel.size = [500, 500];
+	assert(label1.location == Point(10+sp, 18-13+sp));
+	assert(label1.size == label1.bestSize);
+	assert(button1.location == Point(sp, 20+sp*2));
+	assert(button1.size == button1.bestSize);
+
+	//assert(.location == Point());
+	//assert(.size == Size());
+	//Stdout("1:")(panel.bestSize).newline;
 }
 
