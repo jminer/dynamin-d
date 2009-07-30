@@ -23,7 +23,7 @@
  *
  */
 
-module dynamin.gui.directory_dialog;
+module dynamin.gui.folder_dialog;
 
 import dynamin.all_core;
 import dynamin.gui_backend;
@@ -35,9 +35,9 @@ import dynamin.gui_backend;
  *
  * $(IMAGE ../web/example_directory_dialog.png)
  */
-class DirectoryDialog { // TODO: rename to FolderDialog
+class FolderDialog {
 private:
-	mixin DirectoryDialogBackend;
+	mixin FolderDialogBackend;
 	string _text;
 	string _directory;
 public:

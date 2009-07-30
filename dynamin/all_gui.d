@@ -36,8 +36,8 @@ public import dynamin.gui.layout;
 public import dynamin.gui.cursor;
 public import dynamin.gui.clipboard;
 public import dynamin.gui.screen;
-public import dynamin.gui.directory_dialog;
 public import dynamin.gui.file_dialog;
+public import dynamin.gui.folder_dialog;
 
 public import dynamin.gui.label;
 public import dynamin.gui.button;

@@ -23,13 +23,13 @@
  *
  */
 
-module dynamin.gui.x_directory_dialog;
+module dynamin.gui.x_folder_dialog;
 
 public import Utf = tango.text.convert.Utf;
 public import dynamin.c.glib;
 public import dynamin.c.gtk;
 
-template DirectoryDialogBackend() {
+template FolderDialogBackend() {
 	DialogResult backend_showDialog() {
 		string title = text ? text : "Select Folder";
 		auto dialog = gtk_file_chooser_dialog_new(toCharPtr(title), null,

@@ -23,11 +23,11 @@
  *
  */
 
-module dynamin.gui.windows_directory_dialog;
+module dynamin.gui.windows_folder_dialog;
 
 public import Utf = tango.text.convert.Utf;
 
-template DirectoryDialogBackend() {
+template FolderDialogBackend() {
 	extern(Windows) static int setSelectedDirectory(HWND hwnd,
 			UINT uMsg, LPARAM lParam, LPARAM lpData) {
 		if(uMsg == BFFM_INITIALIZED)
