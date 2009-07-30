@@ -273,6 +273,7 @@ struct LayoutGroup {
 		real max = 0;
 		LayoutGroup* l;
 
+		bool prevNonFiller = false;
 		int sp = 0;
 		for(int col = 0; col < numColumns; ++col) { // go down each column
 			for(int row = 0; row < numRows; ++row) {
@@ -288,11 +289,14 @@ struct LayoutGroup {
 				info.elasticWidth += max;
 			else if(colsInfo[col].elastic == Elasticity.Semi)
 				info.semiColumns++;
+			// this won't add spacing to the first non-filler
+			sp = (!colsInfo[col].filler && prevNonFiller) ? spacing : 0;
 			info.bestSize.width = info.bestSize.width + sp + max;
-			sp = (colsInfo[col].filler ? 0 : spacing);
+			prevNonFiller = !colsInfo[col].filler ? true : prevNonFiller ;
 			max = 0;
 		}
 
+		prevNonFiller = false;
 		real maxBl = 0;
 		sp = 0;
 		for(int row = 0; row < numRows; ++row) { // go over each row
@@ -311,8 +315,10 @@ struct LayoutGroup {
 				info.elasticHeight += max;
 			else if(rowsInfo[row].elastic == Elasticity.Semi)
 				info.semiRows++;
+			// this won't add spacing to the first non-filler
+			sp = (!rowsInfo[row].filler && prevNonFiller) ? spacing : 0;
 			info.bestSize.height = info.bestSize.height + sp + max;
-			sp = (rowsInfo[row].filler ? 0 : spacing);
+			prevNonFiller = !rowsInfo[row].filler ? true : prevNonFiller ;
 			max = maxBl = 0;
 		}
 	}
