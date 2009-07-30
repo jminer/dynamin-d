@@ -57,7 +57,7 @@ enum Elasticity {
 struct LayoutGroup {
 	LayoutType type;
 	LayoutGroup* parent;
-	LayoutGroup[] children; // used if type == LayoutType.Horiz or Vert or Table
+	LayoutGroup[] children; // used if type == LayoutType.Table
 	Control control;        // used if type == LayoutType.Control
 	int numColumns;         // used if type == LayoutType.Table
 	int numRows() { return children.length / numColumns; }
@@ -264,7 +264,7 @@ struct LayoutGroup {
 		assert(colsInfo.length == numColumns);
 		assert(rowsInfo.length == numRows);
 
-		real max = 0, temp;
+		real max = 0;
 		LayoutGroup* l;
 
 		int sp = 0;
