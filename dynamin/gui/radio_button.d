@@ -45,7 +45,7 @@ protected:
 		if(!topLevel)
 			return null;
 		RadioButton[] radios;
-		void collectFromPanel(Container container) {
+		void collectFromContainer(Container container) {
 			foreach(control; container) {
 				if(auto r = cast(RadioButton)control) {
 					if(r.group != group)
@@ -55,11 +55,11 @@ protected:
 					if(r.checked)
 						checkedIndex = radios.length-1;
 				} else if(auto c = cast(Container)control)
-					collectFromPanel(c);
+					collectFromContainer(c);
 			}
 		}
 		checkedIndex = -1;
-		collectFromPanel(topLevel.content);
+		collectFromContainer(topLevel.content);
 		return radios;
 	}
 	override void whenKeyDown(KeyEventArgs e) {
