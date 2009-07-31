@@ -57,7 +57,7 @@ template FileDialogBackend() {
 		scope(exit) delete filesBufferW;
 		ofn.lpstrFile = filesBufferW.ptr;
 		ofn.nMaxFile = filesBufferW.length;
-		ofn.lpstrInitialDir = _directory.toWcharPtr();
+		ofn.lpstrInitialDir = _folder.toWcharPtr();
 		ofn.lpstrTitle = _text.toWcharPtr();
 		ofn.Flags = OFN_EXPLORER;
 		//if(canChooseLinks)
@@ -90,22 +90,22 @@ template FileDialogBackend() {
 		scope(exit) delete filesBuffer;
 		if(filesBuffer.contains('\0')) { // multiple files
 			auto arr = filesBuffer.split("\0");
-			_directory = arr[0];
-			// make sure directory ends with a backslash
+			_folder = arr[0];
+			// make sure folder ends with a backslash
 			// "C:\" does but "C:\Program Files" does not
-			if(!_directory.endsWith("\\"))
-				_directory ~= "\\";
+			if(!_folder.endsWith("\\"))
+				_folder ~= "\\";
 			_files = new string[arr.length-1];
 			for(int i = 1; i < arr.length; ++i) {
 				if(arr[i].contains('\\')) // a dereferenced link--absolute
 					_files[i-1] = arr[i];
 				else
-					_files[i-1] = _directory ~ arr[i];
+					_files[i-1] = _folder ~ arr[i];
 				maybeAddExt(_files[i-1]);
 			}
 		} else { //single file
 			assert(filesBuffer.contains('\\'));
-			_directory = filesBuffer[0..filesBuffer.findLast("\\")].dup;
+			_folder = filesBuffer[0..filesBuffer.findLast("\\")].dup;
 			_files = [filesBuffer.dup];
 			maybeAddExt(_files[0]);
 		}

@@ -28,7 +28,7 @@ module dynamin.gui.windows_folder_dialog;
 public import Utf = tango.text.convert.Utf;
 
 template FolderDialogBackend() {
-	extern(Windows) static int setSelectedDirectory(HWND hwnd,
+	extern(Windows) static int setSelectedFolder(HWND hwnd,
 			UINT uMsg, LPARAM lParam, LPARAM lpData) {
 		if(uMsg == BFFM_INITIALIZED)
 			SendMessage(hwnd, BFFM_SETSELECTION, true, lpData);
@@ -41,9 +41,9 @@ template FolderDialogBackend() {
 		bi.lpszTitle = "Choose a folder:";
 		bi.ulFlags |= BIF_RETURNONLYFSDIRS;
 		bi.ulFlags |= BIF_USENEWUI;
-		if(directory) {
-			bi.lpfn = &setSelectedDirectory;
-			bi.lParam = cast(LPARAM)toWcharPtr(directory);
+		if(_folder) {
+			bi.lpfn = &setSelectedFolder;
+			bi.lParam = cast(LPARAM)toWcharPtr(_folder);
 		}
 
 		ITEMIDLIST* pidl = SHBrowseForFolder(&bi);
@@ -65,7 +65,7 @@ template FolderDialogBackend() {
 				}
 				break;
 			}
-		_directory = Utf.toString(dirBuffer[0..index]);
+		_folder = Utf.toString(dirBuffer[0..index]);
 		return DialogResult.OK;
 	}
 }

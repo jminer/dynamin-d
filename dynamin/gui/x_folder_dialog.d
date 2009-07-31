@@ -36,17 +36,17 @@ template FolderDialogBackend() {
 			GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, null);
-		if(_directory)
-			gtk_file_chooser_set_current_folder(dialog, toCharPtr(_directory));
+		if(_folder)
+			gtk_file_chooser_set_current_folder(dialog, toCharPtr(_folder));
 		scope(exit) {
 			gtk_widget_destroy(dialog);
 			while(gtk_events_pending())
 				gtk_main_iteration();
 		}
 		if(gtk_dialog_run(dialog) == GTK_RESPONSE_ACCEPT) {
-			char* folder = gtk_file_chooser_get_filename(dialog);
-			_directory = folder[0..strlen(folder)].dup;
-			g_free(folder);
+			char* fold = gtk_file_chooser_get_filename(dialog);
+			_folder = fold[0..strlen(fold)].dup;
+			g_free(fold);
 			return DialogResult.OK;
 		}
 		return DialogResult.Cancel;

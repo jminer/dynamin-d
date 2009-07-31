@@ -53,7 +53,7 @@ protected:
 	bool _multipleSelection;
 	string _initialFileName;
 	string _text;
-	string _directory;
+	string _folder;
 	string[] _files;
 	FileDialogFilter[] _filters;
 	int _selectedFilter;
@@ -135,17 +135,17 @@ public:
 	}
 
 	/**
-	 * Sets the directory that the FileDialog shows. If this is null,
-	 * the default directory is used when the dialog is first shown.
-	 * After the dialog has been shown, this is set to the directory
+	 * Sets the folder that the FileDialog shows. If this is null,
+	 * the default folder is used when the dialog is first shown.
+	 * After the dialog has been shown, this is set to the folder
 	 * the user was last looking at.
 	 */
-	void directory(string str) {
-		_directory = str;
+	void folder(string str) {
+		_folder = str;
 	}
-	/// TODO: Should this be selectedDirectory ?
-	string directory() {
-		return _directory;
+	/// TODO: Should this be selectedFolder ?
+	string folder() {
+		return _folder;
 	}
 
 	/**

@@ -61,8 +61,8 @@ template FileDialogBackend() {
 		if(fileDialogType == Open)
 			gtk_file_chooser_set_select_multiple(dialog, multipleSelection);
 		gtk_file_chooser_set_do_overwrite_confirmation(dialog, true);
-		if(_directory)
-			gtk_file_chooser_set_current_folder(dialog, toCharPtr(_directory));
+		if(_folder)
+			gtk_file_chooser_set_current_folder(dialog, toCharPtr(_folder));
 		if(_initialFileName)
 			gtk_file_chooser_set_current_name(dialog, toCharPtr(_initialFileName));
 
@@ -89,7 +89,7 @@ template FileDialogBackend() {
 			g_slist_free(list);
 
 			char* fold = gtk_file_chooser_get_current_folder(dialog);
-			_directory = fold[0..strlen(fold)].dup;
+			_folder = fold[0..strlen(fold)].dup;
 			g_free(fold);
 
 			return DialogResult.OK;

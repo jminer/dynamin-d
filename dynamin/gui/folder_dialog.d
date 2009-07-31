@@ -31,28 +31,28 @@ import dynamin.gui_backend;
 /**
  *
  *
- * The appearance of a directory dialog with Windows Classic:
+ * The appearance of a folder dialog with Windows Classic:
  *
- * $(IMAGE ../web/example_directory_dialog.png)
+ * $(IMAGE ../web/example_folder_dialog.png)
  */
 class FolderDialog {
 private:
 	mixin FolderDialogBackend;
 	string _text;
-	string _directory;
+	string _folder;
 public:
 	/// Gets or sets the text that is displayed in the dialog's title bar.
 	string text() { return _text; }
 	/// ditto
 	void text(string str) { _text = str; }
 
-	/// Gets or sets the selected directory.
-	string directory() {
-		return _directory;
+	/// Gets or sets the selected folder.
+	string folder() {
+		return _folder;
 	}
 	/// ditto
-	void directory(string str) {
-		_directory = str;
+	void folder(string str) {
+		_folder = str;
 	}
 
 	DialogResult showDialog() {
