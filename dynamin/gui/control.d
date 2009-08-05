@@ -104,6 +104,24 @@ public:
 		if(!e.stopped && _parent)
 			_parent.mouseTurned(e);
 	}
+	protected void dispatchKeyDown(KeyEventArgs e) {
+		keyDown.callHandlers(e);
+		keyDown.callMainHandler(e);
+		if(!e.stopped && _parent)
+			_parent.keyDown(e);
+	}
+	protected void dispatchKeyUp(KeyEventArgs e) {
+		keyUp.callHandlers(e);
+		keyUp.callMainHandler(e);
+		if(!e.stopped && _parent)
+			_parent.keyUp(e);
+	}
+	protected void dispatchKeyTyped(KeyTypedEventArgs e) {
+		keyTyped.callHandlers(e);
+		keyTyped.callMainHandler(e);
+		if(!e.stopped && _parent)
+			_parent.keyTyped(e);
+	}
 	protected void dispatchPainting(PaintingEventArgs e) {
 		e.graphics.save();
 		painting.callMainHandler(e);
@@ -155,21 +173,25 @@ public:
 	Event!(whenMouseDragged) mouseDragged;
 
 	/// Override this method in a subclass to handle the mouseTurned event.
+	/// If this event is not stopped, it will be sent to the control's parent.
 	protected void whenMouseTurned(MouseTurnedEventArgs e) { }
 	/// This event occurs after the mouse wheel has been turned.
 	Event!(whenMouseTurned) mouseTurned;
 
 	/// Override this method in a subclass to handle the keyDown event.
+	/// If this event is not stopped, it will be sent to the control's parent.
 	protected void whenKeyDown(KeyEventArgs e) { }
 	/// This event occurs after a key is pressed.
 	Event!(whenKeyDown) keyDown;
 
 	/// Override this method in a subclass to handle the keyTyped event.
+	/// If this event is not stopped, it will be sent to the control's parent.
 	protected void whenKeyTyped(KeyTypedEventArgs e) { }
 	/// This event occurs after a character key is pressed.
 	Event!(whenKeyTyped) keyTyped;
 
 	/// Override this method in a subclass to handle the keyUp event.
+	/// If this event is not stopped, it will be sent to the control's parent.
 	protected void whenKeyUp(KeyEventArgs e) { }
 	/// This event occurs after a key is released.
 	Event!(whenKeyUp) keyUp;
@@ -199,8 +221,11 @@ public:
 		mouseTurned.mainHandler = &whenMouseTurned;
 		mouseTurned.dispatcher = &dispatchMouseTurned;
 		keyDown.mainHandler = &whenKeyDown;
+		keyDown.dispatcher = &dispatchKeyDown;
 		keyTyped.mainHandler = &whenKeyTyped;
+		keyTyped.dispatcher = &dispatchKeyTyped;
 		keyUp.mainHandler = &whenKeyUp;
+		keyUp.dispatcher = &dispatchKeyUp;
 		painting.mainHandler = &whenPainting;
 		painting.dispatcher = &dispatchPainting;
 
