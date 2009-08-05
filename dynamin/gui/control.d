@@ -378,8 +378,19 @@ public:
 		return contains(Point(x, y));
 	}
 
+	/**
+	 * Returns true if this control is a top-level control and false otherwise.
+	 * Top-level controls do not have parents. Non-top-level controls can only
+	 * be shown on the screen by adding them as children to a top-level control.
+	 * Currently, the only top-level control is Window.
+	 */
 	bool topLevel() { return false; }
 	// TODO: return NativeControl/Window?
+	/**
+	 * Loops over this control's ancestors, and if a top-level control is found,
+	 * it is returned. If this control does not have a top-level ancestor,
+	 * null is returned.
+	 */
 	Control getTopLevel() {
 		Control c = this;
 		while(c.parent)

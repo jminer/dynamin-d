@@ -70,9 +70,11 @@ public:
 		this();
 		this.text = text;
 	}
+	/// Gets or sets whether this check box is checked.
 	bool checked() {
 		return _checkState == CheckState.Checked;
 	}
+	/// ditto
 	void checked(bool b) {
 		_checkState = b ? CheckState.Checked : CheckState.Unchecked;
 		repaint();
