@@ -63,7 +63,7 @@ protected:
 		return radios;
 	}
 	override void whenKeyDown(KeyEventArgs e) {
-		// TODO: when GetTopLevel() is changed to return NativeControl,
+		// TODO: when getTopLevel() is changed to return NativeControl,
 		// update this
 		int index;
 		if(e.key == Key.Down || e.key == Key.Right) {

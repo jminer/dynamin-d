@@ -404,7 +404,7 @@ public:
 	Container parent() { return _parent; }
 	package void parent(Container c) {
 		_parent = c;
-		//ParentChanged(new EventArgs); // TODO: add event
+		//parentChanged(new EventArgs); // TODO: add event
 	}
 
 	/**
