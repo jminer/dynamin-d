@@ -66,17 +66,23 @@ protected:
 		// TODO: when GetTopLevel() is changed to return NativeControl,
 		// update this
 		int index;
-		RadioButton[] radios = collectGroup(index);
-		if(radios is null)
-			return;
 		if(e.key == Key.Down || e.key == Key.Right) {
+			RadioButton[] radios = collectGroup(index);
+			if(radios is null)
+				return;
 			if(++index >= radios.length)
 				index = 0;
+			radios[index].clicked(new EventArgs);
+			e.stopped = true;
 		} else if(e.key == Key.Up || e.key == Key.Left) {
+			RadioButton[] radios = collectGroup(index);
+			if(radios is null)
+				return;
 			if(--index < 0)
 				index = radios.length-1;
+			radios[index].clicked(new EventArgs);
+			e.stopped = true;
 		}
-		radios[index].clicked(new EventArgs);
 	}
 	override void whenPainting(PaintingEventArgs e) {
 		Theme.current.RadioButton_paint(this, e.graphics);
