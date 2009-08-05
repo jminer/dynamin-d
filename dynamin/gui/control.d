@@ -63,6 +63,7 @@ protected:
 	bool _visible;
 	bool _focusable;
 	bool _focused;
+	int _tabIndex;
 	package Point _location;
 	package Size _size;
 	string _text;
@@ -234,6 +235,7 @@ public:
 		_text = "";
 		_focusable = false;
 		_focused = false;
+		_tabIndex = 0;
 		_visible = true;
 		_cursor = Cursor.Arrow;
 		_elasticX = false;
@@ -279,6 +281,21 @@ public:
 	 */
 	bool focused() {
 		return _focused;
+	}
+
+	/**
+	 * Gets or sets this control's tab index. The tab index of controls
+	 * decides in what order they are focused when the tab key is pressed.
+	 * If multiple controls in a window have the same tab index, focus is
+	 * changed based on the order they were added to the window.
+	 * The default is 0.
+	 */
+	int tabIndex() {
+		return _tabIndex;
+	}
+	/// ditto
+	void tabIndex(int i) {
+		_tabIndex = i;
 	}
 
 	/**
