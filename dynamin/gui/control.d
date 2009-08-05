@@ -304,10 +304,10 @@ public:
 	void focus() {
 		if(!_focusable)
 			return;
-		Control c = this;
-		while(c.parent)
-			c = c.parent;
-		if(auto win = cast(Window)c) {
+		auto top = getTopLevel();
+		if(!top)
+			return;
+		if(auto win = cast(Window)top) {
 			if(win.focusedControl) {
 				win.focusedControl._focused = false;
 				win.focusedControl.repaint();
