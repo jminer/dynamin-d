@@ -186,6 +186,14 @@ version(Windows) {
 			g.stroke();
 		}
 	}
+	/// draws a dotted focus rectangle
+	void drawFocus(Graphics g, int colorIndex, real x, real y, real w, real h) {
+		g.lineWidth = 1;
+		g.source = getColor(colorIndex);
+		g.setDash([1, 1], 0.5);
+		g.rectangle(x, y, w, h);
+		g.stroke();
+	}
 	//}}}
 
 	string name() {
@@ -208,6 +216,8 @@ version(Windows) {
 			auto uxState = findUxState(c, PBS_DISABLED, PBS_NORMAL, PBS_HOT, PBS_PRESSED);
 			Ux.drawBackground(g, Rect(0, 0, c.width, c.height), "BUTTON", BP_PUSHBUTTON, uxState);
 
+			if(c.focused)
+				drawFocus(g, COLOR_WINDOWTEXT, 3.5, 3.5, c.width-7, c.height-7);
 			g.source = getColor(COLOR_WINDOWTEXT);
 			c.paintFore(g);
 			return;
@@ -226,12 +236,8 @@ version(Windows) {
 			draw3dRectangle(g, 1, 1, c.width-2, c.height-2,
 				getColor(COLOR_3DLIGHT), getColor(COLOR_3DSHADOW));
 		}
-		if(c.focused) {
-			g.source = getColor(COLOR_WINDOWTEXT);
-			g.setDash([1, 1], 0.5);
-			g.rectangle(3.5, 3.5, c.width-7, c.height-7);
-			g.stroke();
-		}
+		if(c.focused)
+			drawFocus(g, COLOR_WINDOWTEXT, 3.5, 3.5, c.width-7, c.height-7);
 		g.source = getColor(COLOR_WINDOWTEXT);
 		c.paintFore(g);
 	}
@@ -249,8 +255,11 @@ version(Windows) {
 			}
 			Ux.drawBackground(g, Rect(0, 0, 13, c.height), "BUTTON", BP_CHECKBOX, uxState);
 
+			if(c.focused)
+				drawFocus(g, COLOR_WINDOWTEXT,
+					15.5, 0.5, c.width-16, c.height-1);
 			g.source = getColor(COLOR_WINDOWTEXT);
-			g.translate(15, 0);
+			g.translate(16, 0);
 			c.paintFore(g);
 			return;
 		}
@@ -272,8 +281,10 @@ version(Windows) {
 			drawCheck(g, 3, 3);
 		//	drawCheck(g, 0, 0, 13, 13);
 
+		if(c.focused)
+			drawFocus(g, COLOR_WINDOWTEXT, 15.5, 0.5, c.width-16, c.height-1);
 		g.source = getColor(COLOR_WINDOWTEXT);
-		g.translate(15, 0);
+		g.translate(16, 0);
 		c.paintFore(g);
 	}
 	//}}}
@@ -290,8 +301,11 @@ version(Windows) {
 			}
 			Ux.drawBackground(g, Rect(0, 0, 13, c.height), "BUTTON", BP_RADIOBUTTON, uxState);
 
+			if(c.focused)
+				drawFocus(g, COLOR_WINDOWTEXT,
+					15.5, 0.5, c.width-16, c.height-1);
 			g.source = getColor(COLOR_WINDOWTEXT);
-			g.translate(15, 0);
+			g.translate(16, 0);
 			c.paintFore(g);
 			return;
 		}
@@ -347,8 +361,10 @@ version(Windows) {
 			g.translate(-4, -4);
 		}
 
+		if(c.focused)
+			drawFocus(g, COLOR_WINDOWTEXT, 15.5, 0.5, c.width-16, c.height-1);
 		g.source = getColor(COLOR_WINDOWTEXT);
-		g.translate(15, 0);
+		g.translate(16, 0);
 		c.paintFore(g);
 	}
 	//}}}
