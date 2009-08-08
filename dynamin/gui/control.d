@@ -464,6 +464,21 @@ public:
 	}
 
 	/**
+	 * Calls the specified delegate with each of this control's ancestors,
+	 * starting with its parent and moving up. Returns the first ancestor
+	 * that the delgate returns true for. If none are found, returns null.
+	 */
+	Container findAncestor(bool delegate(Container) dg) {
+		Container anc = parent;
+		while(anc) {
+			if(dg(anc))
+				return anc;
+			anc = anc.parent;
+		}
+		return null;
+	}
+
+	/**
 	 * Gets or sets whether is control is visible. The default is true, except
 	 * on top-level windows.
 	 */
