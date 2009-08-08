@@ -338,7 +338,11 @@ public:
 		_children.remove(child);
 	}
 
-	int opApply(int delegate(inout Control item) dg) {
+	/**
+	 * Calls the specified delegate with each child of this container, for
+	 * use with foreach.
+	 */
+	int opApply(int delegate(ref Control item) dg) {
 		for(uint i = 0; i < _children.count; ++i) {
 			auto tmp = _children[i];
 			if(int result = dg(tmp))
@@ -346,7 +350,8 @@ public:
 		}
 		return 0;
 	}
-	int opApply(int delegate(inout uint index, inout Control item) dg) {
+	/// ditto
+	int opApply(int delegate(ref uint index, ref Control item) dg) {
 		for(uint i = 0; i < _children.count; ++i) {
 			auto tmp = _children[i];
 			if(int result = dg(i, tmp))
@@ -421,14 +426,20 @@ unittest {
 		control2, control3]);
 }
 
+///
 class Panel : Container {
+	///
 	ControlList children() { return _children; }
+	///
 	void add(Control child) { super.add(child); };
+	///
 	void remove(Control child) { super.remove(child); };
-	int opApply(int delegate(inout Control item) dg) {
+	///
+	int opApply(int delegate(ref Control item) dg) {
 		return super.opApply(dg);
 	}
-	int opApply(int delegate(inout uint index, inout Control item) dg) {
+	///
+	int opApply(int delegate(ref uint index, ref Control item) dg) {
 		return super.opApply(dg);
 	}
 }
