@@ -366,6 +366,7 @@ public:
 	void focus() {
 		if(!_focusable)
 			return;
+
 		auto top = getTopLevel();
 		if(!top)
 			return;

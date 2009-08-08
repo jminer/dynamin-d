@@ -69,6 +69,8 @@ struct Event(alias mainHandler_) {
 	/// void delegate(ArgsType e)
 	public alias void delegate(ArgsType e) Dispatcher;
 
+	// TODO: could save memory by storing mainHandler in handlers?
+	//       putting 15 events (24 bytes each) in every control takes memory
 	// TODO: use a list-like struct?
 	Handler[] handlers;
 	///

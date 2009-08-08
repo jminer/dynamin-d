@@ -108,7 +108,7 @@ public:
 	}
 	T pop() {
 		if(_count < 1)
-			throw new Exception("List.Pop() - List is empty");
+			throw new Exception("List.pop() - List is empty");
 		T item = _data[_count-1];
 		// must null out to allow to be collected
 		static if(is(T == class) || is(T == interface))
@@ -121,7 +121,6 @@ public:
 	void add(T item) {
 		insert(item, _count);
 	}
-	// TODO: AddRange?
 	void remove(T item) {
 		uint i = find(item);
 		if(i == -1)
@@ -145,7 +144,6 @@ public:
 		static if(hasDelegates)
 			whenAdded(item, index);
 	}
-	// TODO: InsertRange?
 	void clear() {
 		for(; _count > 0; --_count) {
 			static if(hasDelegates)

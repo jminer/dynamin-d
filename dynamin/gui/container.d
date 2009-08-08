@@ -365,9 +365,6 @@ unittest {
 	assert(i == 2);
 }
 
-// TODO: calling panel.children.add(button) will cause a crash
-// because the button's parent is not set to the panel
-// need to add a change handler on children?
 class Panel : Container {
 	ControlList children() { return _children; }
 	void add(Control child) { super.add(child); };
@@ -378,7 +375,5 @@ class Panel : Container {
 	int opApply(int delegate(inout uint index, inout Control item) dg) {
 		return super.opApply(dg);
 	}
-//	override protected void whenPainting() {
-//	}
 }
 
