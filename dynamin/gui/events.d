@@ -28,6 +28,8 @@ module dynamin.gui.events;
 import dynamin.all_core;
 import dynamin.all_painting;
 import dynamin.all_gui;
+import dynamin.gui.control;
+import dynamin.gui.container;
 
 ///
 enum MouseButton {
@@ -160,5 +162,29 @@ public:
 	 * the keys that do not represent characters.
 	 */
 	dchar character() { return _ch; }
+}
+
+///
+class HierarchyEventArgs : EventArgs {
+	int _levels = 0;
+	Control _control;
+public:
+	this(Control c) {
+		_control = c;
+	}
+	/**
+	 * An immediate child would be a level of 0.
+	 */
+	int levels() { return _levels; }
+	/// ditto
+	void levels(int l) { _levels = l; }
+	/**
+	 *
+	 */
+	Control descendant() { return _control; }
+	/**
+	 *
+	 */
+	Container ancestor() { return cast(Container)_control; }
 }
 

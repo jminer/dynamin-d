@@ -98,6 +98,7 @@ protected:
 	}
 public:
 	this() {
+		_focusable = false;
 	}
 	this(string text) {
 		this();
@@ -105,6 +106,11 @@ public:
 	}
 	override Size bestSize() {
 		return Size(70, 15);
+	}
+	alias CheckBox.checked checked;
+	override void checked(bool b) {
+		focusable = b;
+		super.checked(b);
 	}
 	/**
 	 * Gets or sets what group this radio button is a part of. The default is 1.

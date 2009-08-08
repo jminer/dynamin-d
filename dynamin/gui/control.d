@@ -33,6 +33,7 @@ import dynamin.gui.window;
 import dynamin.gui.cursor;
 import tango.io.Stdout;
 
+//{{{ hotControl
 Control hotControl;
 // the hot control is the one the mouse is over
 package void setHotControl(Control c) {
@@ -45,11 +46,30 @@ package void setHotControl(Control c) {
 	}
 }
 package Control getHotControl() { return hotControl; }
+//}}}
+
+//{{{ captorControl
 Control captorControl;
 package void setCaptorControl(Control c) {
 	captorControl = c;
 }
 package Control getCaptorControl() { return captorControl; }
+//}}}
+
+//{{{ focusedControl
+Control focusedControl;
+package void setFocusedControl(Control c) {
+	if(focusedControl is c)
+		return;
+	scope e = new EventArgs;
+	if(focusedControl)
+		focusedControl.focusLost(e);
+	focusedControl = c;
+	if(focusedControl)
+		focusedControl.focusGained(e);
+}
+package Control getFocusedControl() { return focusedControl; }
+//}}}
 
 /**
  * The painting event is an exception to the rule that added handlers are called
@@ -205,6 +225,20 @@ public:
 	/// This event occurs when the control needs to be painted.
 	Event!(whenPainting) painting;
 
+	/// Override this method in a subclass to handle the focusGained event.
+	protected void whenFocusGained(EventArgs e) {
+		repaint();
+	}
+	/// This event occurs after this control is focused.
+	Event!(whenFocusGained) focusGained;
+
+	/// Override this method in a subclass to handle the focusLost event.
+	protected void whenFocusLost(EventArgs e) {
+		repaint();
+	}
+	/// This event occurs after this control loses focus.
+	Event!(whenFocusLost) focusLost;
+
 	this() {
 		moved.mainHandler = &whenMoved;
 		resized.mainHandler = &whenResized;
@@ -229,6 +263,8 @@ public:
 		keyUp.dispatcher = &dispatchKeyUp;
 		painting.mainHandler = &whenPainting;
 		painting.dispatcher = &dispatchPainting;
+		focusGained.mainHandler = &whenFocusGained;
+		focusLost.mainHandler = &whenFocusLost;
 
 		_location = Point(0, 0);
 		_size = Size(100, 100);
@@ -277,10 +313,36 @@ public:
 	}
 
 	/**
-	 *
+	 * Returns whether or not this control can receive focus.
+	 */
+	bool focusable() {
+		return _focusable;
+	}
+	void focusable(bool f) {
+		_focusable = f;
+		// TODO:
+	}
+
+	/**
+	 * Returns whether this control currently has focus. A control with focus
+	 * receives keyboard events.
 	 */
 	bool focused() {
-		return _focused;
+		return getFocusedControl() is this;
+	}
+
+	/**
+	 * Returns true if this control should visually show when it has focus
+	 * and returns false if not. Focus is usually hidden until the
+	 * user uses the keyboard to navigate.
+	 *
+	 * A text box is one control that shows when it is
+	 * focused (by its caret), regardless of this value. (Because showing
+	 * focus isn't the sole purpose of a caret.)
+	 */
+	bool showFocus() {
+		auto top = getTopLevel();
+		return top && (cast(Window)top).showFocus;
 	}
 
 	/**
@@ -307,15 +369,8 @@ public:
 		auto top = getTopLevel();
 		if(!top)
 			return;
-		if(auto win = cast(Window)top) {
-			if(win.focusedControl) {
-				win.focusedControl._focused = false;
-				win.focusedControl.repaint();
-			}
+		if(auto win = cast(Window)top)
 			win.focusedControl = this;
-			_focused = true;
-			repaint();
-		}
 	}
 
 	/**

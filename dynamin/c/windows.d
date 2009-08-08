@@ -271,6 +271,8 @@ BOOL ClientToScreen(HWND hWnd, POINT* lpPoint);
 
 BOOL ScreenToClient(HWND hWnd, POINT* lpPoint);
 
+BOOL SetForegroundWindow(HWND hWnd);
+
 //{{{ messages
 enum {
 	WM_NULL                   = 0x0000,

@@ -37,6 +37,7 @@ import dynamin.gui.events;
 import tango.io.Stdout;
 import tango.core.Exception;
 import tango.core.Thread;
+import tango.text.Util;
 
 ///
 static class Application {
@@ -109,6 +110,26 @@ enum Position {
 }
 
 /**
+ * The different states a window may be in. It may not be in more than one of
+ * these states at a time.
+ */
+enum WindowState {
+	/**
+	 * Specifies that the window is neither minimized or maximized.
+	 */
+	Normal,
+	/**
+	 * Specifies that the window is only visible as an icon and/or text on
+	 * the taskbar or dock.
+	 */
+	Minimized,
+	/**
+	 * Specifies that the window covers the screen in at least one direction.
+	 */
+	Maximized
+}
+
+/**
  * The different types of borders that a window may have.
  * These do not affect whether the window is resizable--
  * use Window.resizable for that.
@@ -154,21 +175,107 @@ protected:
 	mixin WindowBackend;
 	BorderSize _borderSize;
 	Window _owner;
+	package bool _active;
+	package WindowState _state;
 	WindowBorderStyle _borderStyle;
 	bool _resizable = true;
 	Panel _content;
+	bool _showFocus;
+	// _focusedControl might not be focused at the current time (that is
+	// getFocusedControl()), but will at least be focused when this
+	// window is active
 	Control _focusedControl;
 	package Control focusedControl() { return _focusedControl; }
 	package void focusedControl(Control c) {
 		_focusedControl = c;
+		if(active)
+			setFocusedControl(_focusedControl);
 	}
 	override void dispatchPainting(PaintingEventArgs e) {
 		Theme.current.Window_paint(this, e.graphics);
 		super.dispatchPainting(e);
 	}
+	override void whenDescendantAdded(HierarchyEventArgs e) {
+		super.whenDescendantAdded(e);
+		if(focusedControl is null && e.descendant.focusable) {
+				// && e.descendant.enabled) {
+			focusedControl = e.descendant;
+		}
+	}
+
+	//{{{ focusing
+	public override bool showFocus() { return _showFocus; }
+	override void whenKeyDown(KeyEventArgs e) {
+		if(e.key == Key.Tab) {
+			getNextFocusable().focus();
+			_showFocus = true;
+		}
+	}
+
+	// will not return null
+	Control getNextFocusable() {
+		Control foc = focusedControl;
+
+		Control[32] buffer;
+		auto des = getFocusableDescendants(buffer);
+		if(des.length == 0)
+			return this;
+		else if(des.length == 1)
+			return des[0];
+
+		int focI = locate(des, foc);
+
+		// look _after_ this control for one with the same tab index
+		foreach(c; des[focI+1..$])
+			if(c.tabIndex == foc.tabIndex)
+				return c;
+
+		// if none are found, look for the next largest tab index
+		// from the beginning of the array
+		Control smallest;
+		Control nextLargest;
+		foreach(c; des) {
+			if(c.tabIndex > foc.tabIndex)
+				if(nextLargest is null || c.tabIndex < nextLargest.tabIndex)
+					nextLargest = c;
+			if(smallest is null || c.tabIndex < smallest.tabIndex)
+				smallest = c;
+		}
+
+		if(nextLargest)
+			return nextLargest;
+		else
+			return smallest;
+	}
+
+	// will not return null
+	Control getPreviousFocusable() {
+		return null;
+	}
+	//}}}
+
 public:
+	/// Override this method in a subclass to handle the activated event.
+	protected void whenActivated(EventArgs e) {
+		setFocusedControl(_focusedControl is null ? content : _focusedControl);
+	}
+	/// This event occurs after this window is activated.
+	Event!(whenActivated) activated;
+
+	/// Override this method in a subclass to handle the deactivated event.
+	protected void whenDeactivated(EventArgs e) {
+		setFocusedControl(null);
+	}
+	/// This event occurs after this window is deactivated.
+	Event!(whenDeactivated) deactivated;
+
+	/**
+	 *
+	 */
 	this() {
-		_children = new ControlList();
+		activated.mainHandler = &whenActivated;
+		deactivated.mainHandler = &whenDeactivated;
+
 		content = new Panel;
 
 		_visible = false;
@@ -183,6 +290,13 @@ public:
 		this.text = text;
 	}
 
+	/**
+	 *
+	 */
+	Panel content() {
+		return _content;
+	}
+	/// ditto
 	void content(Panel panel) {
 		if(panel is null)
 			throw new IllegalArgumentException("content must not be null");
@@ -227,9 +341,6 @@ public:
 		ignoreResize = true;
 		_content.size = _size-_borderSize;
 		ignoreResize = false;
-	}
-	Panel content() {
-		return _content;
 	}
 
 	/**
@@ -290,6 +401,32 @@ public:
 	void visible(bool b) {
 		_visible = b;
 		backend_visible = b;
+	}
+
+	/**
+	 *
+	 */
+	bool active() { return _active; }
+	/**
+	 *
+	 */
+	void activate() {
+		if(!handleCreated)
+			return;
+		backend_activate();
+	}
+
+	/**
+	 * Gets or sets whether the window's state is normal, minimized, or
+	 * maximized.
+	 */
+	WindowState state() { return _state; }
+	/// ditto
+	void state(WindowState s) {
+		_state = s;
+		if(!handleCreated)
+			return;
+		backend_state = s;
 	}
 
 	/**

@@ -191,8 +191,26 @@ template WindowBackend() {
 		return g;
 	}
 	void backend_visible(bool b) {
-		//if not created, create the handle by calling Handle()
-		ShowWindow(handle, b ? SW_SHOW : SW_HIDE);
+		if(b)
+			// visible has been set to true by now...use state() to show window
+			backend_state = _state;
+		else
+			//if not created, create the handle by calling handle()
+			ShowWindow(handle, SW_HIDE);
+	}
+	void backend_state(WindowState s) {
+		if(!visible)
+			return;
+		//if not created, create the handle by calling handle()
+		if(s == WindowState.Normal)
+			ShowWindow(handle, SW_RESTORE);
+		else if(s == WindowState.Minimized)
+			ShowWindow(handle, SW_MINIMIZE);
+		else if(s == WindowState.Maximized)
+			ShowWindow(handle, SW_MAXIMIZE);
+	}
+	void backend_activate() {
+		SetForegroundWindow(_handle);
 	}
 	void backend_borderStyle(WindowBorderStyle border) {
 		backend_updateWindowStyles();
@@ -657,14 +675,30 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		c.moved(args);
 		return 0;
 	case WM_SIZE:
-		if(wParam == SIZE_MINIMIZED)
-			break;
+		if(wParam == SIZE_RESTORED)
+			c._state = WindowState.Normal;
+		else if(wParam == SIZE_MINIMIZED) {
+			c._state = WindowState.Minimized;
+			break;   // don't update size if minimized (would be wierd size)
+		} else if(wParam == SIZE_MAXIMIZED)
+			c._state = WindowState.Maximized;
+
 		RECT rect;
 		GetWindowRect(hwnd, &rect);
 		c._size = Size(rect.right-rect.left, rect.bottom-rect.top);
 		c.backend_nativeToBorderSize();
 		scope args = new EventArgs();
 		c.resized(args);
+		return 0;
+	case WM_ACTIVATE:
+		scope e = new EventArgs;
+		if(LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE) {
+			c._active = true;
+			c.activated(e);
+		} else if(LOWORD(wParam) == WA_INACTIVE) {
+			c._active = false;
+			c.deactivated(e);
+		}
 		return 0;
 	case WM_MOUSEMOVE:
 		if(!trackingMouseLeave) {

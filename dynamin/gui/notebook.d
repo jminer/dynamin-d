@@ -68,7 +68,7 @@ public:
  */
 class Notebook : Container {
 protected:
-	List!(TabPage) _tabPages;
+	List!(TabPage, true) _tabPages;
 	int _selectedIndex = -1;
 	bool _multipleLines = true;
 	Control _content;
@@ -91,7 +91,7 @@ protected:
 		}
 		Theme.current.Tab_paint(selectedTabPage, this, e.graphics);
 	}
-	void whenTabPagesChanged() {
+	void whenTabPagesChanged(TabPage page, int) {
 		if(_tabPages.count == 0)
 			selectedIndex = -1;
 		else if(selectedIndex == -1)
@@ -116,7 +116,7 @@ public:
 	this() {
 		selectionChanged.mainHandler = &whenSelectionChanged;
 
-		_tabPages = new List!(TabPage)(&whenTabPagesChanged);
+		_tabPages = new List!(TabPage, true)(&whenTabPagesChanged, &whenTabPagesChanged);
 		_focusable = true;
 	}
 	override void layout() {
@@ -143,7 +143,7 @@ public:
 	  * tabbedView.TabPages.Add(advancedPage);
 	  * -----
 	  */
-	List!(TabPage) tabPages() { return _tabPages; }
+	List!(TabPage, true) tabPages() { return _tabPages; }
 	/**
 	 * Gets or sets the selected tab using its index. An index of -1 means
 	 * there is no selected tab.

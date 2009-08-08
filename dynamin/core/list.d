@@ -37,28 +37,37 @@ import tango.io.Stdout;
 // TODO: QuickSort()
 // TODO: HeapSort()
 // TODO: Sort() - calls HeapSort() so stable sort is default
-// TODO: when D has template inheritance, have separate const_List and List
-class List(T) {
+class List(T, bool hasDelegates = false) {
 protected:
 	T[] _data;
 	uint _count;
-	void delegate() whenChanged; // TODO: have an index and length...
+	static if(hasDelegates) {
+		void delegate(T, int) whenAdded;
+		void delegate(T, int) whenRemoved;
+	}
 public:
 	this() {
-		this(16, {});
+		this(16);
 	}
 	this(uint capacity) {
-		this(capacity, {});
-	}
-	this(void delegate() whenChanged) {
-		this(16, whenChanged);
-	}
-	this(uint capacity, void delegate() whenChanged) {
 		_data = new T[capacity];
-		this.whenChanged = whenChanged;
 	}
-	static List fromArray(T[] arr...) {
-		List list = new List!(T)();
+	static if(hasDelegates) {
+		/// whenAdded or whenRemoved is called right after an item is added
+		/// or removed
+		this(void delegate(T, int) whenAdded,
+				void delegate(T, int) whenRemoved) {
+			this(16, whenAdded, whenRemoved);
+		}
+		this(uint capacity, void delegate(T, int) whenAdded,
+				void delegate(T, int) whenRemoved) {
+			this(capacity);
+			this.whenAdded = whenAdded;
+			this.whenRemoved = whenRemoved;
+		}
+	}
+	static List!(T) fromArray(T[] arr...) {
+		auto list = new List!(T)();
 		list._data = arr.dup;
 		list._count = arr.length;
 		return list;
@@ -105,43 +114,46 @@ public:
 		static if(is(T == class) || is(T == interface))
 			_data[_count-1] = cast(T)null;
 		--_count;
-		whenChanged();
+		static if(hasDelegates)
+			whenRemoved(item, _count);
 		return item;
 	}
 	void add(T item) {
-		insert(_count, item);
+		insert(item, _count);
 	}
 	// TODO: AddRange?
 	void remove(T item) {
 		uint i = find(item);
 		if(i == -1)
 			return;
-		removeRange(i);
-	}
-	void removeRange(uint index, uint length = 1) {
-		arrayCopy!(T)(_data, index+length, _data, index, _count - (index+length));
+
+		for(++i; i < _count; ++i)
+			_data[i-1] = _data[i];
 		// must null out to allow to be collected
 		static if(is(T == class) || is(T == interface))
-			for(uint i = _count-length; i < _count; ++i)
-				_data[i] = cast(T)null;
-		_count -= length;
-		whenChanged();
+			_data[_count-1] = cast(T)null;
+		--_count;
+
+		static if(hasDelegates)
+			whenRemoved(item, i);
 	}
-	void insert(uint index, T item) {
+	void insert(T item, uint index) {
 		maybeEnlarge(_count+1);
 		arrayCopy!(T)(_data, index, _data, index+1, _count - index);
 		_data[index] = item;
 		++_count;
-		whenChanged();
+		static if(hasDelegates)
+			whenAdded(item, index);
 	}
 	// TODO: InsertRange?
 	void clear() {
-		// must null out to allow to be collected
-		static if(is(T == class) || is(T == interface))
-			for(uint i = 0; i < count; ++i)
-				data[i] = cast(T)null;
-		_count = 0;
-		whenChanged();
+		for(; _count > 0; --_count) {
+			static if(hasDelegates)
+				whenRemoved(_data[_count-1], _count-1);
+			// must null out to allow to be collected
+			static if(is(T == class) || is(T == interface))
+				data[_count-1] = cast(T)null;
+		}
 	}
 	uint find(T item) {
 		foreach(i, item2; _data)
@@ -179,12 +191,28 @@ unittest {
 	list.add('t');
 	assert(list.data == "Hello, Matt");
 	assert(list.pop() == 't');
-	list.removeRange(1, 7);
-	assert(list.data == "Hat");
+	assert(list.data == "Hello, Mat");
+	list.insert('!', 5);
+	assert(list.data == "Hello!, Mat");
+	list.remove('l');
+	assert(list.data == "Helo!, Mat");
 	list.clear();
 	assert(list.data == "");
-	auto list2 = new List!(string);
+
+	int a = 0, r = 0;
+	void added(string, int) { a++; };
+	void removed(string, int) { r++; };
+	auto list2 = new List!(string, true)(&added, &removed);
+	assert(a == 0 && r == 0);
 	list2.add("hello");
+	assert(a == 1 && r == 0);
 	assert(list2.pop() == "hello");
+	assert(a == 1 && r == 1);
+
+	list2.add("Hi");
+	list2.add("Jacob!");
+	assert(a == 3 && r == 1);
+	list2.clear();
+	assert(a == 3 && r == 3);
 }
 

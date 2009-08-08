@@ -32,7 +32,7 @@ import dynamin.gui.control;
 import dynamin.gui.events;
 import tango.io.Stdout;
 
-alias List!(Control) ControlList;
+alias List!(Control, true) ControlList;
 
 ///
 class Container : Control {
@@ -43,6 +43,100 @@ protected:
 
 	override void whenResized(EventArgs e) {
 		layout();
+	}
+	// If the specified array is large enough to hold the results, no heap
+	// allocation will be done.
+	Control[] getFocusableDescendants(Control[] des = null) {
+		uint cur = 0;
+
+		void addDescendants(Container c) {
+			if(c._focusable) { // TODO: && c.enabled) {
+				if(cur == des.length)
+					des.length = des.length + 20;
+				des[cur++] = c;
+			}
+			foreach(ch; c._children) {
+				if(cast(Container)ch)
+					addDescendants(cast(Container)ch);
+				else if(ch.focusable) { // TODO: && ch.enabled) {
+					if(cur == des.length)
+						des.length = des.length + 20;
+					des[cur++] = ch;
+				}
+			}
+		}
+		addDescendants(this);
+		return des[0..cur];
+	}
+	unittest {
+		class MyControl : Control {
+			this() {
+				_focusable = true;
+			}
+		}
+		auto container1 = new Container();
+		auto container2 = new Container();
+		auto container3 = new Container();
+		auto container4 = new Container();
+		container2._focusable = true;
+		container4._focusable = true;
+		auto ctrl1 = new MyControl();
+		auto ctrl2 = new MyControl();
+		auto ctrl3 = new MyControl();
+
+		container1.add(container2);
+		container1.add(container3);
+		container3.add(container4);
+		container2.add(ctrl1);
+		container4.add(ctrl2);
+		container4.add(ctrl3);
+		assert(container1.getFocusableDescendants() ==
+			[cast(Control)container2, ctrl1, container4, ctrl2, ctrl3]);
+		Control[5] buf;
+		assert(container1.getFocusableDescendants(buf).ptr == buf.ptr);
+	}
+
+	// not an event
+	void whenChildAdded(Control child, int) {
+		if(child.parent)
+			child.parent.remove(child);
+		child.parent = this;
+		repaint();
+
+		void callAdded(Control ctrl) {
+			scope e = new HierarchyEventArgs(ctrl);
+			descendantAdded(e);
+
+			if(auto cntr = cast(Container)ctrl) {
+				foreach(c; cntr._children)
+					callAdded(c);
+			}
+		}
+		callAdded(child);
+	}
+
+	// not an event
+	void whenChildRemoved(Control child, int) {
+		child.parent = null;
+		repaint();
+
+		scope e = new HierarchyEventArgs(child);
+		descendantRemoved(e);
+	}
+
+	void dispatchDescendantAdded(HierarchyEventArgs e) {
+		descendantAdded.callHandlers(e);
+		descendantAdded.callMainHandler(e);
+		e.levels = e.levels + 1;
+		if(_parent)
+			_parent.descendantAdded(e);
+	}
+	void dispatchDescendantRemoved(HierarchyEventArgs e) {
+		descendantRemoved.callHandlers(e);
+		descendantRemoved.callMainHandler(e);
+		e.levels = e.levels + 1;
+		if(_parent)
+			_parent.descendantRemoved(e);
 	}
 public:
 	/// Override this method in a subclass to handle the minSizeChanged event.
@@ -55,10 +149,25 @@ public:
 	/// This event occurs after the control's maximum size has been changed.
 	Event!(whenMaxSizeChanged) maxSizeChanged;
 
+	/// Override this method in a subclass to handle the descendantAdded event.
+	protected void whenDescendantAdded(HierarchyEventArgs e) { }
+	/// This event occurs after a control is added as a descendant of this container.
+	Event!(whenDescendantAdded) descendantAdded;
+
+	/// Override this method in a subclass to handle the descendantRemoved event.
+	protected void whenDescendantRemoved(HierarchyEventArgs e) { }
+	/// This event occurs after a descendant of this container has been removed.
+	Event!(whenDescendantRemoved) descendantRemoved;
+
 	this() {
 		minSizeChanged.mainHandler = &whenMinSizeChanged;
 		maxSizeChanged.mainHandler = &whenMaxSizeChanged;
-		_children = new ControlList();
+		descendantAdded.mainHandler = &whenDescendantAdded;
+		descendantAdded.dispatcher = &dispatchDescendantAdded;
+		descendantRemoved.mainHandler = &whenDescendantRemoved;
+		descendantRemoved.dispatcher = &dispatchDescendantRemoved;
+
+		_children = new ControlList(&whenChildAdded, &whenChildRemoved);
 
 		elasticX = true;
 		elasticY = true;
@@ -222,19 +331,11 @@ public:
 	}
 
 	protected void add(Control child) {
-		if(child.parent)
-			child.parent.remove(child);
 		_children.add(child);
-		child.parent = this;
-		repaint();
-		//ControlAdded(EventArgs e); // TODO: add event
 	}
 
 	protected void remove(Control child) {
 		_children.remove(child);
-		child.parent = null;
-		repaint();
-		//ControlRemoved(EventArgs e); // TODO: add event
 	}
 
 	int opApply(int delegate(inout Control item) dg) {
@@ -253,6 +354,15 @@ public:
 		}
 		return 0;
 	}
+}
+unittest {
+	auto i = 0;
+	auto container = new Panel;
+	container.descendantAdded += (HierarchyEventArgs e) { i++; };
+	auto sub = new Panel;
+	sub.add(new Control);
+	container.add(sub);
+	assert(i == 2);
 }
 
 // TODO: calling panel.children.add(button) will cause a crash

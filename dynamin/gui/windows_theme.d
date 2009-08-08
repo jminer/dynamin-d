@@ -216,7 +216,7 @@ version(Windows) {
 			auto uxState = findUxState(c, PBS_DISABLED, PBS_NORMAL, PBS_HOT, PBS_PRESSED);
 			Ux.drawBackground(g, Rect(0, 0, c.width, c.height), "BUTTON", BP_PUSHBUTTON, uxState);
 
-			if(c.focused)
+			if(c.focused && c.showFocus)
 				drawFocus(g, COLOR_WINDOWTEXT, 3.5, 3.5, c.width-7, c.height-7);
 			g.source = getColor(COLOR_WINDOWTEXT);
 			c.paintFore(g);
@@ -236,7 +236,7 @@ version(Windows) {
 			draw3dRectangle(g, 1, 1, c.width-2, c.height-2,
 				getColor(COLOR_3DLIGHT), getColor(COLOR_3DSHADOW));
 		}
-		if(c.focused)
+		if(c.focused && c.showFocus)
 			drawFocus(g, COLOR_WINDOWTEXT, 3.5, 3.5, c.width-7, c.height-7);
 		g.source = getColor(COLOR_WINDOWTEXT);
 		c.paintFore(g);
@@ -255,7 +255,7 @@ version(Windows) {
 			}
 			Ux.drawBackground(g, Rect(0, 0, 13, c.height), "BUTTON", BP_CHECKBOX, uxState);
 
-			if(c.focused)
+			if(c.focused && c.showFocus)
 				drawFocus(g, COLOR_WINDOWTEXT,
 					15.5, 0.5, c.width-16, c.height-1);
 			g.source = getColor(COLOR_WINDOWTEXT);
@@ -281,7 +281,7 @@ version(Windows) {
 			drawCheck(g, 3, 3);
 		//	drawCheck(g, 0, 0, 13, 13);
 
-		if(c.focused)
+		if(c.focused && c.showFocus)
 			drawFocus(g, COLOR_WINDOWTEXT, 15.5, 0.5, c.width-16, c.height-1);
 		g.source = getColor(COLOR_WINDOWTEXT);
 		g.translate(16, 0);
@@ -301,7 +301,7 @@ version(Windows) {
 			}
 			Ux.drawBackground(g, Rect(0, 0, 13, c.height), "BUTTON", BP_RADIOBUTTON, uxState);
 
-			if(c.focused)
+			if(c.focused && c.showFocus)
 				drawFocus(g, COLOR_WINDOWTEXT,
 					15.5, 0.5, c.width-16, c.height-1);
 			g.source = getColor(COLOR_WINDOWTEXT);
@@ -361,7 +361,7 @@ version(Windows) {
 			g.translate(-4, -4);
 		}
 
-		if(c.focused)
+		if(c.focused && c.showFocus)
 			drawFocus(g, COLOR_WINDOWTEXT, 15.5, 0.5, c.width-16, c.height-1);
 		g.source = getColor(COLOR_WINDOWTEXT);
 		g.translate(16, 0);
