@@ -111,7 +111,7 @@ enum Position {
 /**
  * The different types of borders that a window may have.
  * These do not affect whether the window is resizable--
- * use Window.Resizable for that.
+ * use Window.resizable for that.
  */
 enum WindowBorderStyle {
 	/** Specifies that the window has no border around the content area. */
@@ -121,7 +121,9 @@ enum WindowBorderStyle {
 	 * and minimize button.
 	 */
 	Normal,
-	/** Specifies that the window has a normal border without a minimize button. */
+	/**
+	 * Specifies that the window has a normal border without a minimize button.
+	 */
 	Dialog,
 	/** Specifies that the window has the border of a floating tool box. */
 	Tool
@@ -175,6 +177,7 @@ public:
 		_borderStyle = WindowBorderStyle.Normal;
 		recreateHandle();
 	}
+	/// ditto
 	this(string text) {
 		this();
 		this.text = text;
@@ -198,6 +201,7 @@ public:
 		_content.size = best;
 
 	}
+
 	bool ignoreResize;
 	void whenContentResized(EventArgs e) {
 		if(ignoreResize)
@@ -243,8 +247,10 @@ public:
 		return _handle;
 	}
 
+	///
 	bool handleCreated() { return backend_handleCreated; }
 
+	///
 	void recreateHandle() {
 		backend_recreateHandle();
 	}
@@ -268,6 +274,7 @@ public:
 	}
 	override bool topLevel() { return true; }
 	override Container parent() { return null; }
+
 	// TODO: because you should always be able to click a window from
 	//       the taskbar, then show it on taskbar if window has an owner,
 	//       but don't if it does not
@@ -278,6 +285,7 @@ public:
 		recreateHandle();
 	}
 	Window owner() { return _owner; }
+
 	alias Control.visible visible;
 	void visible(bool b) {
 		_visible = b;
@@ -350,6 +358,7 @@ public:
 			return;
 		backend_location = pt;
 	}
+
 	alias Control.size size;
 	void size(Size size) {
 		super.size(size);
@@ -358,18 +367,20 @@ public:
 			return;
 		backend_size = size;
 	}
-	/**
-	 * Gets the size of the border/frame around this window.
-	 */
-	BorderSize borderSize() {
-		return _borderSize;
-	}
+
 	alias Control.text text;
 	void text(string str) {
 		super.text(str);
 		if(!handleCreated)
 			return;
 		backend_text = str;
+	}
+
+	/**
+	 * Gets the size of the border/frame around this window.
+	 */
+	BorderSize borderSize() {
+		return _borderSize;
 	}
 
 	/**
