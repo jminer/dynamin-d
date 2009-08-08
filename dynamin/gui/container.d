@@ -354,15 +354,71 @@ public:
 		}
 		return 0;
 	}
+	/**
+	 * Calls the specified delegate with each descendant of this container, for
+	 * use with foreach.
+	 *
+	 * Example:
+	 * -----
+	 * foreach(c; &container.descendants) {
+	 *     // do something with c
+	 * }
+	 * -----
+	 */
+	int descendants(int delegate(ref Control item) dg) {
+		for(int i = 0; i < _children.count; ++i) {
+			auto tmp = _children[i];
+			if(int result = dg(tmp))
+				return result;
+			auto c = cast(Container)_children[i];
+			if(c)
+				if(int result = c.descendants(dg))
+					return result;
+		}
+		return 0;
+	}
+	/**
+	 * Same as descendants(), but includes this container in addition to
+	 * descendants.
+	 */
+	int descendantsPlus(int delegate(ref Control item) dg) {
+		Control tmp = this;
+		if(int result = dg(tmp))
+			return result;
+		if(int result = descendants(dg))
+			return result;
+		return 0;
+	}
 }
 unittest {
-	auto i = 0;
-	auto container = new Panel;
-	container.descendantAdded += (HierarchyEventArgs e) { i++; };
-	auto sub = new Panel;
-	sub.add(new Control);
-	container.add(sub);
-	assert(i == 2);
+	int a = 0, r = 0;
+	auto container1 = new Panel;
+	auto container2 = new Panel;
+	auto control1 = new Control;
+	auto control2 = new Control;
+	auto control3 = new Control;
+	container1.descendantAdded += (HierarchyEventArgs e) { a++; };
+	container1.descendantRemoved += (HierarchyEventArgs e) { r++; };
+
+	container2.add(control2);
+	container2.children.add(control3);
+	assert(control3.parent == container2);
+	container1.add(control1);
+	assert(a == 1);  // test descendantAdded
+	container1.add(container2);
+	assert(a == 4);  // test descendantAdded
+
+	// test Container.descendants
+	auto list = new List!(Control);
+	foreach(c; &container1.descendants)
+		list.add(c);
+	assert(list.data == [control1, container2, control2, control3]);
+
+	list.clear();
+	foreach(c; &container1.descendantsPlus)
+		list.add(c);
+	assert(list.data == [cast(Control)container1, control1, container2,
+		control2, control3]);
 }
 
 class Panel : Container {
