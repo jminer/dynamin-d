@@ -76,13 +76,18 @@ LineNumsVisible=true
 TabSize=4
 ";
 unittest {
+	// test saving to the file
 	auto settings = new Settings;
+	settings.loadFromString(test);
+	test = settings.saveToString();
+
+	// test reading from the file
+	settings = new Settings;
 	settings.loadFromString(test);
 	assert(settings.get("UndoLevels") == "500");
 	assert(settings.get("TabSize", "RubyMode") == "4");
 	assert(getSetting!(int)(settings, "UndoLevels") == 500);
 	assert(getSetting!(bool)(settings, "LineNumsVisible") == true);
-	Stdout(settings.saveToString()).newline;
 }
 
 /**
