@@ -461,7 +461,7 @@ public:
 	 */
 	Rect[] snapRects = null;
 	/**
-	 * Convenience method that sets SnapRects to an array
+	 * Convenience method that sets snapRects to an array
 	 * with just the specified Rect.
 	 */
 	void snapRect(Rect rect) {
@@ -469,7 +469,7 @@ public:
 	}
 
 	/**
-	 * The SnapDistance specifies how close a window has to be to a
+	 * The snapDistance specifies how close a window has to be to a
 	 * snap rectangle for the window to snap to it. The default is 10 pixels.
 	 */
 	uint snapDistance = 10;
@@ -521,9 +521,9 @@ public:
 	}
 
 	/**
-	 * Moves this window to the specified position relative to
-	 * the specified control. If no control is specified, the
-	 * window is positioned relative to the screen.
+	 * Moves this window to the specified position relative to the specified
+	 * control. If no control is specified, the window is positioned relative
+	 * to the screen.
 	 */
 	void position(Position pos, Control c = null) {
 		Rect rect;

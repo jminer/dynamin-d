@@ -172,16 +172,20 @@ public:
 	/// This event occurs after the button has been clicked.
 	Event!(whenClicked) clicked;
 
+	///
 	this() {
 		clicked.mainHandler = &whenClicked;
 		_focusable = true;
 	}
+	///
 	this(string text) {
 		this();
 		this.text = text;
 	}
 	override Size bestSize() { return Theme.current.Button_bestSize(this); }
+	///
 	ButtonState state() { return _state; }
+	///
 	void state(ButtonState s) { _state = s; repaint(); }
 	/**
 	  * Returns true if this button should be painted as being default.
