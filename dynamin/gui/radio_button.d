@@ -119,3 +119,19 @@ public:
 	/// ditto
 	void group(int i) { _group = i; }
 }
+
+/**
+ * Simply sets every radio button to have the specified group.
+ *
+ * Example:
+ * -----
+ * auto radioButton1 = new RadioButton;
+ * auto radioButton2 = new RadioButton;
+ * setGroup(7, radioButton1, radioButton2);
+ * -----
+ */
+void setGroup(int group, RadioButton[] radios...) {
+	foreach(r; radios)
+		r.group = group;
+}
+
