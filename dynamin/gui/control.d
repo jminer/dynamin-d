@@ -286,7 +286,8 @@ public:
 		if(_parent is null)
 			return null;
 		auto g = _parent.quickCreateGraphics();
-		g.translate(location);
+		if(g)
+			g.translate(location);
 		return g;
 	}
 
@@ -307,6 +308,8 @@ public:
 	 */
 	void withGraphics(void delegate(Graphics g) dg) {
 		auto g = quickCreateGraphics();
+		if(!g)
+			return;
 		setupGraphics(g);
 		dg(g);
 		delete g;
@@ -674,4 +677,8 @@ public:
 	}
 }
 
+unittest {
+	Control c = new Control;
+	c.withGraphics((Graphics g) { g.source = Color.Blue; });
+}
 
