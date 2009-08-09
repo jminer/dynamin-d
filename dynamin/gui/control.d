@@ -677,8 +677,30 @@ public:
 	}
 }
 
+/**
+ * Sets the tabIndex of each control to be subsequent numbers. The first control
+ * will have an index of startIndex.
+ */
+void setTabOrder(Control[] controls...) {
+	setTabOrder(0, controls);
+}
+/// ditto
+void setTabOrder(int startIndex, Control[] controls...) {
+	foreach(c; controls)
+		c.tabIndex = startIndex++;
+}
+
 unittest {
-	Control c = new Control;
-	c.withGraphics((Graphics g) { g.source = Color.Blue; });
+	auto c1 = new Control;
+	auto c2 = new Control;
+	auto c3 = new Control;
+
+	// test setTabOrder()
+	setTabOrder(c1, c2, c3);
+	assert(c1.tabIndex == 0);
+	assert(c2.tabIndex == 1);
+	assert(c3.tabIndex == 2);
+
+	c1.withGraphics((Graphics g) { g.source = Color.Blue; });
 }
 
