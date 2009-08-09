@@ -28,6 +28,8 @@ module dynamin.gui.button;
 import dynamin.all_core;
 import dynamin.all_gui;
 import dynamin.all_painting;
+import dynamin.gui.control;
+import dynamin.gui.events;
 import tango.io.Stdout;
 import dynamin.c.cairo; // TODO: remove
 
@@ -49,7 +51,30 @@ enum TextImageRelation {
  */
 class Button : Control {
 protected:
+	package bool _isDefault;
 	ButtonState _state;
+	override void whenFocusGained(EventArgs e) {
+		super.whenFocusGained(e);
+		auto anc = findAncestor((Container c) {
+			return c.defaultButton !is null;
+		});
+		if(anc) {
+			foreach(d; &anc.descendants) {
+				if(auto b = cast(Button)d)
+					b._isDefault = false;
+			}
+		}
+		_isDefault = true;
+	}
+	override void whenFocusLost(EventArgs e) {
+		super.whenFocusLost(e);
+		_isDefault = false;
+		auto anc = findAncestor((Container c) {
+			return c.defaultButton !is null;
+		});
+		if(anc)
+			anc.defaultButton._isDefault = true;
+	}
 	override void whenMouseDragged(MouseEventArgs e) {
 		if(contains(e.x, e.y))
 			state = ButtonState.Pressed;
@@ -74,14 +99,22 @@ protected:
 		clicked(new EventArgs);
 	}
 	override void whenKeyDown(KeyEventArgs e) {
-		if(e.key == Key.Space)
+		if(e.key == Key.Space) {
 			state = ButtonState.Pressed;
+			e.stopped = true;
+		} else if(e.key == Key.Enter) { // being default is implied in keyDown
+			scope e2 = new EventArgs;
+			clicked(e2);
+			e.stopped = true;
+		}
 	}
 	override void whenKeyUp(KeyEventArgs e) {
 		if(e.key == Key.Space) {
 			if(state != ButtonState.Pressed) return;
 			state = ButtonState.Normal;
-			clicked(new EventArgs);
+			scope e2 = new EventArgs;
+			clicked(e2);
+			e.stopped = true;
 		}
 	}
 	override void whenPainting(PaintingEventArgs e) {
@@ -150,4 +183,9 @@ public:
 	override Size bestSize() { return Theme.current.Button_bestSize(this); }
 	ButtonState state() { return _state; }
 	void state(ButtonState s) { _state = s; repaint(); }
+	/**
+	  * Returns true if this button should be painted as being default.
+	  * Mainly for themes.
+	  */
+	bool isDefault() { return _isDefault; }
 }

@@ -214,6 +214,8 @@ version(Windows) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			auto uxState = findUxState(c, PBS_DISABLED, PBS_NORMAL, PBS_HOT, PBS_PRESSED);
+			if(uxState == PBS_NORMAL && c.isDefault)
+				uxState = PBS_DEFAULTED;
 			Ux.drawBackground(g, Rect(0, 0, c.width, c.height), "BUTTON", BP_PUSHBUTTON, uxState);
 
 			if(c.focused && c.showFocus)

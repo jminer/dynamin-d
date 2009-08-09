@@ -30,6 +30,7 @@ import dynamin.all_painting;
 import dynamin.all_gui;
 import dynamin.gui.control;
 import dynamin.gui.events;
+import dynamin.gui.button;
 import tango.io.Stdout;
 
 alias List!(Control, true) ControlList;
@@ -40,6 +41,7 @@ protected:
 	ControlList _children;
 	Size _minSize;
 	Size _maxSize;
+	Button _defaultButton;
 
 	override void whenResized(EventArgs e) {
 		layout();
@@ -125,6 +127,9 @@ protected:
 	}
 
 	void dispatchDescendantAdded(HierarchyEventArgs e) {
+		if(e.descendant is defaultButton)
+			(cast(Button)e.descendant)._isDefault = true;
+
 		descendantAdded.callHandlers(e);
 		descendantAdded.callMainHandler(e);
 		e.levels = e.levels + 1;
@@ -138,6 +143,15 @@ protected:
 		if(_parent)
 			_parent.descendantRemoved(e);
 	}
+
+	override void whenKeyDown(KeyEventArgs e) {
+		if(e.key == Key.Enter && defaultButton) {
+			scope e2 = new EventArgs;
+			defaultButton.clicked(e2);
+			e.stopped = true;
+		}
+	}
+
 public:
 	/// Override this method in a subclass to handle the minSizeChanged event.
 	protected void whenMinSizeChanged(EventArgs e) { }
@@ -172,6 +186,20 @@ public:
 		elasticX = true;
 		elasticY = true;
 	}
+
+	/**
+	 * Gets or sets the default button in this container.
+	 */
+	Button defaultButton() { return _defaultButton; }
+	/// ditto
+	void defaultButton(Button b) {
+		_defaultButton = b;
+		foreach(d; &descendants) {
+			if(b == d)
+				b._isDefault = true;
+		}
+	}
+
 	override void dispatchPainting(PaintingEventArgs e) {
 		super.dispatchPainting(e);
 		foreach(c; _children) {
