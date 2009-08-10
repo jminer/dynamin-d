@@ -50,24 +50,13 @@ protected:
 	// allocation will be done.
 	Control[] getFocusableDescendants(Control[] des = null) {
 		uint cur = 0;
-
-		void addDescendants(Container c) {
-			if(c._focusable) { // TODO: && c.enabled) {
+		foreach(d; &descendantsPlus) {
+			if(d.focusable) { // TODO: && ch.enabled) {
 				if(cur == des.length)
 					des.length = des.length + 20;
-				des[cur++] = c;
-			}
-			foreach(ch; c._children) {
-				if(cast(Container)ch)
-					addDescendants(cast(Container)ch);
-				else if(ch.focusable) { // TODO: && ch.enabled) {
-					if(cur == des.length)
-						des.length = des.length + 20;
-					des[cur++] = ch;
-				}
+				des[cur++] = d;
 			}
 		}
-		addDescendants(this);
 		return des[0..cur];
 	}
 	unittest {
