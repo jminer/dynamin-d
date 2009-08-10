@@ -80,7 +80,6 @@ package Control getFocusedControl() { return focusedControl; }
  */
 class Control {
 protected:
-	bool _visible;
 	bool _focusable;
 	bool _focused;
 	int _tabIndex;
@@ -272,7 +271,6 @@ public:
 		_focusable = false;
 		_focused = false;
 		_tabIndex = 0;
-		_visible = true;
 		_cursor = Cursor.Arrow;
 		_elasticX = false;
 		_elasticY = false;
@@ -480,13 +478,6 @@ public:
 		}
 		return null;
 	}
-
-	/**
-	 * Gets or sets whether is control is visible. The default is true, except
-	 * on top-level windows.
-	 */
-	//void visible(bool b) { visible = b; }
-	bool visible() { return _visible; }
 
 	/**
 	 * Gets or sets the location of this control in its parent's content

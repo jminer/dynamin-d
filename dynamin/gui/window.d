@@ -173,6 +173,7 @@ class Window : Container {
 	}
 protected:
 	mixin WindowBackend;
+	bool _visible;
 	BorderSize _borderSize;
 	Window _owner;
 	package bool _active;
@@ -255,6 +256,11 @@ protected:
 	//}}}
 
 public:
+	/// Override this method in a subclass to handle the visibleChanged event.
+	protected void whenVisibleChanged(EventArgs e) { }
+	/// This event occurs after this control is shown or hidden.
+	Event!(whenVisibleChanged) visibleChanged;
+
 	/// Override this method in a subclass to handle the activated event.
 	protected void whenActivated(EventArgs e) {
 		setFocusedControl(_focusedControl is null ? content : _focusedControl);
@@ -273,6 +279,7 @@ public:
 	 *
 	 */
 	this() {
+		visibleChanged.mainHandler = &whenVisibleChanged;
 		activated.mainHandler = &whenActivated;
 		deactivated.mainHandler = &whenDeactivated;
 
@@ -397,10 +404,17 @@ public:
 	}
 	Window owner() { return _owner; }
 
-	alias Control.visible visible;
+	/**
+	 * Gets or sets whether this window is visible. The default is false.
+	 */
+	bool visible() { return _visible; }
+	/// ditto
 	void visible(bool b) {
 		_visible = b;
 		backend_visible = b;
+
+		scope e = new EventArgs;
+		visibleChanged(e);
 	}
 
 	/**
