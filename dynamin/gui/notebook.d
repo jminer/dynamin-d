@@ -151,6 +151,8 @@ public:
 	int selectedIndex() { return _selectedIndex; }
 	/// ditto
 	void selectedIndex(int index) {
+		if(_selectedIndex == index)
+			return;
 		if(index < -1)
 			throw new IllegalArgumentException("index cannot be less than -1");
 		_selectedIndex = index;

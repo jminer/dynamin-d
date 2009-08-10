@@ -315,6 +315,8 @@ public:
 	Size minSize() { return _minSize; }
 	/// ditto
 	void minSize(Size size) {
+		if(_minSize == size)
+			return;
 		_minSize = size;
 		minSizeChanged(new EventArgs);
 	}
@@ -336,6 +338,8 @@ public:
 	Size maxSize() { return _maxSize; }
 	/// ditto
 	void maxSize(Size size) {
+		if(_maxSize == size)
+			return;
 		_maxSize = size;
 		minSizeChanged(new EventArgs);
 	}

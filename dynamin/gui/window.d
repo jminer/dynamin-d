@@ -397,6 +397,8 @@ public:
 	//       the taskbar, then show it on taskbar if window has an owner,
 	//       but don't if it does not
 	void owner(Window w) {
+		if(_owner == w)
+			return;
 		_owner = w;
 		if(!handleCreated)
 			return;
@@ -410,6 +412,8 @@ public:
 	bool visible() { return _visible; }
 	/// ditto
 	void visible(bool b) {
+		if(_visible == b)
+			return;
 		_visible = b;
 		backend_visible = b;
 
@@ -450,6 +454,8 @@ public:
 	WindowBorderStyle borderStyle() { return _borderStyle; }
 	/// ditto
 	void borderStyle(WindowBorderStyle border) {
+		if(_borderStyle == border)
+			return;
 		if(border > WindowBorderStyle.Tool)
 			throw new IllegalArgumentException("Window.borderStyle(): invalid border style");
 		_borderStyle = border;
@@ -495,6 +501,8 @@ public:
 	bool resizable() { return _resizable; }
 	/// ditto
 	void resizable(bool b) {
+		if(_resizable == b)
+			return;
 		_resizable = b;
 		if(!handleCreated)
 			return;

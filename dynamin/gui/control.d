@@ -495,6 +495,8 @@ public:
 			throw new Exception("cannot set location of a window's content");
 		pt.x = round(pt.x);
 		pt.y = round(pt.y);
+		if(_location == pt)
+			return;
 		repaint();
 		_location = pt;
 		repaint();
@@ -523,6 +525,8 @@ public:
 			newSize.height = 0;
 		newSize.width = round(newSize.width);
 		newSize.height = round(newSize.height);
+		if(_size == newSize)
+			return;
 		repaint();
 		_size = newSize;
 		repaint();
@@ -578,6 +582,8 @@ public:
 	string text() { return _text.dup; }
 	/// ditto
 	void text(string str) {
+		if(_text == str)
+			return;
 		_text = str.dup;
 		repaint();
 		//TextChanged(EventArgs e) // TODO: add event
@@ -589,6 +595,8 @@ public:
 	Color backColor() { return _backColor; }
 	/// ditto
 	void backColor(Color c) {
+		if(_backColor == c)
+			return;
 		_backColor = c;
 		repaint();
 	}
@@ -599,6 +607,8 @@ public:
 	Color foreColor() { return _foreColor; }
 	/// ditto
 	void foreColor(Color c) {
+		if(_foreColor == c)
+			return;
 		_foreColor = c;
 		repaint();
 	}
@@ -617,6 +627,8 @@ public:
 	}
 	/// ditto
 	void font(Font f) {
+		if(_font is f)
+			return;
 		_font = f;
 		repaint();
 	}

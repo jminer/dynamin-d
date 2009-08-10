@@ -76,7 +76,10 @@ public:
 	}
 	/// ditto
 	void checked(bool b) {
+		auto old = _checkState;
 		_checkState = b ? CheckState.Checked : CheckState.Unchecked;
+		if(_checkState == old)
+			return;
 		repaint();
 		checkedChanged(new EventArgs);
 	}
