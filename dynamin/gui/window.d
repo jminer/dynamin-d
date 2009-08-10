@@ -480,7 +480,7 @@ public:
 	 */
 	bool resizable() { return _resizable; }
 	/// ditto
-	void resizable(bool b) { // TODO: set based upon whether content is elastic?
+	void resizable(bool b) {
 		_resizable = b;
 		if(!handleCreated)
 			return;
