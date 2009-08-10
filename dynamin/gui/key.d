@@ -110,13 +110,8 @@ enum Key {
 	Alt     = 0x40000
 }
 
-/*string KeyToString(Key key) {
-	static string[] table = [
-	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-	"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-	"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-	"Escape", "Tab", "Backspace", "Enter", "Space",
+const string[] keyStringTable = [
+	"None", "Escape", "Tab", "Backspace", "Enter", "Space",
 	"Left Arrow", "Right Arrow", "Up Arrow", "Down Arrow",
 	"Insert", "Delete", "Home", "End", "Page Up", "Page Down",
 	"Print Screen", "Pause",
@@ -124,16 +119,31 @@ enum Key {
 	"NumPad0", "NumPad1", "NumPad2", "NumPad3", "NumPad4",
 	"NumPad5", "NumPad6", "NumPad7", "NumPad8", "NumPad9",
 	"NumPad/", "NumPad*", "NumPad-", "NumPad+", "NumPad.",
-	"`", "-", "=", "[", "]", "\\", ";", "'", ",", ".", "/",
-	"Shift", "Ctrl", "Alt"
-	];
-	return table[key];
+	"`", "-", "=", "[", "]", "\\", ";", "'", ",", ".", "/", "Menu",
+	"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+	"", "", "", "", "", "", "",
+	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+	"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+	"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
+	"Volume Up", "Volume Down", "Volume Mute",
+	"Play/Pause", "Stop", "Next Track", "Previous Track"
+];
+string keyToString(Key key) {
+	 if(key == Key.Shift)
+		return "Shift";
+	else if(key == Key.Control)
+		return "Ctrl";
+	else if(key == Key.Alt)
+		return "Alt";
+	return keyStringTable[key];
 }
 Key toKey(string str) {
-	foreach(i, s; table)
+	if(!str)
+		return Key.None;
+	foreach(i, s; keyStringTable)
 		if(s == str)
-			return i;
-	return
+			return cast(Key)i;
+	return Key.None;
 }
 unittest {
 	assert(keyToString(Key.D0) == "0");
@@ -141,16 +151,16 @@ unittest {
 	assert(keyToString(Key.N) == "N");
 	assert(keyToString(Key.F1) == "F1");
 	assert(keyToString(Key.Escape) == "Escape");
-	assert(keyToString(Key.Left) == "Left");
-	assert(keyToString(Key.Up) == "Up");
+	assert(keyToString(Key.Left) == "Left Arrow");
+	assert(keyToString(Key.Up) == "Up Arrow");
 	assert(keyToString(Key.Insert) == "Insert");
 	assert(keyToString(Key.PrintScreen) == "Print Screen");
 	assert(keyToString(Key.Pause) == "Pause");
-	assert(keyToString(Key.CapsLock) == "CapsLock");
+	assert(keyToString(Key.CapsLock) == "Caps Lock");
 	assert(keyToString(Key.NumPad0) == "NumPad0");
 	assert(keyToString(Key.NumPad5) == "NumPad5");
 	assert(keyToString(Key.NumPadDivide) == "NumPad/");
 	assert(keyToString(Key.Backquote) == "`");
 	assert(keyToString(Key.Control) == "Ctrl");
-}*/
+}
 
