@@ -289,7 +289,6 @@ public:
 		_minSize = Size(0, 0);
 		_maxSize = Size(0, 0);
 		_borderStyle = WindowBorderStyle.Normal;
-		recreateHandle();
 	}
 	/// ditto
 	this(string text) {
@@ -591,5 +590,24 @@ public:
 		}
 		location = newLoc;
 	}
+}
+
+unittest {
+	auto w = new Window;
+	assert(!w.handleCreated);
+	w.content = new Panel;
+	assert(!w.handleCreated);
+	w.location = Point(5, 5);
+	assert(!w.handleCreated);
+	w.size = Size(100, 100);
+	assert(!w.handleCreated);
+	w.position = Position.Right;
+	assert(!w.handleCreated);
+	w.text = "Test Text";
+	assert(!w.handleCreated);
+	w.borderStyle = WindowBorderStyle.Tool;
+	assert(!w.handleCreated);
+	w.state = WindowState.Maximized;
+	assert(!w.handleCreated);
 }
 
