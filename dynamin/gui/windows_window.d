@@ -566,6 +566,9 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		default: return MouseButton.None;
 		}
 	}
+	bool isKeyDown(int vk) {
+		return cast(bool)HIWORD(GetKeyState(vk));
+	}
 	//}}}
 	switch(uMsg) {
 	case WM_ENTERSIZEMOVE: //when the user starts moving or resizing the window
@@ -801,8 +804,9 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_KEYDOWN:
 		//Stdout.format("WM_KEYDOWN:    {:x}", cast(int)wParam).newline;
 		Control focused = c.focusedControl ? c.focusedControl : c;
-		scope args = new KeyEventArgs(
-			VKToKey(wParam), cast(bool)(lParam & (1 << 30)) );
+		scope args = new KeyEventArgs(VKToKey(wParam),
+			cast(bool)(lParam & (1 << 30)), isKeyDown(VK_SHIFT),
+			isKeyDown(VK_CONTROL), isKeyDown(VK_MENU) );
 		focused.keyDown(args);
 		return 0;
 	case WM_SYSKEYUP:
@@ -812,7 +816,8 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_KEYUP:
 		//Stdout.format("WM_KEYUP:    {:x}", cast(int)wParam).newline;
 		Control focused = c.focusedControl ? c.focusedControl : c;
-		scope args = new KeyEventArgs( VKToKey(wParam), false );
+		scope args = new KeyEventArgs( VKToKey(wParam), false,
+			isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL), isKeyDown(VK_MENU) );
 		focused.keyUp(args);
 		return 0;
 	case WM_CHAR:

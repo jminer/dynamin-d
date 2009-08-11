@@ -119,10 +119,14 @@ public:
 class KeyEventArgs : StopEventArgs {
 	Key _key;
 	bool _repeat;
+	bool _shiftDown, _controlDown, _altDown;
 public:
-	this(Key key, bool repeat) {
+	this(Key key, bool repeat, bool shift, bool ctrl, bool alt) {
 		_key = key;
 		_repeat = repeat;
+		_shiftDown = shift;
+		_controlDown = ctrl;
+		_altDown = alt;
 	}
 	/**
 	 * Returns: the key that was typed.
@@ -135,6 +139,12 @@ public:
 	 *          if the key was just pressed
 	 */
 	bool repeat() { return _repeat; }
+	// Returns true if the shift key is currently down and false otherwise.
+	bool shiftDown() { return _shiftDown; }
+	// Returns true if the control key is currently down and false otherwise.
+	bool controlDown() { return _controlDown; }
+	// Returns true if the alt key is currently down and false otherwise.
+	bool altDown() { return _altDown; }
 	string toString() {
 		return format("KeyEventArgs [key={}, repeat={}]", _key, _repeat);
 	}
