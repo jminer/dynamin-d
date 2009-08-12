@@ -46,8 +46,6 @@ static:
 	package Thread eventThread;
 	/// Starts event processing. Must be called from main().
 	void run(Window w = null) {
-		Window.hasProcessedEvents = true;
-
 		auto thread = Thread.getThis();
 		assert(eventThread is null || eventThread is thread,
 			"Application.run called from two different threads");
@@ -164,13 +162,6 @@ alias List!(Control) ControlList;
  * $(IMAGE ../web/example_window.png)
  */
 class Window : Container {
-	private static hasProcessedEvents = false;
-	~this() { // this should be a static ~this, but I get a circular dep error
-		if(!hasProcessedEvents) {
-			Stdout("Warning: a window was created, but Application.run");
-			Stdout(" was not called to process events").newline;
-		}
-	}
 protected:
 	mixin WindowBackend;
 	bool _visible;
