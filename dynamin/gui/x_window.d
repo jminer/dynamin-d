@@ -661,7 +661,7 @@ template WindowBackend() {
 		//backend_nativeToBorderSize();
 	}
 	Graphics backend_quickCreateGraphics() {
-		auto surface = cairo_xlib_surface_create(display, _handle,
+		auto surface = cairo_xlib_surface_create(display, handle,
 			XDefaultVisual(display, XDefaultScreen(display)),
 			cast(int)width, cast(int)height);
 		auto cr = cairo_create(surface);

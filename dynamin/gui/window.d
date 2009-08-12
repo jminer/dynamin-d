@@ -363,9 +363,8 @@ public:
 		backend_recreateHandle();
 	}
 
+	// should create the handle if it hasn't been yet
 	override protected Graphics quickCreateGraphics() {
-		if(!handleCreated)
-			return null;
 		return backend_quickCreateGraphics();
 	}
 	override bool onScreen() {
@@ -585,8 +584,6 @@ public:
 
 unittest {
 	auto w = new Window;
-	assert(!w.handleCreated);
-	w.content = new Panel;
 	assert(!w.handleCreated);
 	w.location = Point(5, 5);
 	assert(!w.handleCreated);
