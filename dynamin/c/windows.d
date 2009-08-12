@@ -833,6 +833,8 @@ BOOL TrackMouseEvent(TRACKMOUSEEVENT* lpEventTrack);
 HCURSOR SetCursor(HCURSOR hCursor);
 
 BOOL GetCursorPos(POINT* lpPoint);
+
+DWORD GetMessagePos();
 //}}}
 
 //{{{ keyboard functions

@@ -573,12 +573,13 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch(uMsg) {
 	case WM_ENTERSIZEMOVE: //when the user starts moving or resizing the window
 		//{{{
-		POINT cursor;
-		GetCursorPos(&cursor);
+		DWORD cur = GetMessagePos();
+		short curX = cur & 0xFFFF;
+		short curY = cur >> 16;
 		RECT rect;
 		GetWindowRect(hwnd, &rect);
-		dragX = cursor.x-rect.left;
-		dragY = cursor.y-rect.top;
+		dragX = curX-rect.left;
+		dragY = curY-rect.top;
 		return 0;
 		//}}}
 	case WM_MOVING:
@@ -588,10 +589,11 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		RECT* rect = cast(RECT*)lParam;
 		int rectWidth = rect.right-rect.left;
 		int rectHeight = rect.bottom-rect.top;
-		POINT cursor;
-		GetCursorPos(&cursor);
-		rect.left = cursor.x-dragX;
-		rect.top = cursor.y-dragY;
+		DWORD cur = GetMessagePos();
+		short curX = cur & 0xFFFF;
+		short curY = cur >> 16;
+		rect.left = curX-dragX;
+		rect.top = curY-dragY;
 		void updateRightAndBottom() {
 			rect.right = rect.left+rectWidth;
 			rect.bottom = rect.top+rectHeight;
