@@ -362,7 +362,10 @@ public:
 	}
 
 	/**
-	 *
+	 * Sets this control as the focused control in its window. The focused
+	 * control is the one keyboard input is sent to. If the window this control
+	 * is in is not active, then this control will be focused only when the
+	 * window is activated.
 	 */
 	void focus() {
 		if(!_focusable)
