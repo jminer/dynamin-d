@@ -71,9 +71,13 @@ struct Event(alias mainHandler_) {
 
 	Handler[] handlers;
 	///
-	Handler mainHandler;
+	private Handler mainHandler;
 	///
-	Dispatcher dispatcher;
+	private Dispatcher dispatcher;
+	void setUp(Handler mainHandler, Dispatcher dispatcher = null) {
+		this.mainHandler = mainHandler;
+		this.dispatcher = dispatcher;
+	}
 	void defaultDispatch(ArgsType e) {
 		callHandlers(e);
 		callMainHandler(e);

@@ -69,7 +69,7 @@ protected:
 	// stores the location of the thumb as a percentage of the track
 	real _thumbPos;
 	this() {
-		valueChanged.mainHandler = &whenValueChanged;
+		valueChanged.setUp(&whenValueChanged);
 
 		_track1 = new ScrollBarTrack;
 		_track2 = new ScrollBarTrack;

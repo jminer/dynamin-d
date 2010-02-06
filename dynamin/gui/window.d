@@ -270,9 +270,9 @@ public:
 	 *
 	 */
 	this() {
-		visibleChanged.mainHandler = &whenVisibleChanged;
-		activated.mainHandler = &whenActivated;
-		deactivated.mainHandler = &whenDeactivated;
+		visibleChanged.setUp(&whenVisibleChanged);
+		activated     .setUp(&whenActivated);
+		deactivated   .setUp(&whenDeactivated);
 
 		content = new Panel;
 

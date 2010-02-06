@@ -174,7 +174,7 @@ public:
 
 	///
 	this() {
-		clicked.mainHandler = &whenClicked;
+		clicked.setUp(&whenClicked);
 		_focusable = true;
 	}
 	///

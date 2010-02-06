@@ -163,12 +163,11 @@ public:
 	Event!(whenDescendantRemoved) descendantRemoved;
 
 	this() {
-		minSizeChanged.mainHandler = &whenMinSizeChanged;
-		maxSizeChanged.mainHandler = &whenMaxSizeChanged;
-		descendantAdded.mainHandler = &whenDescendantAdded;
-		descendantAdded.dispatcher = &dispatchDescendantAdded;
-		descendantRemoved.mainHandler = &whenDescendantRemoved;
-		descendantRemoved.dispatcher = &dispatchDescendantRemoved;
+		minSizeChanged   .setUp(&whenMinSizeChanged);
+		maxSizeChanged   .setUp(&whenMaxSizeChanged);
+		descendantAdded  .setUp(&whenDescendantAdded, &dispatchDescendantAdded);
+		descendantRemoved.setUp(&whenDescendantRemoved,
+		                        &dispatchDescendantRemoved);
 
 		_children = new ControlList(&whenChildAdded, &whenChildRemoved);
 

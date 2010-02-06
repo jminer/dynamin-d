@@ -114,7 +114,7 @@ public:
 	Event!(whenSelectionChanged) selectionChanged;
 
 	this() {
-		selectionChanged.mainHandler = &whenSelectionChanged;
+		selectionChanged.setUp(&whenSelectionChanged);
 
 		_tabPages = new List!(TabPage, true)(&whenTabPagesChanged, &whenTabPagesChanged);
 		_focusable = true;

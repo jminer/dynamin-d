@@ -113,7 +113,7 @@ public:
 	Event!(whenSelectionChanged) selectionChanged;
 
 	this() {
-		selectionChanged.mainHandler = &whenSelectionChanged;
+		selectionChanged.setUp(&whenSelectionChanged);
 
 		super();
 		_focusable = true;

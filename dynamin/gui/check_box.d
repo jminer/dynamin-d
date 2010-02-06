@@ -63,7 +63,7 @@ public:
 	/// This event occurs after .
 	Event!(whenCheckedChanged) checkedChanged;
 	this() {
-		checkedChanged.mainHandler = &whenCheckedChanged;
+		checkedChanged.setUp(&whenCheckedChanged);
 		_focusable = true;
 	}
 	this(string text) {

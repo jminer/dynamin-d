@@ -90,7 +90,7 @@ public:
 
 	///
 	this() {
-		selectionChanged.mainHandler = &whenSelectionChanged;
+		selectionChanged.setUp(&whenSelectionChanged);
 		_items = new List!(string, true)(&whenListItemsChanged, &whenListItemsChanged);
 
 		super();

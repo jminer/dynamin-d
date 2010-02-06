@@ -239,31 +239,21 @@ public:
 	Event!(whenFocusLost) focusLost;
 
 	this() {
-		moved.mainHandler = &whenMoved;
-		resized.mainHandler = &whenResized;
-		mouseEntered.mainHandler = &whenMouseEntered;
-		mouseEntered.dispatcher = &dispatchMouseEntered;
-		mouseLeft.mainHandler = &whenMouseLeft;
-		mouseDown.mainHandler = &whenMouseDown;
-		mouseDown.dispatcher = &dispatchMouseDown;
-		mouseUp.mainHandler = &whenMouseUp;
-		mouseUp.dispatcher = &dispatchMouseUp;
-		mouseMoved.mainHandler = &whenMouseMoved;
-		mouseMoved.dispatcher = &dispatchMouseMoved;
-		mouseDragged.mainHandler = &whenMouseDragged;
-		mouseDragged.dispatcher = &dispatchMouseDragged;
-		mouseTurned.mainHandler = &whenMouseTurned;
-		mouseTurned.dispatcher = &dispatchMouseTurned;
-		keyDown.mainHandler = &whenKeyDown;
-		keyDown.dispatcher = &dispatchKeyDown;
-		keyTyped.mainHandler = &whenKeyTyped;
-		keyTyped.dispatcher = &dispatchKeyTyped;
-		keyUp.mainHandler = &whenKeyUp;
-		keyUp.dispatcher = &dispatchKeyUp;
-		painting.mainHandler = &whenPainting;
-		painting.dispatcher = &dispatchPainting;
-		focusGained.mainHandler = &whenFocusGained;
-		focusLost.mainHandler = &whenFocusLost;
+		moved       .setUp(&whenMoved);
+		resized     .setUp(&whenResized);
+		mouseEntered.setUp(&whenMouseEntered, &dispatchMouseEntered);
+		mouseLeft   .setUp(&whenMouseLeft);
+		mouseDown   .setUp(&whenMouseDown,    &dispatchMouseDown);
+		mouseUp     .setUp(&whenMouseUp,      &dispatchMouseUp);
+		mouseMoved  .setUp(&whenMouseMoved,   &dispatchMouseMoved);
+		mouseDragged.setUp(&whenMouseDragged, &dispatchMouseDragged);
+		mouseTurned .setUp(&whenMouseTurned,  &dispatchMouseTurned);
+		keyDown     .setUp(&whenKeyDown,      &dispatchKeyDown);
+		keyTyped    .setUp(&whenKeyTyped,     &dispatchKeyTyped);
+		keyUp       .setUp(&whenKeyUp,        &dispatchKeyUp);
+		painting    .setUp(&whenPainting,     &dispatchPainting);
+		focusGained .setUp(&whenFocusGained);
+		focusLost   .setUp(&whenFocusLost);
 
 		_location = Point(0, 0);
 		_size = Size(100, 100);
