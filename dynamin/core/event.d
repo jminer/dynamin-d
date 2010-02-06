@@ -70,14 +70,18 @@ struct Event(alias mainHandler_) {
 	public alias void delegate(ArgsType e) Dispatcher;
 
 	Handler[] handlers;
-	///
-	private Handler mainHandler;
-	///
-	private Dispatcher dispatcher;
+	private void* ptr;
+	private void function(ArgsType e) mainHandler;
+	private void function(ArgsType e) dispatcher;
+
 	void setUp(Handler mainHandler, Dispatcher dispatcher = null) {
-		this.mainHandler = mainHandler;
-		this.dispatcher = dispatcher;
+		if(mainHandler.ptr != dispatcher.ptr && dispatcher.ptr != null)
+			throw new Exception("mainHandler.ptr must equal dispatcher.ptr");
+		ptr = mainHandler.ptr;
+		this.mainHandler = mainHandler.funcptr;
+		this.dispatcher = dispatcher.funcptr;
 	}
+
 	void defaultDispatch(ArgsType e) {
 		callHandlers(e);
 		callMainHandler(e);
@@ -89,10 +93,14 @@ struct Event(alias mainHandler_) {
 	void opCall(ArgsType e) {
 		if(e is null)
 			Stdout("Warning: EventArgs null").newline;
-		if(!dispatcher.funcptr)
+		if(!dispatcher) {
 			defaultDispatch(e);
-		else
-			dispatcher(e);
+			return;
+		}
+		Dispatcher dg;
+		dg.ptr = ptr;
+		dg.funcptr = dispatcher;
+		dg(e);
 	}
 	/**
 	 * Adds the specified handler to this event. The handler will be called
@@ -137,8 +145,12 @@ struct Event(alias mainHandler_) {
 	void callMainHandler(ArgsType e) {
 		auto stopEventArgs = cast(StopEventArgs)e;
 		// if e is an instance of StopEventArgs, then check if it is stopped
-		if(stopEventArgs is null || !stopEventArgs.stopped)
-			mainHandler(e);
+		if(stopEventArgs is null || !stopEventArgs.stopped) {
+			Handler dg;
+			dg.ptr = ptr;
+			dg.funcptr = mainHandler;
+			dg(e);
+		}
 	}
 }
 
