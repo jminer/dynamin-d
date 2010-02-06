@@ -33,6 +33,7 @@ public import dynamin.core.string;
 Can get width of console with $COLUMNS
 Can get height of console with $LINES
 */
+// The control codes are defined in ECMA-48.
 template ConsoleBackend() {
 	static colorsUsed = false;
 	static ~this() {
