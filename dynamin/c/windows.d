@@ -758,7 +758,6 @@ int EnumFontFamiliesExW(
 	HDC hdc, LOGFONT* lpLogfont,
 	FONTENUMPROCW lpProc, LPARAM lParam, DWORD dwFlags);
 
-alias int function(ENUMLOGFONTEX*, TEXTMETRIC*, DWORD, LPARAM) FONTENUMPROCA;
 alias int function(ENUMLOGFONTEX*, TEXTMETRIC*, DWORD, LPARAM) FONTENUMPROCW;
 //}}}
 
