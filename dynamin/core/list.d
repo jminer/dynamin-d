@@ -128,8 +128,12 @@ public:
 		uint i = find(item);
 		if(i == -1)
 			return;
+		removeAt(i);
+	}
+	void removeAt(uint index) {
+		T item = _data[index];
 
-		for(++i; i < _count; ++i)
+		for(uint i = index + 1; i < _count; ++i)
 			_data[i-1] = _data[i];
 		// must null out to allow to be collected
 		static if(is(T == class) || is(T == interface))
@@ -137,7 +141,7 @@ public:
 		--_count;
 
 		static if(hasDelegates)
-			whenRemoved(item, i);
+			whenRemoved(item, index);
 	}
 	void insert(T item, uint index) {
 		maybeEnlarge(_count+1);
@@ -197,6 +201,12 @@ unittest {
 	assert(list.data == "Hello!, Mat");
 	list.remove('l');
 	assert(list.data == "Helo!, Mat");
+	list.removeAt(0);
+	assert(list.data == "elo!, Mat");
+	list.removeAt(8);
+	assert(list.data == "elo!, Ma");
+	list.removeAt(1);
+	assert(list.data == "eo!, Ma");
 	list.clear();
 	assert(list.data == "");
 
