@@ -45,25 +45,28 @@ protected:
 		void delegate(T, int) whenAdded;
 		void delegate(T, int) whenRemoved;
 	}
+	const int DefaultCapacity = 16;
 public:
-	this() {
-		this(16);
-	}
-	this(uint capacity) {
-		_data = new T[capacity];
-	}
 	static if(hasDelegates) {
 		/// whenAdded or whenRemoved is called right after an item is added
 		/// or removed
 		this(void delegate(T, int) whenAdded,
-				void delegate(T, int) whenRemoved) {
-			this(16, whenAdded, whenRemoved);
+		     void delegate(T, int) whenRemoved) {
+			this(DefaultCapacity, whenAdded, whenRemoved);
 		}
-		this(uint capacity, void delegate(T, int) whenAdded,
-				void delegate(T, int) whenRemoved) {
-			this(capacity);
+		this(uint capacity,
+		     void delegate(T, int) whenAdded,
+		     void delegate(T, int) whenRemoved) {
+			_data = new T[capacity];
 			this.whenAdded = whenAdded;
 			this.whenRemoved = whenRemoved;
+		}
+	} else {
+		this() {
+			this(DefaultCapacity);
+		}
+		this(uint capacity) {
+			_data = new T[capacity];
 		}
 	}
 	static List!(T) fromArray(T[] arr...) {
