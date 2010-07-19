@@ -48,6 +48,12 @@ enum ListChangeType {
 	Replaced
 }
 
+/**
+ * A list of items backed by an array. If changeNotification is true, then a delegate is passed
+ * into the constructor as a callback. The delegate will be called when any item is added to or
+ * removed from the list. Also, when changeNotfication is true, some methods are not
+ * available. These are marked in their documentation.
+ */
 class List(T, bool changeNotification = false) {
 protected:
 	T[] _data;
@@ -56,24 +62,52 @@ protected:
 		void delegate(ListChangeType, T, T, uint) whenChanged;
 	const int DefaultCapacity = 16;
 public:
-	static if(changeNotification) {
-		/// whenChanged is called right after an item is added, removed, or replaced
-		this(void delegate(ListChangeType, T, T, uint) whenChanged) {
+	/**
+	 * Creates a list with the specified capacity.
+	 *
+	 * Only available if changeNotification is false.
+	 */
+	this() {
+		static if(changeNotification)
+			throw new Exception("not available");
+		this(DefaultCapacity);
+	}
+	/// ditto
+	this(uint capacity) {
+		static if(changeNotification)
+			throw new Exception("not available");
+		_data = new T[capacity];
+	}
+
+	/**
+	 * Creates a list with the specified capacity and with a delegate that will be called
+	 * when an item is added to or removed from the list. The type specifies whether an
+	 * item was added, removed, or replaced. oldItem contains the item that was removed,
+	 * and newItem contains the item that was added. So if type is ListChangeType.Added,
+	 * oldItem will be T.init (which is null for reference types). If type is
+	 * ListChangeType.Removed, newItem will be T.init. The index of the item after being
+	 * added or before being removed is also passed to the delegate.
+	 *
+	 * Only available if changeNotification is true.
+	 */
+	this(void delegate(ListChangeType type, T oldItem, T newItem, uint index) whenChanged) {
+		static if(changeNotification) {
 			this(DefaultCapacity, whenChanged);
-		}
-		this(uint capacity,
-		     void delegate(ListChangeType, T, T, uint) whenChanged) {
-			_data = new T[capacity];
-			this.whenChanged = whenChanged;
-		}
-	} else {
-		this() {
-			this(DefaultCapacity);
-		}
-		this(uint capacity) {
-			_data = new T[capacity];
+		} else {
+			throw new Exception("not available");
 		}
 	}
+	/// ditto
+	this(uint capacity,
+		 void delegate(ListChangeType type, T oldItem, T newItem, uint index) whenChanged) {
+		static if(changeNotification) {
+			_data = new T[capacity];
+			this.whenChanged = whenChanged;
+		} else {
+			throw new Exception("not available");
+		}
+	}
+
 	static List!(T) fromArray(T[] arr...) {
 		auto list = new List!(T)();
 		list._data = arr.dup;
@@ -178,8 +212,6 @@ public:
 		return -1;
 	}
 	//trimCapacity()
-	//opIndex
-	//opIndexAssign
 	//opConcat
 	//opEquals
 	//opSlice
