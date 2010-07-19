@@ -88,31 +88,33 @@ protected:
 	}
 
 	// not an event
-	void whenChildAdded(Control child, int) {
-		if(child.parent)
-			child.parent.remove(child);
-		child.parent = this;
-		repaint();
+	void whenChildrenChanged(ListChangeType, Control oldChild, Control newChild, uint) {
+		if(oldChild) {
+			oldChild.parent = null;
+			repaint();
 
-		void callAdded(Control ctrl) {
-			scope e = new HierarchyEventArgs(ctrl);
-			descendantAdded(e);
-
-			if(auto cntr = cast(Container)ctrl) {
-				foreach(c; cntr._children)
-					callAdded(c);
-			}
+			scope e = new HierarchyEventArgs(oldChild);
+			descendantRemoved(e);
 		}
-		callAdded(child);
-	}
 
-	// not an event
-	void whenChildRemoved(Control child, int) {
-		child.parent = null;
-		repaint();
+		if(newChild) {
+			if(newChild.parent)
+				newChild.parent.remove(newChild);
+			newChild.parent = this;
+			repaint();
 
-		scope e = new HierarchyEventArgs(child);
-		descendantRemoved(e);
+			void callAdded(Control ctrl) {
+				scope e = new HierarchyEventArgs(ctrl);
+				descendantAdded(e);
+
+				if(auto cntr = cast(Container)ctrl) {
+					foreach(c; cntr._children)
+						callAdded(c);
+				}
+			}
+			callAdded(newChild);
+		}
+
 	}
 
 	void dispatchDescendantAdded(HierarchyEventArgs e) {
@@ -169,7 +171,7 @@ public:
 		descendantRemoved.setUp(&whenDescendantRemoved,
 		                        &dispatchDescendantRemoved);
 
-		_children = new ControlList(&whenChildAdded, &whenChildRemoved);
+		_children = new ControlList(&whenChildrenChanged);
 
 		elasticX = true;
 		elasticY = true;

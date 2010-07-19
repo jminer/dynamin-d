@@ -91,7 +91,7 @@ protected:
 		}
 		Theme.current.Tab_paint(selectedTabPage, this, e.graphics);
 	}
-	void whenTabPagesChanged(TabPage page, int) {
+	void whenTabPagesChanged(ListChangeType, TabPage oldPage, TabPage newPage, uint) {
 		if(_tabPages.count == 0)
 			selectedIndex = -1;
 		else if(selectedIndex == -1)
@@ -116,7 +116,7 @@ public:
 	this() {
 		selectionChanged.setUp(&whenSelectionChanged);
 
-		_tabPages = new List!(TabPage, true)(&whenTabPagesChanged, &whenTabPagesChanged);
+		_tabPages = new List!(TabPage, true)(&whenTabPagesChanged);
 		_focusable = true;
 	}
 	override void layout() {

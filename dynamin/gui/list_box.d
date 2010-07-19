@@ -83,7 +83,7 @@ public:
 	/// This event occurs after the selection has changed.
 	Event!(whenSelectionChanged) selectionChanged;
 
-	void whenListItemsChanged(string, int) {
+	void whenListItemsChanged(ListChangeType, string, string, uint) {
 		super.layout();
 		repaint();
 	}
@@ -91,7 +91,7 @@ public:
 	///
 	this() {
 		selectionChanged.setUp(&whenSelectionChanged);
-		_items = new List!(string, true)(&whenListItemsChanged, &whenListItemsChanged);
+		_items = new List!(string, true)(&whenListItemsChanged);
 
 		super();
 		_focusable = true;

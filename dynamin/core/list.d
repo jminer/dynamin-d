@@ -37,29 +37,34 @@ import tango.io.Stdout;
 // TODO: QuickSort()
 // TODO: HeapSort()
 // TODO: Sort() - calls HeapSort() so stable sort is default
-class List(T, bool hasDelegates = false) {
+
+/// Represents the ways items can be changed in a list.
+enum ListChangeType {
+	/// An item was added to the list.
+	Added,
+	/// An item was removed from the list.
+	Removed,
+	/// An item was replaced with another item.
+	Replaced
+}
+
+class List(T, bool changeNotification = false) {
 protected:
 	T[] _data;
 	uint _count;
-	static if(hasDelegates) {
-		void delegate(T, int) whenAdded;
-		void delegate(T, int) whenRemoved;
-	}
+	static if(changeNotification)
+		void delegate(ListChangeType, T, T, uint) whenChanged;
 	const int DefaultCapacity = 16;
 public:
-	static if(hasDelegates) {
-		/// whenAdded or whenRemoved is called right after an item is added
-		/// or removed
-		this(void delegate(T, int) whenAdded,
-		     void delegate(T, int) whenRemoved) {
-			this(DefaultCapacity, whenAdded, whenRemoved);
+	static if(changeNotification) {
+		/// whenChanged is called right after an item is added, removed, or replaced
+		this(void delegate(ListChangeType, T, T, uint) whenChanged) {
+			this(DefaultCapacity, whenChanged);
 		}
 		this(uint capacity,
-		     void delegate(T, int) whenAdded,
-		     void delegate(T, int) whenRemoved) {
+		     void delegate(ListChangeType, T, T, uint) whenChanged) {
 			_data = new T[capacity];
-			this.whenAdded = whenAdded;
-			this.whenRemoved = whenRemoved;
+			this.whenChanged = whenChanged;
 		}
 	} else {
 		this() {
@@ -106,6 +111,12 @@ public:
 	T opIndex(uint index) {
 		return _data[0.._count][index];
 	}
+	void opIndexAssign(T item, uint index) {
+		T oldItem = _data[0.._count][index];
+		_data[0.._count][index] = item;
+		static if(changeNotification)
+			whenChanged(ListChangeType.Replaced, oldItem, item, index);
+	}
 	void push(T item) {
 		add(item);
 	}
@@ -117,8 +128,8 @@ public:
 		static if(is(T == class) || is(T == interface))
 			_data[_count-1] = cast(T)null;
 		--_count;
-		static if(hasDelegates)
-			whenRemoved(item, _count);
+		static if(changeNotification)
+			whenChanged(ListChangeType.Removed, item, T.init, _count);
 		return item;
 	}
 	void add(T item) {
@@ -140,21 +151,21 @@ public:
 			_data[_count-1] = cast(T)null;
 		--_count;
 
-		static if(hasDelegates)
-			whenRemoved(item, index);
+		static if(changeNotification)
+			whenChanged(ListChangeType.Removed, item, T.init, index);
 	}
 	void insert(T item, uint index) {
 		maybeEnlarge(_count+1);
 		arrayCopy!(T)(_data, index, _data, index+1, _count - index);
 		_data[index] = item;
 		++_count;
-		static if(hasDelegates)
-			whenAdded(item, index);
+		static if(changeNotification)
+			whenChanged(ListChangeType.Added, T.init, item, index);
 	}
 	void clear() {
 		for(; _count > 0; --_count) {
-			static if(hasDelegates)
-				whenRemoved(_data[_count-1], _count-1);
+			static if(changeNotification)
+				whenChanged(ListChangeType.Removed, _data[_count-1], T.init, _count-1);
 			// must null out to allow to be collected
 			static if(is(T == class) || is(T == interface))
 				data[_count-1] = cast(T)null;
@@ -210,20 +221,40 @@ unittest {
 	list.clear();
 	assert(list.data == "");
 
-	int a = 0, r = 0;
-	void added(string, int) { a++; };
-	void removed(string, int) { r++; };
-	auto list2 = new List!(string, true)(&added, &removed);
-	assert(a == 0 && r == 0);
+	int a = 0, r = 0, r2 = 0;
+	void changed(ListChangeType t, string o, string n, uint) {
+		if(t == ListChangeType.Added) {
+			a++;
+			assert(o == "" && n != "");
+		}
+		if(t == ListChangeType.Removed) {
+			r++;
+			assert(n == "" && o != "");
+		}
+		if(t == ListChangeType.Replaced) {
+			r2++;
+		}
+	};
+	auto list2 = new List!(string, true)(&changed);
+	assert(a == 0 && r == 0 && r2 == 0);
 	list2.add("hello");
-	assert(a == 1 && r == 0);
+	assert(a == 1 && r == 0 && r2 == 0);
 	assert(list2.pop() == "hello");
-	assert(a == 1 && r == 1);
+	assert(a == 1 && r == 1 && r2 == 0);
 
 	list2.add("Hi");
-	list2.add("Jacob!");
-	assert(a == 3 && r == 1);
+	list2.add("Jacob");
+	assert(a == 3 && r == 1 && r2 == 0);
+	list2[1] = "Matt";
+	assert(a == 3 && r == 1 && r2 == 1);
+	list2.insert("John", 1);
+	list2.insert("Pete", 3);
+	assert(list2.data == ["Hi", "John", "Matt", "Pete"]);
+	assert(a == 5 && r == 1 && r2 == 1);
+	list2.removeAt(0);
+	assert(list2.data == ["John", "Matt", "Pete"]);
+	assert(a == 5 && r == 2 && r2 == 1);
 	list2.clear();
-	assert(a == 3 && r == 3);
+	assert(a == 5 && r == 5 && r2 == 1);
 }
 
