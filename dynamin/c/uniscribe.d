@@ -26,7 +26,7 @@ template BitField(uint start, uint count, alias data, type = uint) {
 	}
 }
 
-extern(C):
+extern(Windows):
 
 const int USPBUILD = 0400;
 
