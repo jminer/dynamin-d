@@ -120,6 +120,36 @@ int MessageBoxW(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
 
 DWORD GetLastError();
 
+enum : HRESULT {
+	E_NOTIMPL                        = 0x80004001,
+	E_OUTOFMEMORY                    = 0x8007000E,
+	E_INVALIDARG                     = 0x80070057,
+	E_NOINTERFACE                    = 0x80004002,
+	E_POINTER                        = 0x80004003,
+	E_HANDLE                         = 0x80070006,
+	E_ABORT                          = 0x80004004,
+	E_FAIL                           = 0x80004005,
+	E_ACCESSDENIED                   = 0x80070005
+}
+
+// COM error codes
+enum {
+	SEVERITY_SUCCESS = 0,
+	SEVERITY_ERROR   = 1,
+}
+enum {
+	FACILITY_WIN32 = 7,
+	FACILITY_ITF   = 4,
+}
+
+bool SUCCEEDED(HRESULT hr) { return hr >= 0; }
+bool FAILED(HRESULT hr) { return hr < 0; }
+bool IS_ERROR(HRESULT hr) { return (hr >> 31) == SEVERITY_ERROR; }
+uint HRESULT_CODE(HRESULT hr) { return hr & 0xFFFF; }
+uint HRESULT_FACILITY(HRESULT hr) { return (hr >> 16) & 0x1FFF; }
+uint HRESULT_SEVERITY(HRESULT hr) { return (hr >> 31) & 0x1; }
+HRESULT MAKE_HRESULT(uint sev, uint fac, uint code) { return (sev << 31) | (fac << 16) | code; }
+
 int MultiByteToWideChar(
 	UINT CodePage,
 	DWORD dwFlags,
