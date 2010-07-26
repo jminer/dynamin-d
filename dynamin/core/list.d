@@ -159,8 +159,7 @@ public:
 			throw new Exception("List.pop() - List is empty");
 		T item = _data[_count-1];
 		// must null out to allow to be collected
-		static if(is(T == class) || is(T == interface))
-			_data[_count-1] = cast(T)null;
+		_data[_count-1] = T.init;
 		--_count;
 		static if(changeNotification)
 			whenChanged(ListChangeType.Removed, item, T.init, _count);
@@ -181,8 +180,7 @@ public:
 		for(uint i = index + 1; i < _count; ++i)
 			_data[i-1] = _data[i];
 		// must null out to allow to be collected
-		static if(is(T == class) || is(T == interface))
-			_data[_count-1] = cast(T)null;
+		_data[_count-1] = T.init;
 		--_count;
 
 		static if(changeNotification)
@@ -201,8 +199,7 @@ public:
 			static if(changeNotification)
 				whenChanged(ListChangeType.Removed, _data[_count-1], T.init, _count-1);
 			// must null out to allow to be collected
-			static if(is(T == class) || is(T == interface))
-				data[_count-1] = cast(T)null;
+			data[_count-1] = T.init;
 		}
 	}
 	uint find(T item) {
