@@ -249,6 +249,9 @@ struct TabStop {
  */
 class TextLayout {
 	string text;
+	Rect[] layoutBoxes;
+	///
+	void delegate(Rect line, List!(Rect) boxes) getLineBoxes;
 
 	// character formatting
 	List!(FormatChange) formatting; // Always sorted by FormatChange.index
@@ -260,7 +263,11 @@ class TextLayout {
 	TabStop[] tabStops;
 	TextAlignment alignment = TextAlignment.Left;
 
+	void defaultGetLineBoxes(Rect line, List!(Rect) boxes) {
+		boxes.add(line);
+	}
 	this(string fontFamily, double fontSize) {
+		getLineBoxes = &defaultGetLineBoxes;
 		formatting = new List!(FormatChange);
 		initialFormat.fontFamily = fontFamily;
 		initialFormat.fontSize = fontSize;
