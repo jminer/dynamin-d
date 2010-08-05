@@ -181,6 +181,32 @@ struct Format {
 			throw new Exception("unknown type");
 		return data;
 	}
+	void setDataForType(FormatType type, FormatData data) {
+		if(type == FormatType.FontFamily)
+			fontFamily = data.family;
+		else if(type == FormatType.FontSize)
+			fontSize = data.size;
+		else if(type == FormatType.Bold)
+			bold = data.on;
+		else if(type == FormatType.Italic)
+			italic = data.on;
+		else if(type == FormatType.Underline)
+			underline = data.style;
+		else if(type == FormatType.Strikethrough)
+			strikethrough = data.style;
+		else if(type == FormatType.Overline)
+			overline = data.style;
+		else if(type == FormatType.Small)
+			small = data.type;
+		else if(type == FormatType.ForeColor)
+			foreColor = data.color;
+		else if(type == FormatType.BackColor)
+			backColor = data.color;
+		else if(type == FormatType.Spacing)
+			spacing = data.multiple;
+		else
+			throw new Exception("unknown type");
+	}
 }
 //}}}
 
@@ -246,6 +272,102 @@ class TextLayout {
 			assert(change.index >= index);
 			index = change.index;
 		}
+	}
+
+	///
+	struct FormatRunsIter {
+	private:
+		TextLayout owner;
+		FormatType[] filter;
+		int delegate(uint index) splitter;
+	public:
+		///
+		int opApply(int delegate(ref uint start, ref uint length, ref Format format) dg) {
+			bool inFilter(FormatType type) {
+				return filter.length == 0 || filter.containsT(type);
+			}
+			with(owner) {
+				int result;
+				uint fIndex = 0; // index of formatting array
+				uint sIndex = 0; // index passed to splitter
+				Format format = initialFormat;
+
+				uint start = 0;
+				uint end;
+				while(start != text.length) {
+					end = text.length;
+					// stop looping when one is found that is greater than start and in the filter
+					while(fIndex < formatting.count && (formatting[fIndex].index <= start ||
+					                                    !inFilter(formatting[fIndex].type))) {
+						// the only ones that are greater are ones skipped due to filter
+						assert(formatting[fIndex].index >= start);
+						format.setDataForType(formatting[fIndex].type, formatting[fIndex].data);
+						fIndex++;
+					}
+					if(fIndex < formatting.count)
+						end = formatting[fIndex].index;
+
+					if(splitter) {
+						while(splitter(sIndex) != -1 && splitter(sIndex) <= start)
+							sIndex++;
+						if(splitter(sIndex) != -1 && splitter(sIndex) < end)
+							end = splitter(sIndex);
+					}
+					if(end == start)
+						end = text.length;
+
+					uint _start = start;
+					uint _length = end - start;
+					result = dg(_start, _length, format);
+					if(result)
+						break;
+
+					start = end;
+				}
+
+				return result;
+			}
+		}
+	}
+
+	/**
+	 * Returns an iterator struct that can be used with foreach. The struct will iterate over
+	 * each range of the text that has the same formatting.
+	 *
+	 * The difference between formatRuns and fontFormatRuns is that fontFormatRuns ignores
+	 * all formatting except FontFamily, FontSize, Bold, Italic, and Small, whereas formatRuns
+	 * does not ignore any formatting.
+	 *
+	 * If the optional delegate is specified, it will be called with index = 0, then index = 1,
+	 * and so on. The delegate should return an index to split the ranges at. When there are no
+	 * more indexes to split the ranges at, the delegate should return -1. It is a way of
+	 * giving an array of indexes to split at without allocating an array.
+	 *
+	 * Example:
+	 * -----
+	 * foreach(start, length, format; textLayout.formatRuns) {
+	 *     // code goes here
+	 * }
+	 * -----
+	 */
+	FormatRunsIter formatRuns(int delegate(uint index) splitter = null) {
+		FormatRunsIter iter;
+		iter.owner = this;
+		iter.splitter = splitter;
+		return iter;
+	}
+
+	/// ditto
+	FormatRunsIter fontFormatRuns(int delegate(uint index) splitter = null) {
+		FormatRunsIter iter;
+		iter.owner = this;
+		iter.filter = [FormatType.FontFamily,
+		               FormatType.FontSize,
+		               FormatType.Bold,
+		               FormatType.Italic,
+		               FormatType.Small];
+		iter.splitter = splitter;
+		return iter;
 	}
 
 	//{{{ character formatting
@@ -423,5 +545,49 @@ unittest {
 	assert(t.formatting[0].index == 18);
 	t.setUnderline(LineStyle.None, 4, 20); // "are you doing today?"
 	assert(t.formatting.count == 0);
+}
+unittest {
+	auto t = new TextLayout("Arial", 14);
+	t.text = "The computer is black.";
+	int[][] runs = [[0, 22]];
+	int delegate(uint index) splitter;
+	void checkRuns() {
+		int i = 0;
+		foreach(s, l, f; t.formatRuns(splitter)) {
+			assert(runs[i][0] == s && runs[i][1] == l);
+			i++;
+		}
+	}
+	// no formatting or splitter
+	checkRuns();
+
+	// with a splitter but no formatting
+	splitter = delegate int(uint i) { return [0, -1][i]; };
+	checkRuns();
+	splitter = delegate int(uint i) { return [22, -1][i]; };
+	checkRuns();
+	splitter = delegate int(uint i) { return [10, 15, -1][i]; };
+	runs = [[0, 10], [10, 5], [15, 7]];
+	checkRuns();
+	splitter = null;
+
+	// with formatting but no splitter
+	t.setFontFamily("Tahoma", 4, 8);  // "computer"
+	runs = [[0, 4], [4, 8], [12, 10]];
+	checkRuns();
+
+	t.setUnderline(LineStyle.Single, 12, 3);  // " is"
+	runs = [[0, 4], [4, 8], [12, 3], [15,7]];
+	checkRuns();  // test two FormatChanges at the same index
+
+	t.setUnderline(LineStyle.Double, 0, 22);
+	runs = [[0, 4], [4, 8], [12, 10]];
+	checkRuns();  // test a FormatChange at beginning and at end
+
+	splitter = delegate int(uint i) { return [2, 4, 21, -1][i]; };
+	runs = [[0, 2], [2, 2], [4, 8], [12, 9], [21, 1]];
+	checkRuns();  // test a split in middle of a format run and at the same index as a format run
+
+	// TODO: test fontFormatRuns
 }
 
