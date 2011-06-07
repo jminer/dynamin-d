@@ -748,6 +748,10 @@ HDC CreateCompatibleDC(HDC hdc);
 
 BOOL DeleteDC(HDC hdc);
 
+int SaveDC(HDC hdc);
+
+BOOL RestoreDC(HDC hdc, int nSavedDC);
+
 HGDIOBJ SelectObject(HDC hdc, HGDIOBJ hObject);
 
 BOOL DeleteObject(HGDIOBJ hObject);
@@ -789,6 +793,15 @@ int EnumFontFamiliesExW(
 	FONTENUMPROCW lpProc, LPARAM lParam, DWORD dwFlags);
 
 alias int function(ENUMLOGFONTEX*, TEXTMETRIC*, DWORD, LPARAM) FONTENUMPROCW;
+
+HFONT CreateFontW(
+	int cHeight, int cWidth, int cEscapement, int cOrientation, int cWeight, DWORD bItalic,
+	DWORD bUnderline, DWORD bStrikeOut, DWORD iCharSet, DWORD iOutPrecision, DWORD iClipPrecision,
+	DWORD iQuality, DWORD iPitchAndFamily, LPCWSTR pszFaceName);
+
+HFONT CreateFontIndirectW(LOGFONTW* lplf);
+
+BOOL TextOutW(HDC hdc, int x, int y, LPCWSTR lpString, int c);
 //}}}
 
 //{{{ message functions
@@ -1592,6 +1605,9 @@ alias SendMessageW             SendMessage;
 alias LoadImageW               LoadImage;
 alias GetObjectW               GetObject;
 alias EnumFontFamiliesExW      EnumFontFamiliesEx;
+alias CreateFontW              CreateFont;
+alias CreateFontIndirectW      CreateFontIndirect;
+alias TextOutW                 TextOut;
 alias SystemParametersInfoW    SystemParametersInfo;
 alias GetVersionExW            GetVersionEx;
 alias GetModuleHandleW         GetModuleHandle;
