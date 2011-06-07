@@ -69,6 +69,23 @@ string ToString(ulong num, uint base = 10) {
 	return str;
 }
 */
+
+// TODO: move to encoding.d
+/**
+  * Returns true if the specified code unit is a high surrogate, in the range of 0xD800 to 0xDBFF.
+  * A high surrogate comes before a low surrogate in a surrogate pair.
+  */
+bool isHighSurrogate(wchar c) {
+	return c >= 0xD800 && c <= 0xDBFF;
+}
+/**
+ * Returns true if the specified code unit is a low surrogate, in the range of 0xDC00 to 0xDFFF.
+ * A low surrogate comes after a high surrogate in a surrogate pair.
+ */
+bool isLowSurrogate(wchar c) {
+	return c >= 0xDC00 && c <= 0xDFFF;
+}
+
 Layout!(char) formatter;
 static this() {
 	formatter = new Layout!(char);
