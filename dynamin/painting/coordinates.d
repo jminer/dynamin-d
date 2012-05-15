@@ -31,7 +31,7 @@ import dynamin.core.math;
 ///
 struct Point {
 private:
-	float _x = 0, _y = 0;
+	float[2] _values = [0, 0];
 public:
 	///
 	static Point opCall() {
@@ -46,13 +46,13 @@ public:
 		return pt;
 	}
 	///
-	float x() { return _x; }
+	float x() { return _values[0]; }
 	///
-	void x(float f) { _x = f; }
+	void x(float f) { _values[0] = f; }
 	///
-	float y() { return _y; }
+	float y() { return _values[1]; }
 	///
-	void y(float f) { _y = f; }
+	void y(float f) { _values[1] = f; }
 	///
 	Point opNeg() {
 		Point pt2;
@@ -91,7 +91,7 @@ public:
 ///
 struct Size {
 private:
-	float _width = 0, _height = 0;
+	float[2] _values = [0, 0];
 public:
 	///
 	static Size opCall() {
@@ -101,18 +101,18 @@ public:
 	///
 	static Size opCall(float width, float height) {
 		Size size;
-		size._width  = width;  // TODO: underscores for CTFE--remove with D2
-		size._height = height;
+		size.width = width;
+		size.height = height;
 		return size;
 	}
 	///
-	float width() { return _width; }
+	float width() { return _values[0]; }
 	///
-	void width(float f) { _width = f; }
+	void width(float f) { _values[0] = f; }
 	///
-	float height() { return _height; }
+	float height() { return _values[1]; }
 	///
-	void height(float f) { _height = f; }
+	void height(float f) { _values[1] = f; }
 	///
 	Size opAdd(Size size) {
 		Size size2;
@@ -149,7 +149,7 @@ public:
 ///
 struct Rect {
 private:
-	float _x = 0, _y = 0, _width = 0, _height = 0;
+	float[4] _values = [0, 0, 0, 0];
 public:
 	static Rect opCall() {
 		Rect rect;
@@ -164,21 +164,21 @@ public:
 		return rect;
 	}
 	///
-	float x() { return _x; }
+	float x() { return _values[0]; }
 	///
-	void x(float f) { _x = f; }
+	void x(float f) { _values[0] = f; }
 	///
-	float y() { return _y; }
+	float y() { return _values[1]; }
 	///
-	void y(float f) { _y = f; }
+	void y(float f) { _values[1] = f; }
 	///
-	float width() { return _width; }
+	float width() { return _values[2]; }
 	///
-	void width(float f) { _width = f; }
+	void width(float f) { _values[2] = f; }
 	///
-	float height() { return _height; }
+	float height() { return _values[3]; }
 	///
-	void height(float f) { _height = f; }
+	void height(float f) { _values[3] = f; }
 	///
 	float right() { return x + width; }
 	///
@@ -299,7 +299,7 @@ unittest {
 ///
 struct BorderSize {
 private:
-	float _left = 0, _top = 0, _right = 0, _bottom = 0;
+	float[4] _values = [0, 0, 0, 0];
 public:
 	static BorderSize opCall() {
 		BorderSize border;
@@ -314,21 +314,21 @@ public:
 		return border;
 	}
 	///
-	float left() { return _left; }
+	float left() { return _values[0]; }
 	///
-	void left(float f) { _left = f; }
+	void left(float f) { _values[0] = f; }
 	///
-	float top() { return _top; }
+	float top() { return _values[1]; }
 	///
-	void top(float f) { _top = f; }
+	void top(float f) { _values[1] = f; }
 	///
-	float right() { return _right; }
+	float right() { return _values[2]; }
 	///
-	void right(float f) { _right = f; }
+	void right(float f) { _values[2] = f; }
 	///
-	float bottom() { return _bottom; }
+	float bottom() { return _values[3]; }
 	///
-	void bottom(float f) { _bottom = f; }
+	void bottom(float f) { _values[3] = f; }
 	///
 	BorderSize opAdd(BorderSize border) {
 		BorderSize border2;

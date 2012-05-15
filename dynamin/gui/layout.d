@@ -263,7 +263,7 @@ struct LayoutGroup {
 		int semiColumns = 0; int semiRows = 0;
 		// the sum of fully elastic width/height, not including semi
 		real elasticWidth = 0, elasticHeight = 0;
-		Size bestSize = Size(0, 0);
+		Size bestSize;
 	}
 	//{{{ getTableSizes()
 	// Fills in the passed in array with the column and row sizes, as well
