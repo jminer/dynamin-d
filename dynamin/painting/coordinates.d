@@ -182,7 +182,11 @@ public:
 	///
 	float right() { return x + width; }
 	///
+	void right(float f) { width = f - x; }
+	///
 	float bottom() { return y + height; }
+	///
+	void bottom(float f) { height = f - y; }
 	///
 	Rect opAdd(Rect rect) {
 		Rect rect2;
