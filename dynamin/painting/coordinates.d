@@ -41,8 +41,8 @@ public:
 	///
 	static Point opCall(float x, float y) {
 		Point pt;
-		pt._x = x;
-		pt._y = y;
+		pt.x = x;
+		pt.y = y;
 		return pt;
 	}
 	///
@@ -56,35 +56,35 @@ public:
 	///
 	Point opNeg() {
 		Point pt2;
-		pt2._x = -_x;
-		pt2._y = -_y;
+		pt2.x = -x;
+		pt2.y = -y;
 		return pt2;
 	}
 	///
 	Point opAdd(Point pt) {
 		Point pt2;
-		pt2._x = _x + pt._x;
-		pt2._y = _y + pt._y;
+		pt2.x = x + pt.x;
+		pt2.y = y + pt.y;
 		return pt2;
 	}
 	///
 	Point opSub(Point pt) {
 		Point pt2;
-		pt2._x = _x - pt._x;
-		pt2._y = _y - pt._y;
+		pt2.x = x - pt.x;
+		pt2.y = y - pt.y;
 		return pt2;
 	}
 	///
 	Rect opAdd(Size size) {
 		Rect rect;
-		rect._x = _x;
-		rect._y = _y;
-		rect._width = size._width;
-		rect._height = size._height;
+		rect.x = x;
+		rect.y = y;
+		rect.width  = size.width;
+		rect.height = size.height;
 		return rect;
 	}
 	string toString() {
-		return format("Point [x={}, y={}]", _x, _y);
+		return format("Point [x={}, y={}]", x, y);
 	}
 }
 
@@ -101,7 +101,7 @@ public:
 	///
 	static Size opCall(float width, float height) {
 		Size size;
-		size._width = width;
+		size._width  = width;  // TODO: underscores for CTFE--remove with D2
 		size._height = height;
 		return size;
 	}
@@ -116,33 +116,33 @@ public:
 	///
 	Size opAdd(Size size) {
 		Size size2;
-		size2._width = _width + size._width;
-		size2._height = _height + size._height;
+		size2.width  = width  + size.width;
+		size2.height = height + size.height;
 		return size2;
 	}
 	///
 	Size opSub(Size size) {
 		Size size2;
-		size2._width = _width - size._width;
-		size2._height = _height - size._height;
+		size2.width  = width  - size.width;
+		size2.height = height - size.height;
 		return size2;
 	}
 	///
 	Size opAdd(BorderSize border) {
 		Size size2;
-		size2._width = _width + border._left + border._right;
-		size2._height = _height + border._top + border._bottom;
+		size2.width  = width  + border.left + border.right;
+		size2.height = height + border.top  + border.bottom;
 		return size2;
 	}
 	///
 	Size opSub(BorderSize border) {
 		Size size2;
-		size2._width = _width - border._left - border._right;
-		size2._height = _height - border._top - border._bottom;
+		size2.width  = width  - border.left - border.right;
+		size2.height = height - border.top  - border.bottom;
 		return size2;
 	}
 	string toString() {
-		return format("Size [width={}, height={}]", _width, _height);
+		return format("Size [width={}, height={}]", width, height);
 	}
 }
 
@@ -157,10 +157,10 @@ public:
 	}
 	static Rect opCall(float x, float y, float width, float height) {
 		Rect rect;
-		rect._x = x;
-		rect._y = y;
-		rect._width = width;
-		rect._height = height;
+		rect.x = x;
+		rect.y = y;
+		rect.width  = width;
+		rect.height = height;
 		return rect;
 	}
 	///
@@ -180,97 +180,97 @@ public:
 	///
 	void height(float f) { _height = f; }
 	///
-	float right() { return _x+_width; }
+	float right() { return x + width; }
 	///
-	float bottom() { return _y+_height; }
+	float bottom() { return y + height; }
 	///
 	Rect opAdd(Rect rect) {
 		Rect rect2;
-		rect2._x = _x + rect._x;
-		rect2._y = _y + rect._y;
-		rect2._width = _width + rect._width;
-		rect2._height = _height + rect._height;
+		rect2.x = x + rect.x;
+		rect2.y = y + rect.y;
+		rect2.width  = width  + rect.width;
+		rect2.height = height + rect.height;
 		return rect2;
 	}
 	///
 	Rect opSub(Rect rect) {
 		Rect rect2;
-		rect2._x = _x - rect._x;
-		rect2._y = _y - rect._y;
-		rect2._width = _width - rect._width;
-		rect2._height = _height - rect._height;
+		rect2.x = x - rect.x;
+		rect2.y = y - rect.y;
+		rect2.width  = width  - rect.width;
+		rect2.height = height - rect.height;
 		return rect2;
 	}
 	///
 	Rect opAdd(Point pt) {
 		Rect rect2;
-		rect2._x = _x + pt._x;
-		rect2._y = _y + pt._y;
-		rect2._width = _width;
-		rect2._height = _height;
+		rect2.x = x + pt.x;
+		rect2.y = y + pt.y;
+		rect2.width  = width;
+		rect2.height = height;
 		return rect2;
 	}
 	///
 	Rect opSub(Point pt) {
 		Rect rect2;
-		rect2._x = _x - pt._x;
-		rect2._y = _y - pt._y;
-		rect2._width = _width;
-		rect2._height = _height;
+		rect2.x = x - pt.x;
+		rect2.y = y - pt.y;
+		rect2.width  = width;
+		rect2.height = height;
 		return rect2;
 	}
 	///
 	Rect opAdd(Size size) {
 		Rect rect2;
-		rect2._x = _x;
-		rect2._y = _y;
-		rect2._width = _width + size._width;
-		rect2._height = _height + size._height;
+		rect2.x = x;
+		rect2.y = y;
+		rect2.width  = width  + size.width;
+		rect2.height = height + size.height;
 		return rect2;
 	}
 	///
 	Rect opSub(Size size) {
 		Rect rect2;
-		rect2._x = _x;
-		rect2._y = _y;
-		rect2._width = _width - size._width;
-		rect2._height = _height - size._height;
+		rect2.x = x;
+		rect2.y = y;
+		rect2.width  = width  - size.width;
+		rect2.height = height - size.height;
 		return rect2;
 	}
 	///
 	Rect opAdd(BorderSize border) {
 		Rect rect2;
-		rect2._x = _x - border._left;
-		rect2._y = _y - border._top;
-		rect2._width = _width + border._left + border._right;
-		rect2._height = _height + border._top + border._bottom;
+		rect2.x = x - border.left;
+		rect2.y = y - border.top;
+		rect2.width  = width  + border.left + border.right;
+		rect2.height = height + border.top  + border.bottom;
 		return rect2;
 	}
 	///
 	Rect opSub(BorderSize border) {
 		Rect rect2;
-		rect2._x = _x + border._left;
-		rect2._y = _y + border._top;
-		rect2._width = _width - border._left - border._right;
-		rect2._height = _height - border._top - border._bottom;
+		rect2.x = x + border.left;
+		rect2.y = y + border.top;
+		rect2.width  = width  - border.left - border.right;
+		rect2.height = height - border.top  - border.bottom;
 		return rect2;
 	}
 	bool contains(Point pt) {
 		return pt.x >= x && pt.y >= y && pt.x < right && pt.y < bottom;
 	}
 	Rect getUnion(Rect rect) {
-		auto x2 = min(_x, rect._x);
-		auto y2 = min(_y, rect._y);
+		auto x2 = min(x, rect.x);
+		auto y2 = min(y, rect.y);
 		Rect rect2;
-		rect2._width = max(_x+_width, rect._x+rect._width)-x2;
-		rect2._height = max(_y+_height, rect._y+rect._height)-y2;
-		rect2._x = x2;
-		rect2._y = y2;
+		rect2.width  = max(x + width,  rect.x + rect.width ) - x2;
+		rect2.height = max(y + height, rect.y + rect.height) - y2;
+		rect2.x = x2;
+		rect2.y = y2;
 		return rect2;
 	}
 	string toString() {
 		return format("Rect [x={}, y={}, width={}, height={}]",
-			_x, _y, _width, _height);
+			x, y, width, height);
 	}
 }
 unittest {
@@ -286,12 +286,12 @@ public:
 		BorderSize border;
 		return border;
 	}
-	static BorderSize opCall(float _left, float _top, float _right, float _bottom) {
+	static BorderSize opCall(float left, float top, float right, float bottom) {
 		BorderSize border;
-		border._left = _left;
-		border._top = _top;
-		border._right = _right;
-		border._bottom = _bottom;
+		border.left = left;
+		border.top = top;
+		border.right = right;
+		border.bottom = bottom;
 		return border;
 	}
 	///
@@ -313,24 +313,24 @@ public:
 	///
 	BorderSize opAdd(BorderSize border) {
 		BorderSize border2;
-		border2._left = _left + border._left;
-		border2._right = _right + border._right;
-		border2._top = _top + border._top;
-		border2._bottom = _bottom + border._bottom;
+		border2.left = left + border.left;
+		border2.right = right + border.right;
+		border2.top = top + border.top;
+		border2.bottom = bottom + border.bottom;
 		return border2;
 	}
 	///
 	BorderSize opSub(BorderSize border) {
 		BorderSize border2;
-		border2._left = _left - border._left;
-		border2._right = _right - border._right;
-		border2._top = _top - border._top;
-		border2._bottom = _bottom - border._bottom;
+		border2.left = left - border.left;
+		border2.right = right - border.right;
+		border2.top = top - border.top;
+		border2.bottom = bottom - border.bottom;
 		return border2;
 	}
 	string toString() {
-		return format("BorderSize [_left={}, _top={}, _right={}, _bottom={}]",
-			_left, _top, _right, _bottom);
+		return format("BorderSize [left={}, top={}, right={}, bottom={}]",
+			left, top, right, bottom);
 	}
 }
 
