@@ -278,7 +278,22 @@ public:
 	}
 }
 unittest {
-	assert(Rect(20, 2, 70, 5).getUnion(Rect(22, 3, 70, 4)) == Rect(20, 2, 72, 5));
+	assert(Rect(2, 3, 5, 9).right == 7);
+	assert(Rect(2, 3, 5, 9).bottom == 12);
+	// same
+	assert(Rect(1, 2, 3, 3).getUnion(Rect(1, 2, 3, 3)) == Rect(1, 2, 3, 3));
+	// second inside first
+	assert(Rect(1, 2, 5, 7.5).getUnion(Rect(3, 4, 1.5, 2)) == Rect(1, 2, 5, 7.5));
+	// second outside first
+	assert(Rect(1, 2, 5, 7.5).getUnion(Rect(0.5, 0.7, 10, 11)) == Rect(0.5, 0.7, 10, 11));
+	// second up left of first
+	assert(Rect(2, 3, 6, 8).getUnion(Rect(1, 2, 5, 6)) == Rect(1, 2, 7, 9));
+	// second down right of first
+	assert(Rect(2, 3, 6, 8).getUnion(Rect(5, 4, 7, 9)) == Rect(2, 3, 10, 10));
+	// not overlapping
+	assert(Rect(1, 2, 1, 3).getUnion(Rect(20, 30, 5, 5)) == Rect(1, 2, 24, 33));
+	// negative
+	assert(Rect(-4, -5, 2, 3).getUnion(Rect(-10, -2, 1, 5)) == Rect(-10, -5, 8, 8));
 }
 
 ///
