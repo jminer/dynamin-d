@@ -15,7 +15,7 @@
  * The Original Code is the Dynamin library.
  *
  * The Initial Developer of the Original Code is Jordan Miner.
- * Portions created by the Initial Developer are Copyright (C) 2006-2009
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -53,6 +53,10 @@ public:
 	float y() { return _values[1]; }
 	///
 	void y(float f) { _values[1] = f; }
+	///
+	float opIndex(int index) { return _values[index]; }
+	///
+	float opIndexAssign(float f, int index) { return _values[index] = f; }
 	///
 	Point opNeg() {
 		Point pt2;
@@ -113,6 +117,10 @@ public:
 	float height() { return _values[1]; }
 	///
 	void height(float f) { _values[1] = f; }
+	///
+	float opIndex(int index) { return _values[index]; }
+	///
+	float opIndexAssign(float f, int index) { return _values[index] = f; }
 	///
 	Size opAdd(Size size) {
 		Size size2;
@@ -187,6 +195,10 @@ public:
 	float bottom() { return y + height; }
 	///
 	void bottom(float f) { height = f - y; }
+	///
+	float opIndex(int index) { return _values[index]; }
+	///
+	float opIndexAssign(float f, int index) { return _values[index] = f; }
 	///
 	Rect opAdd(Rect rect) {
 		Rect rect2;
@@ -330,6 +342,10 @@ public:
 	///
 	void bottom(float f) { _values[3] = f; }
 	///
+	float opIndex(int index) { return _values[index]; }
+	///
+	float opIndexAssign(float f, int index) { return _values[index] = f; }
+	///
 	BorderSize opAdd(BorderSize border) {
 		BorderSize border2;
 		border2.left = left + border.left;
@@ -354,11 +370,36 @@ public:
 }
 
 unittest {
-	Point pt = Point(7, 9);
+	Point pt;
+	Size sz;
+	Rect rect;
+	BorderSize border;
+
+	assert(pt.x == 0 && pt.y == 0);
+
+	pt = Point(7, 9);
 	assert(pt.x == 7);
 	assert(pt.y == 9);
-	Rect rect = pt + Size(15, 13);
+	rect = pt + Size(15, 13);
 	assert(rect == Rect(7, 9, 15, 13));
 	assert(Size(15, 10) + BorderSize(3, 5, 1, 7) == Size(19, 22));
+
+	pt = Point(1, 2);
+	assert(pt[0] == 1 && pt[1] == 2);
+	pt[0] = 13;
+	assert(pt[0] == 13);
+
+	sz = Size(20, 30);
+	assert(sz[0] == 20 && sz[1] == 30);
+	sz[1] = 35;
+	assert(sz[0] == 20 && sz[1] == 35);
+
+	rect = Rect(1, 2, 3, 4);
+	assert(rect[0] == 1 && rect[1] == 2 && rect[2] == 3 && rect[3] == 4);
+	rect[2] = 5;
+	assert(rect[2] == 5);
+
+	border = BorderSize(5, 6, 7, 8);
+	assert(border[0] == 5 && border[1] == 6 && border[2] == 7 && border[3] == 8);
 }
 
