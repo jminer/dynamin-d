@@ -36,14 +36,6 @@ public import tango.math.Math;
 
 //version = TextLayoutDebug;
 
-// TODO: move to array.d
-bool containsT(T)(T[] array, T item) {
-	foreach(T item2; array) {
-		if(item == item2)
-			return true;
-	}
-	return false;
-}
 template TextLayoutBackend() {
 	uint charToWcharIndex(uint index) {
 		uint wcharIndex = 0;

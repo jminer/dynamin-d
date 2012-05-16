@@ -418,7 +418,7 @@ public:
 		///
 		int opApply(int delegate(ref uint start, ref uint length, ref Format format) dg) {
 			bool inFilter(FormatType type) {
-				return filter.length == 0 || filter.containsT(type);
+				return filter.length == 0 || filter.contains(type);
 			}
 			with(owner) {
 				int result;

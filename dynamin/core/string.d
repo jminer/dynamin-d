@@ -30,11 +30,12 @@
  */
 module dynamin.core.string;
 
+public import dynamin.core.array;
+
 import tango.core.Exception;
 import tango.text.convert.Utf;
 import tango.text.convert.Layout;
 import tango.text.Unicode;
-import tango.text.Util;
 import dynamin.core.global;
 import dynamin.core.math;
 
@@ -162,36 +163,7 @@ int find(string str, string subStr, int start = 0) {
 			return i;
 	return -1;
 }
-/**
- * Tests whether or not the specified char is in the specified string.
- * Returns: true if the specified char is in the string and false otherwise
- * Examples:
- * -----
- * "Hello".contains('e') == true
- * "Hello".contains('a') == false
- * "".contains('e') == false
- * -----
- */
-bool contains(string str, char c) {
-	foreach(char c2; str) {
-		if(c == c2)
-			return true;
-	}
-	return false;
-}
-/// ditto
-bool contains(string str, dchar c) {
-	foreach(dchar c2; str) {
-		if(c == c2)
-			return true;
-	}
-	return false;
-}
-unittest {
-	assert("Hello".contains('e') == true);
-	assert("Hello".contains('a') == false);
-	assert("".contains('e') == false);
-}
+
 string remove(string str, int start, int count = 1) {
 	return str[0..start] ~ str[start+count..str.length];
 }
