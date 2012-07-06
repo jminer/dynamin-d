@@ -40,16 +40,16 @@ version(BigEndian) {
 		this.b = b/255.0;
 		this.a = a/255.0;
 	}
-	this(real r, real g, real b, real a = 1.0) {
+	this(double r, double g, double b, double a = 1.0) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
 		this.a = a;
 	}
-	private real getMin() {
+	private double getMin() {
 	}
-	private real getMax() {
-		real max = r;
+	private double getMax() {
+		double max = r;
 		if(g > max)
 			max = g;
 		if(b > max)
@@ -59,14 +59,14 @@ version(BigEndian) {
 	/**
 	 * From 0 to 360 degrees.
 	 */
-	real gethue() {
-		real min = min();
-		real max = max();
-		real delta = max - min;
+	double gethue() {
+		double min = min();
+		double max = max();
+		double delta = max - min;
 		if(max == 0)  // r = g = b = 0 = black
 			return 0;
 
-		real hue;
+		double hue;
 		if(r == max)
 			hue = (g - b) / delta;     // between yellow and magenta
 		else if(g == max)
@@ -79,9 +79,9 @@ version(BigEndian) {
 			hue += 360;
 
 	}
-	real getSaturation() {
+	double getSaturation() {
 	}
-	real getValue() {
+	double getValue() {
 		return getMax();
 	}
 	+/

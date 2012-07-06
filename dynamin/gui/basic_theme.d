@@ -137,7 +137,7 @@ class BasicTheme : Theme {
 		}
 	}
 
-	real ScrollBar_size() {
+	double ScrollBar_size() {
 		// TODO: all themes should get this from SystemGui.ScrollBarSize
 		return 18;
 	}

@@ -71,15 +71,15 @@ public:
 ///
 struct FontExtents {
 	///
-	real ascent;
+	double ascent;
 	///
-	real descent;
+	double descent;
 	///
-	real leading() { return height - ascent - descent; }
+	double leading() { return height - ascent - descent; }
 	///
-	real height;
+	double height;
 	///
-	real maxAdvance;
+	double maxAdvance;
 }
 
 //import lodepng = dynamin.lodepng.decode;
@@ -230,7 +230,7 @@ public:
 		assert(0);
 	}
 	///
-	void moveTo(real x, real y) {
+	void moveTo(double x, double y) {
 		cairo_move_to(cr, x, y);
 	}
 	/// ditto
@@ -238,7 +238,7 @@ public:
 		moveTo(pt.x, pt.y);
 	}
 	///
-	void lineTo(real x, real y) {
+	void lineTo(double x, double y) {
 		cairo_line_to(cr, x, y);
 	}
 	/// ditto
@@ -250,11 +250,11 @@ public:
 		curveTo(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y);
 	}
 	/// ditto
-	void curveTo(real x1, real y1, real x2, real y2, real x3, real y3) {
+	void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
 		cairo_curve_to(cr, x1, y1, x2, y2, x3, y3);
 	}
 	///
-	void relMoveTo(real x, real y) {
+	void relMoveTo(double x, double y) {
 		cairo_rel_move_to(cr, x, y);
 	}
 	/// ditto
@@ -262,7 +262,7 @@ public:
 		relMoveTo(pt.x, pt.y);
 	}
 	///
-	void relLineTo(real x, real y) {
+	void relLineTo(double x, double y) {
 		cairo_rel_line_to(cr, x, y);
 	}
 	/// ditto
@@ -274,7 +274,7 @@ public:
 		relCurveTo(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y);
 	}
 	/// ditto
-	void relCurveTo(real x1, real y1, real x2, real y2, real x3, real y3) {
+	void relCurveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
 		cairo_rel_curve_to(cr, x1, y1, x2, y2, x3, y3);
 	}
 	/**
@@ -288,15 +288,15 @@ public:
 	 * -----
 	 * $(IMAGE ../web/example_arc.png)
 	 */
-	void arc(Point ptc, real radius, real angle1, real angle2) {
+	void arc(Point ptc, double radius, double angle1, double angle2) {
 		arc(ptc.x, ptc.y, radius, angle1, angle2);
 	}
 	/// ditto
-	void arc(real xc, real yc, real radius, real angle1, real angle2) {
+	void arc(double xc, double yc, double radius, double angle1, double angle2) {
 		cairo_arc(cr, xc, yc, radius, angle1, angle2);
 	}
 	/// ditto
-	void arc(real xc, real yc, real xradius, real yradius, real angle1, real angle2) {
+	void arc(double xc, double yc, double xradius, double yradius, double angle1, double angle2) {
 		cairo_save(cr);
 		cairo_translate(cr, xc, yc);
 		cairo_scale(cr, xradius, yradius);
@@ -313,13 +313,13 @@ public:
 	 * -----
 	 * $(IMAGE ../web/example_ellipse.png)
 	 */
-	void ellipse(real xc, real yc, real radius) {
+	void ellipse(double xc, double yc, double radius) {
 		cairo_new_sub_path(cr);
 		cairo_arc(cr, xc, yc, radius, 0, Pi * 2);
 		cairo_close_path(cr);
 	}
 	/// ditto
-	void ellipse(real xc, real yc, real xradius, real yradius) {
+	void ellipse(double xc, double yc, double xradius, double yradius) {
 		cairo_new_sub_path(cr);
 		arc(xc, yc, xradius, yradius, 0, Pi * 2);
 		cairo_close_path(cr);
@@ -338,18 +338,18 @@ public:
 		rectangle(rect.x, rect.y, rect.width, rect.height);
 	}
 	/// ditto
-	void rectangle(real x, real y, real width, real height) {
+	void rectangle(double x, double y, double width, double height) {
 		cairo_rectangle(cr, x, y, width, height);
 	}
 	/**
 	 * Adds a rectangle with rounded corners as a sub-path--a line will
 	 * not connect it to the current point.
 	 */
-	void roundedRectangle(Rect rect, real radius) {
+	void roundedRectangle(Rect rect, double radius) {
 		roundedRectangle(rect.x, rect.y, rect.width, rect.height, radius);
 	}
 	/// ditto
-	void roundedRectangle(real x, real y, real width, real height, real radius) {
+	void roundedRectangle(double x, double y, double width, double height, double radius) {
 		alias radius r;
 		cairo_new_sub_path(cr);
 		arc(x+r,       y+r,        r, Pi,     3*Pi/2);
@@ -419,11 +419,11 @@ public:
 	 * -----
 	 * $(IMAGE ../web/example_line_width.png)
 	 */
-	real lineWidth() {
+	double lineWidth() {
 		return cairo_get_line_width(cr);
 	}
 	/// ditto
-	void lineWidth(real width) {
+	void lineWidth(double width) {
 		cairo_set_line_width(cr, width);
 	}
 	/**
@@ -444,7 +444,7 @@ public:
 	 * Sets the font size to the specified size in user space units, not
 	 * in points.
 	 */
-	void fontSize(real size) {
+	void fontSize(double size) {
 		assert(size != 0);
 		cairo_set_font_size(cr, size);
 	}
@@ -457,7 +457,7 @@ public:
 		cairo_select_font_face(cr, toCharPtr(f.family), f.italic, f.bold);
 	}
 	// TODO: if text is all ascii, do fast path with no uniscribe
-	void drawText(string text, real x, real y) {
+	void drawText(string text, double x, double y) {
 		auto extents = getFontExtents;
 		cairo_font_extents_t fextents;
 		cairo_font_extents(cr, &fextents);
@@ -508,15 +508,15 @@ public:
 		translate(pt.x, pt.y);
 	}
 	/// ditto
-	void translate(real x, real y) {
+	void translate(double x, double y) {
 		cairo_translate(cr, x, y);
 	}
 	///
-	void scale(real x, real y) {
+	void scale(double x, double y) {
 		cairo_scale(cr, x, y);
 	}
 	///
-	void rotate(real angle) {
+	void rotate(double angle) {
 		cairo_rotate(cr, angle);
 	}
 	///
@@ -530,11 +530,8 @@ public:
 	/**
 	 * Sets the dash pattern to be used when lines are drawn.
 	 */
-	void setDash(real[] dashes, real offset) {
-		auto cdashes = new double[dashes.length];
-		foreach(int i, real r; dashes)
-			cdashes[i] = r;
-		cairo_set_dash(cr, cdashes.ptr, cdashes.length, offset);
+	void setDash(double[] dashes, double offset) {
+		cairo_set_dash(cr, dashes.ptr, dashes.length, offset);
 	}
 	/**
 	 * Gets or sets the fill rule the current fill rule.
@@ -570,14 +567,14 @@ public:
 		cairo_set_source_rgba(cr, c.R/255.0, c.G/255.0, c.B/255.0, c.A/255.0);
 	}
 	//void source(Pattern s) {}
-	//void setSource(Surface s, real x = 0, real y = 0) {}
+	//void setSource(Surface s, double x = 0, double y = 0) {}
 	// TODO: remove this function and have users do:
 	// g.setSource(img, x, y);
 	// g.paint();
 	// ???
-	// paintSource(Image, real, real) ?
+	// paintSource(Image, double, double) ?
 	/// Draws the specified image unscaled.
-	void drawImage(Image image, real x, real y) {
+	void drawImage(Image image, double x, double y) {
 		auto surface= cairo_image_surface_create_for_data(cast(char*)image.data,
 			CAIRO_FORMAT_ARGB32, image.width, image.height, image.width*4);
 		save();
@@ -587,5 +584,5 @@ public:
 		cairo_surface_destroy(surface);
 	}
 	// Draws the specified image scaled to the specified width and height.
-	//void drawImage(Image image, real x, real y, real width, real height);
+	//void drawImage(Image image, double x, double y, double width, double height);
 }

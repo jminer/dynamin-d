@@ -69,7 +69,7 @@ const char PathSeparatorChar = FileConst.SystemPathChar;
  * floatsEqual(3.14, 3.151, 0.01) == false
  * -----
  */
-bool floatsEqual(real num1, real num2, real epsilon) {
+bool floatsEqual(double num1, double num2, double epsilon) {
 	return abs(num1 - num2) <= epsilon;
 }
 unittest {

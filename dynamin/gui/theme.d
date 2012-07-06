@@ -21,7 +21,7 @@ import tango.stdc.stdlib;
  * left and top are drawn with the first color, and the right and
  * bottom are drawn with the second color.
  */
-void draw3dRectangle(Graphics g, real x, real y, real width, real height,
+void draw3dRectangle(Graphics g, double x, double y, double width, double height,
 	Color c1, Color c2) {
 	g.lineWidth = 1;
 
@@ -38,7 +38,7 @@ void draw3dRectangle(Graphics g, real x, real y, real width, real height,
 	g.stroke();
 }
 
-void drawCheckerboard(Graphics g, real x, real y, real width, real height,
+void drawCheckerboard(Graphics g, double x, double y, double width, double height,
 	Color c1, Color c2, int squareSize = 1) {
 	drawCheckerboard(g, Rect(x, y, width, height), c1, c2, squareSize);
 }
@@ -116,7 +116,7 @@ static {
 	void RadioButton_paint(CheckBox c, Graphics g);
 	void ScrollBarTrack_paint(ScrollBarTrack c, Graphics g);
 	void ScrollBarThumb_paint(ScrollBarThumb c, Graphics g);
-	real ScrollBar_size();
+	double ScrollBar_size();
 	void ArrowButton_paint(ArrowButton c, Graphics g);
 	BorderSize Scrollable_borderSize(Scrollable c);
 	void Scrollable_paint(Scrollable c, Graphics g);

@@ -126,8 +126,8 @@ protected:
 	ScrollBar _hScrollBar, _vScrollBar;
 	ScrollableClipper _clipper;
 
-	real _sbSize;
-	real _leftControlsWidth, _topControlsHeight;
+	double _sbSize;
+	double _leftControlsWidth, _topControlsHeight;
 	// the area the content could be shown if no scroll bars
 	Rect _availableRect;
 	// the area the content is actually visible, after scroll bars are
@@ -273,14 +273,14 @@ public:
 	 * Gets the combined width of all the controls docked on the left side of
 	 * this scrollable.
 	 */
-	real leftControlsWidth() {
+	double leftControlsWidth() {
 		return _leftControlsWidth;
 	}
 	/**
 	 * Gets the combined height of all the controls docked on the top side of
 	 * this scrollable.
 	 */
-	real topControlsHeight() {
+	double topControlsHeight() {
 		return _topControlsHeight;
 	}
 

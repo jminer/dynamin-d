@@ -45,7 +45,7 @@ class MouseEventArgs : StopEventArgs {
 	MouseButton _button;
 public:
 	///
-	this(real x, real y, MouseButton b) {
+	this(double x, double y, MouseButton b) {
 		_location = Point(x, y);
 		_button = b;
 	}
@@ -54,9 +54,9 @@ public:
 	///
 	void location(Point pt) { _location = pt; }
 	///
-	real x() { return _location.x; }
+	double x() { return _location.x; }
 	///
-	real y() { return _location.y; }
+	double y() { return _location.y; }
 	///
 	MouseButton button() { return _button; }
 	string toString() {

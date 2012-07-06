@@ -47,7 +47,7 @@ class SilverTheme : Theme {
 	private Color _black = Color(0, 0, 0);
 	private Color _white = Color(255, 255, 255);
 	//{{{ common
-	void drawButtonBack(Graphics g, real x, real y, real width, real height, ButtonState state) {
+	void drawButtonBack(Graphics g, double x, double y, double width, double height, ButtonState state) {
 		with(g) {
 			if(state == ButtonState.Normal)
 				source = _silver;
@@ -157,7 +157,7 @@ class SilverTheme : Theme {
 		}
 	}
 
-	real ScrollBar_size() {
+	double ScrollBar_size() {
 		// TODO: all themes should get this from SystemGui.ScrollBarSize
 		return 18;
 	}

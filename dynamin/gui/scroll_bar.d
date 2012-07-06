@@ -49,10 +49,10 @@ protected:
 	ScrollBarThumb _thumb;
 	ArrowButton _button1, _button2;
 	int _value = 0, _maxValue = 100;
-	real _visibleValue = 0.5;
-	real _thumbDragLoc = -1;
+	double _visibleValue = 0.5;
+	double _thumbDragLoc = -1;
 	// stores the location of the thumb as a percentage of the track
-	real _thumbPos;
+	double _thumbPos;
 	this() {
 		valueChanged.setUp(&whenValueChanged);
 
@@ -96,15 +96,15 @@ protected:
 	void whenButton2MouseDown(MouseEventArgs e) {
 		value = value + 10;
 	}
-	void putControl(Control c, real location, real size);
-	real breadth();
-	real length();
+	void putControl(Control c, double location, double size);
+	double breadth();
+	double length();
 	override void whenResized(EventArgs e) {
 		updateControls();
 	}
-	void layoutControls(Control[] controls, real[] sizes) {
+	void layoutControls(Control[] controls, double[] sizes) {
 		assert(controls.length == sizes.length);
-		real loc = 0;
+		double loc = 0;
 		for(int i = 0; i < controls.length; ++i) {
 			putControl(controls[i], loc, sizes[i]);
 			loc += sizes[i];
@@ -118,7 +118,7 @@ protected:
 		}
 		// if thumbPos does not represent the current value
 		if(cast(int)(_thumbPos * _maxValue) != _value)
-			_thumbPos = _value / cast(real)_maxValue;
+			_thumbPos = _value / cast(double)_maxValue;
 		auto totalSz = length;
 		auto buttonSz = breadth;
 		auto totalTrackSz = totalSz - buttonSz*2;
@@ -160,9 +160,9 @@ public:
 			return Size(100, Theme.current.ScrollBar_size());
 	}
 	///
-	real thumbLocation();
+	double thumbLocation();
 	/// ditto
-	void thumbLocation(real loc) {
+	void thumbLocation(double loc) {
 		// TODO: return if no thumb (too small for one)
 		if(loc < trackStart)
 			loc = trackStart;
@@ -176,13 +176,13 @@ public:
 		updateControls();
 	}
 	///
-	real thumbSize();
+	double thumbSize();
 	///
-	real trackStart();
+	double trackStart();
 	///
-	real trackEnd();
+	double trackEnd();
 	///
-	real trackSize() { return trackEnd-trackStart; }
+	double trackSize() { return trackEnd-trackStart; }
 	///
 	int value() { return _value; }
 	/// ditto
@@ -218,9 +218,9 @@ public:
 	 * minimum size, and a value of 1 makes the thumb take up all of the track.
 	 * The default is 0.5.
 	 */
-	real visibleValue() { return _visibleValue; }
+	double visibleValue() { return _visibleValue; }
 	/// ditto
-	void visibleValue(real val) {
+	void visibleValue(double val) {
 		if(val < 0)
 			val = 0;
 		else if(val > 1)
@@ -245,17 +245,17 @@ protected:
 		_thumb.state = ButtonState.Pressed;
 		thumbLocation = e.location.x + _thumb.location.x - _thumbDragLoc;
 	}
-	void putControl(Control c, real location, real size) {
+	void putControl(Control c, double location, double size) {
 		c.location = [location, 0.0];
 		c.size = [size, height];
 	}
-	real breadth() { return height; }
-	real length() { return width; }
+	double breadth() { return height; }
+	double length() { return width; }
 	alias ScrollBar.thumbLocation thumbLocation;
-	real thumbLocation() { return _thumb.x; }
-	real thumbSize() { return _thumb.width; }
-	real trackStart() { return _track1.x; }
-	real trackEnd() { return _track2.x+_track2.width; }
+	double thumbLocation() { return _thumb.x; }
+	double thumbSize() { return _thumb.width; }
+	double trackStart() { return _track1.x; }
+	double trackEnd() { return _track2.x+_track2.width; }
 }
 ///
 class VScrollBar : ScrollBar {
@@ -271,16 +271,16 @@ protected:
 		_thumb.state = ButtonState.Pressed;
 		thumbLocation = e.location.y + _thumb.location.y - _thumbDragLoc;
 	}
-	void putControl(Control c, real location, real size) {
+	void putControl(Control c, double location, double size) {
 		c.location = [0.0, location];
 		c.size = [width, size];
 	}
-	real breadth() { return width; }
-	real length() { return height; }
+	double breadth() { return width; }
+	double length() { return height; }
 	alias ScrollBar.thumbLocation thumbLocation;
-	real thumbLocation() { return _thumb.y; }
-	real thumbSize() { return _thumb.height; }
-	real trackStart() { return _track1.y; }
-	real trackEnd() { return _track2.y+_track2.height; }
+	double thumbLocation() { return _thumb.y; }
+	double thumbSize() { return _thumb.height; }
+	double trackStart() { return _track1.y; }
+	double trackEnd() { return _track2.y+_track2.height; }
 }
 

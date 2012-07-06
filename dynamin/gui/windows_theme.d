@@ -162,7 +162,7 @@ version(Windows) {
 	}
 
 	/// draws a classic check, which is 7 wide and 7 high
-	void drawCheck(Graphics g, real x, real y) {
+	void drawCheck(Graphics g, double x, double y) {
 		g.source = getColor(COLOR_WINDOWTEXT);
 		auto checkYs = [2, 3, 4, 3, 2, 1, 0];
 		foreach(i, cy; checkYs) {
@@ -172,7 +172,7 @@ version(Windows) {
 		}
 	}
 	/// draws a dotted focus rectangle
-	void drawFocus(Graphics g, int colorIndex, real x, real y, real w, real h) {
+	void drawFocus(Graphics g, int colorIndex, double x, double y, double w, double h) {
 		g.lineWidth = 1;
 		g.source = getColor(colorIndex);
 		g.setDash([1, 1], 0.5);
@@ -405,7 +405,7 @@ version(Windows) {
 			getColor(COLOR_3DHIGHLIGHT), getColor(COLOR_3DSHADOW));
 	}
 
-	real ScrollBar_size() {
+	double ScrollBar_size() {
 		// TODO: all themes should get this from SystemGui.ScrollBarSize
 	version(Windows)
 		return GetSystemMetrics(SM_CXVSCROLL);

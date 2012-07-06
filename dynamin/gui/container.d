@@ -233,12 +233,12 @@ public:
 	 * If there is no child control at the point, null is returned. The returned
 	 * control, if any, is a direct child of this container.
 	 */
-	Control getChildAtPoint(real[] pt) {
+	Control getChildAtPoint(double[] pt) {
 		assert(pt.length == 2, "pt must be just an x and y");
 		return getChildAtPoint(Point(pt[0], pt[1]));
 	}
 	/// ditto
-	Control getChildAtPoint(real x, real y) {
+	Control getChildAtPoint(double x, double y) {
 		return getChildAtPoint(Point(x, y));
 	}
 	/// ditto
@@ -256,12 +256,12 @@ public:
 	 * Never returns null. If there is no descendant at the specified point,
 	 * this container will be returned.
 	 */
-	Control getDescendantAtPoint(real[] pt) {
+	Control getDescendantAtPoint(double[] pt) {
 		assert(pt.length == 2, "pt must be just an x and y");
 		return getDescendantAtPoint(Point(pt[0], pt[1]));
 	}
 	/// ditto
-	Control getDescendantAtPoint(real x, real y) {
+	Control getDescendantAtPoint(double x, double y) {
 		return getDescendantAtPoint(Point(x, y));
 	}
 	/// ditto
@@ -296,14 +296,14 @@ public:
 		minSizeChanged(new EventArgs);
 	}
 	/// ditto
-	void minSize(real[] size) {
+	void minSize(double[] size) {
 		assert(size.length == 2, "size must be just a width and height");
 		minSize = Size(size[0], size[1]);
 	}
 	///
-	real minWidth() { return _minSize.width; }
+	double minWidth() { return _minSize.width; }
 	///
-	real minHeight() { return _minSize.height; }
+	double minHeight() { return _minSize.height; }
 
 	/**
 	 * Gets or sets the maximum size of this window. A maximum width or
@@ -319,14 +319,14 @@ public:
 		minSizeChanged(new EventArgs);
 	}
 	/// ditto
-	void maxSize(real[] size) {
+	void maxSize(double[] size) {
 		assert(size.length == 2, "size must be just a width and height");
 		maxSize = Size(size[0], size[1]);
 	}
 	///
-	real maxWidth() { return _maxSize.width; }
+	double maxWidth() { return _maxSize.width; }
 	///
-	real maxHeight() { return _maxSize.height; }
+	double maxHeight() { return _maxSize.height; }
 
 	/**
 	 * Causes this container to position its child controls. Called on every

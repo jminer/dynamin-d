@@ -94,8 +94,8 @@ class TextParagraph {
 	uint defaultTabLocations = 0; // no default tabs
 	// newLineSpacing = old * mul + delta
 	// spacing after line, as part of it
-	real lineSpacingMul = 1.0;   // percent
-	real lineSpacingDelta = 0; // pixels
+	double lineSpacingMul = 1.0;   // percent
+	double lineSpacingDelta = 0; // pixels
 	Alignment alignment;
 
 	uint width;
@@ -116,7 +116,7 @@ struct EmbeddedObject {
 }
 Format {
 	string family;
-	real size;
+	double size;
 	bool bold;
 	bool italic;
 	// spaces are not underlined, overlined, or strikethrough unless
@@ -126,8 +126,8 @@ Format {
 	LineStyle overlined;
 	bool superscript; // 2/3 of the height
 	bool subscript;   // 2/3 of the height
-	real letterSpacingMul = 1.0; // after letter, as part of it
-	real letterSpacingAdd = 0;
+	double letterSpacingMul = 1.0; // after letter, as part of it
+	double letterSpacingAdd = 0;
 	// ( ^ useful for Hexplore's column spacing)
 	Color foreColor;
 	Color backColor;
@@ -151,10 +151,10 @@ FormatChange {
 	}
 	union Data {
 		string family;
-		real size;
+		double size;
 		bool on; // bold and italic
 		LineStyle lineStyle;
-		real letterSpacing;
+		double letterSpacing;
 		Color color;
 	}
 }

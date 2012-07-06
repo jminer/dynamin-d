@@ -18,24 +18,24 @@ import tango.io.Stdout;
  * Returns: The average number of milliseconds one call of the specified
  *          delegate took.
  */
-real benchmark(int repetitions, void delegate() dg) { // use static opCall()?
+double benchmark(int repetitions, void delegate() dg) { // use static opCall()?
 	long time = Environment.runningTime;
 	for(int i = 0; i < repetitions; ++i)
 		dg();
-	return (Environment.runningTime-time)/cast(real)repetitions;
+	return (Environment.runningTime-time)/cast(double)repetitions;
 }
-real benchmark(void delegate() dg) {
+double benchmark(void delegate() dg) {
 	return benchmark(1, dg);
 }
 /**
  * name can be null
  */
-real benchmarkAndWrite(string name, int repetitions, void delegate() dg) {
-	real time = benchmark(repetitions, dg);
+double benchmarkAndWrite(string name, int repetitions, void delegate() dg) {
+	double time = benchmark(repetitions, dg);
 	Stdout.format("{} took {:.2}ms.", name, time).newline; // TODO: verify :.2
 	return time;
 }
-real benchmarkAndWrite(string name, void delegate() dg) {
+double benchmarkAndWrite(string name, void delegate() dg) {
 	return benchmarkAndWrite(name, 1, dg);
 }
 

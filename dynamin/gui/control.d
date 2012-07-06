@@ -409,7 +409,7 @@ public:
 		return pt.x >= 0 && pt.y >= 0 && pt.x < width && pt.y < height;
 	}
 	/// ditto
-	bool contains(real x, real y) {
+	bool contains(double x, double y) {
 		return contains(Point(x, y));
 	}
 
@@ -481,7 +481,7 @@ public:
 		moved(new EventArgs);
 	}
 	/// ditto
-	void location(real[] pt) {
+	void location(double[] pt) {
 		assert(pt.length == 2, "pt must be just an x and y");
 		location = Point(pt[0], pt[1]);
 	}
@@ -511,7 +511,7 @@ public:
 		resized(new EventArgs);
 	}
 	/// ditto
-	void size(real[] newSize) {
+	void size(double[] newSize) {
 		assert(newSize.length == 2, "size must be just a width and height");
 		size = Size(newSize[0], newSize[1]);
 	}
@@ -533,13 +533,13 @@ public:
 	int baseline() { return 0; }
 
 	/// Same as location.x
-	real x() { return location.x; }
+	double x() { return location.x; }
 	/// Same as location.y
-	real y() { return location.y; }
+	double y() { return location.y; }
 	/// Same as size.width
-	real width() { return size.width; }
+	double width() { return size.width; }
 	/// Same as size.height
-	real height() { return size.height; }
+	double height() { return size.height; }
 
 	/**
 	 * Gets or sets whether this control is elastic horizontally or vertically.
@@ -647,7 +647,7 @@ public:
 			_parent.repaint(rect + location);
 	}
 	/// ditto
-	void repaint(real x, real y, real width, real height) {
+	void repaint(double x, double y, double width, double height) {
 		repaint(Rect(x, y, width, height));
 	}
 	/**

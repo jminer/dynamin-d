@@ -181,11 +181,11 @@ struct LayoutGroup {
 			TableInfo info;
 			getTableSizes(colsInfo, rowsInfo, info);
 
-			real extraWidth  = rect.width  - bestSize.width;
-			real extraHeight = rect.height - bestSize.height;
+			double extraWidth  = rect.width  - bestSize.width;
+			double extraHeight = rect.height - bestSize.height;
 
-			void distExtra(ref real extra, ref ColRowInfo info,
-			              ref real totalElastic, ref int semis, Elasticity e) {
+			void distExtra(ref double extra, ref ColRowInfo info,
+			              ref double totalElastic, ref int semis, Elasticity e) {
 				if(info.elastic == Elasticity.No || extra <= 0)
 					return;
 				if(e == Elasticity.Semi &&
@@ -202,11 +202,11 @@ struct LayoutGroup {
 					info.bestSize += thisExtra;
 				}
 			}
-			real y = 0;
+			double y = 0;
 			for(int row = 0; row < numRows; ++row) { // go over each row
 				distExtra(extraHeight, rowsInfo[row], info.elasticHeight, info.semiRows, elasticY);
 
-				real x = 0;
+				double x = 0;
 				for(int col = 0; col < numColumns; ++col) {
 					distExtra(extraWidth, colsInfo[col], info.elasticWidth, info.semiColumns, elasticX);
 
@@ -238,16 +238,16 @@ struct LayoutGroup {
 	//}}}
 
 	struct ColRowInfo {
-		real bestSize = 0;  // large enough to hold the largest control
+		double bestSize = 0;  // large enough to hold the largest control
 		Elasticity elastic = Elasticity.No;
 		bool filler = true; // if the entire column/row is filler
-		real baseline;      // only applies to rows: max baseline in row
+		double baseline;      // only applies to rows: max baseline in row
 	}
 	struct TableInfo {
 		// number of semi-elastic columns/rows
 		int semiColumns = 0; int semiRows = 0;
 		// the sum of fully elastic width/height, not including semi
-		real elasticWidth = 0, elasticHeight = 0;
+		double elasticWidth = 0, elasticHeight = 0;
 		Size bestSize;
 	}
 	//{{{ getTableSizes()
@@ -262,7 +262,7 @@ struct LayoutGroup {
 		assert(colsInfo.length == numColumns);
 		assert(rowsInfo.length == numRows);
 
-		real max = 0;
+		double max = 0;
 		LayoutGroup* l;
 
 		bool prevNonFiller = false;
@@ -289,7 +289,7 @@ struct LayoutGroup {
 		}
 
 		prevNonFiller = false;
-		real maxBl = 0;
+		double maxBl = 0;
 		sp = 0;
 		for(int row = 0; row < numRows; ++row) { // go over each row
 			for(int col = 0; col < numColumns; ++col) {
