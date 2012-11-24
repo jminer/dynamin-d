@@ -642,7 +642,12 @@ public:
 			throw new Exception("index must be at a valid code point, not inside one");
 	}
 
+	// {{{ layout()
 	protected void layout(Graphics g) {
+		if(layoutBoxes.length == 0)
+			throw new Exception("layoutBoxes must be set");
+		// TODO: need to be able to set just one rect, not an array of layoutBoxes
+
 		backend_preprocess(g);
 
 		version(TextLayoutDebug)
@@ -698,6 +703,7 @@ public:
 		}
 		// if wrapping around an object, a tab should go on the other side of the object
 	}
+	// }}}
 
 	struct LayoutProgress {
 		int runIndex = 0;
@@ -1316,7 +1322,7 @@ unittest {
 		assert(startAct >= 0);
 		if(lengthAct == -1)
 			lengthAct = t.text.length - startAct;
-		Stdout.format("s {0} l {1} s2 {2} l2 {3}", start, length, startAct, lengthAct).newline;
+		Stdout.format("test start: {0} len: {1} startAct: {2} lenAct: {3}", start, length, startAct, lengthAct).newline;
 		assert(start == startAct && length == lengthAct);
 	}
 	void assertLinePosition(TextLayout t, int line, float x, float y) {

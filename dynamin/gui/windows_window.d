@@ -1026,3 +1026,6 @@ LRESULT dynaminMsgWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
+// TODO: backend tests
+// test that setting window.content.size doesn't include borders (I just saw this bug)
+
