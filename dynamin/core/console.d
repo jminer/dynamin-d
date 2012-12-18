@@ -49,9 +49,9 @@ enum ConsoleColor {
  * The only functions that will work corectly when output or input have been
  * redirected are the following:
  * $(UL
-	 $(LI Write())
-	 $(LI WriteLine())
-	 $(LI ReadLine())
+	 $(LI write())
+	 $(LI writeLine())
+	 $(LI readLine())
  * )
  * On Windows, when writing to a console window, all functionality is
  * available except Bold, Italic, Underline, Strikethrough. Windows does
@@ -76,7 +76,7 @@ public:
 //- Turning off echoing the key press that the user types when returning
 //  input without ENTER
 //- Writing a string, such as "23%", and then changing it to like "24%".
-//  Console.WriteBuffer(40) writes 40 spaces and returns a ConsoleBuffer object
+//  Console.writeBuffer(40) writes 40 spaces and returns a ConsoleBuffer object
 	/**
 	 * Sets whether or not writing to the standard output will be
 	 * buffered. By default, this is false, meaning that no buffering will
@@ -91,7 +91,7 @@ public:
 	/**
 	 * Writes the specified text string to the console.
 	 */
-	void write(string s, ...) {
+	void write(cstring s, ...) {
 		Stdout.layout.convert(&Stdout.emit, _arguments, _argptr, s);
 	}
 	/**
@@ -99,7 +99,7 @@ public:
 	 */
 	void writeLine() { Stdout.newline; }
 	/// ditto
-	void writeLine(string s, ...) {
+	void writeLine(cstring s, ...) {
 		Stdout.layout.convert(&Stdout.emit, _arguments, _argptr, s);
 		Stdout.newline;
 	}
@@ -108,14 +108,14 @@ public:
 	 * will end in a newline, unless it was read from the last line in a text
 	 * file.
 	 */
-	string readLineRaw() { return Cin.copyln(true); }
+	mstring readLineRaw() { return Cin.copyln(true); }
 	/**
 	 * Reads a line of text from the console. The returned string does not
 	 * contain a newline.
 	 */
-	string readLine() { return Cin.copyln(false); }
+	mstring readLine() { return Cin.copyln(false); }
 	/// ditto
-	string readLine(string prompt, ...) {
+	mstring readLine(cstring prompt, ...) {
 		Stdout.layout.convert(&Stdout.emit, _arguments, _argptr, prompt);
 		return readLine();
 	}
@@ -123,9 +123,9 @@ public:
 	 * reads a character, echoing it to the screen
 	 * TODO: not implemented
 	 */
-	string read() { return backend_read(); }
+	mstring read() { return backend_read(); }
 	/// ditto
-	string read(string prompt) {
+	mstring read(cstring prompt) {
 		write(prompt);
 		return backend_read();
 	}
@@ -133,9 +133,9 @@ public:
 	 * reads a line without showing that line
 	 * TODO: not implemented
 	 */
-	string readLineHidden() { return backend_readLineHidden(); }
+	mstring readLineHidden() { return backend_readLineHidden(); }
 	/// ditto
-	string readLineHidden(string prompt) {
+	mstring readLineHidden(cstring prompt) {
 		write(prompt);
 		return backend_readLineHidden();
 	}
@@ -143,9 +143,9 @@ public:
 	 * reads a character without showing it
 	 * TODO: not implemented
 	 */
-	string readHidden() { return backend_readHidden(); }
+	mstring readHidden() { return backend_readHidden(); }
 	/// ditto
-	string readHidden(string prompt) {
+	mstring readHidden(cstring prompt) {
 		write(prompt);
 		return backend_readHidden();
 	}

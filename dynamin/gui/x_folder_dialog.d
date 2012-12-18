@@ -16,7 +16,7 @@ public import dynamin.c.gtk;
 
 template FolderDialogBackend() {
 	DialogResult backend_showDialog() {
-		string title = text ? text : "Select Folder";
+		mstring title = text ? text : "Select Folder";
 		auto dialog = gtk_file_chooser_dialog_new(toCharPtr(title), null,
 			GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,

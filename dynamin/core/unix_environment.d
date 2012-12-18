@@ -37,7 +37,7 @@ template EnvironmentBackend() {
 	long backend_timevalToMs(timeval* tv) {
 		return tv.tv_sec*1000L+tv.tv_usec/1000;
 	}
-	const long timerSec = 31_536_000*5; // 31,536,000 seconds in 365 days
+	enum long timerSec = 31_536_000*5; // 31,536,000 seconds in 365 days
 	static this() {
 		itimerval itv;
 		itv.it_value.tv_sec = timerSec;

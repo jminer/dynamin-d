@@ -59,7 +59,7 @@ public:
 	double y() { return _location.y; }
 	///
 	MouseButton button() { return _button; }
-	string toString() {
+	override string toString() {
 		return format("MouseEventArgs [x={}, y={}, button={}]",
 			x, y, _button);
 	}
@@ -95,7 +95,7 @@ public:
 	bool scrollScreen() {
 		return _scrollScreen;
 	}
-	string toString() {
+	override string toString() {
 		return format("MouseTurnedEventArgs [scrollAmount={}, scrollScreen={}]",
 			_scrollAmount, _scrollScreen);
 	}
@@ -130,7 +130,7 @@ public:
 	bool controlDown() { return _controlDown; }
 	// Returns true if the alt key is currently down and false otherwise.
 	bool altDown() { return _altDown; }
-	string toString() {
+	override string toString() {
 		return format("KeyEventArgs [key={}, repeat={}]", _key, _repeat);
 	}
 }

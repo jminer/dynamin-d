@@ -23,7 +23,7 @@ import dynamin.all_gui;
  */
 class ListBox : Scrollable {
 protected:
-	List!(string, true) _items;
+	List!(mstring, true) _items;
 	int _selectedIndex = -1;
 
 	override void whenKeyDown(KeyEventArgs e) {
@@ -68,7 +68,7 @@ public:
 	/// This event occurs after the selection has changed.
 	Event!(whenSelectionChanged) selectionChanged;
 
-	void whenListItemsChanged(ListChangeType, string, string, uint) {
+	void whenListItemsChanged(ListChangeType, mstring, mstring, uint) {
 		super.layout();
 		repaint();
 	}
@@ -76,7 +76,7 @@ public:
 	///
 	this() {
 		selectionChanged.setUp(&whenSelectionChanged);
-		_items = new List!(string, true)(&whenListItemsChanged);
+		_items = new List!(mstring, true)(&whenListItemsChanged);
 
 		super();
 		_focusable = true;
@@ -84,7 +84,7 @@ public:
 		backColor = WindowsTheme.getColor(5);
 	}
 	///
-	List!(string, true) items() {
+	List!(mstring, true) items() {
 		return _items;
 	}
 	///

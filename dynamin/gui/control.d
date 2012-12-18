@@ -557,12 +557,12 @@ public:
 	/**
 	 * Gets or sets the text that this control shows.
 	 */
-	string text() { return _text.dup; }
+	string text() { return _text; }
 	/// ditto
 	void text(string str) {
 		if(_text == str)
 			return;
-		_text = str.dup;
+		_text = str;
 		repaint();
 		//TextChanged(EventArgs e) // TODO: add event
 	}

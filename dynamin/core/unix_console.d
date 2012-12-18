@@ -29,22 +29,22 @@ template ConsoleBackend() {
 	void backend_buffered(bool b) {
 		buffered = b;
 	}
-	void backend_write(string s) {
+	void backend_write(mstring s) {
 		/*fwrite(s.ptr, 1, s.length, stdout);
 		if(!buffered)
 			fflush(stdout);*/
 	}
-	string backend_readLineRaw() {
+	mstring backend_readLineRaw() {
 		/*uint size;
 		char* line;
 		auto numRead = getline(&line, &size, stdin);
 		scope(exit) free(line);
-		string str = new char[numRead];
+		mstring str = new char[numRead];
 		str[] = line[0..numRead];
 		return str;*/
 		return null;
 	}
-	string backend_read() {
+	mstring backend_read() {
 		return null;
 	}
 	// TODO: use this
@@ -53,20 +53,20 @@ template ConsoleBackend() {
 	//ts.c_lflag |= ICANON; // turns on waiting for a whole lines
 	//ts.c_lflag |= ECHO;   // turns on echoing
 	//tcsetattr(filedes, TCSAFLUSH, &ts);
-	string backend_readLineHidden() {
+	mstring backend_readLineHidden() {
 		system("stty -echo");
 		auto line = readLine();
 		system("stty echo");
 		return line;
 	}
-	string backend_readHidden() {
+	mstring backend_readHidden() {
 		return null;
 	}
 	void backend_clear() {
 		system("clear");
 	}
-	string backend_getColorStr(ConsoleColor c, bool fore) {
-		switch(c) {
+	mstring backend_getColorStr(ConsoleColor c, bool fore) {
+		final switch(c) {
 		case c.Black:      return fore ? "\x1b[30m" : "\x1b[40m";
 		case c.Silver:     return fore ? "\x1b[37m" : "\x1b[47m";
 		case c.Maroon:     return fore ? "\x1b[31m" : "\x1b[41m";
@@ -83,7 +83,6 @@ template ConsoleBackend() {
 		case c.Pink:       return fore ? "\x1b[95m" : "\x1b[105m";
 		case c.Yellow:     return fore ? "\x1b[93m" : "\x1b[103m";
 		case c.Cyan:       return fore ? "\x1b[96m" : "\x1b[106m";
-		default: assert(0);
 		}
 	}
 	void backend_foreColor(ConsoleColor color) {

@@ -438,15 +438,15 @@ class Panel : Container {
 	///
 	ControlList children() { return _children; }
 	///
-	void add(Control child) { super.add(child); };
+	override void add(Control child) { super.add(child); };
 	///
-	void remove(Control child) { super.remove(child); };
+	override void remove(Control child) { super.remove(child); };
 	///
-	int opApply(int delegate(ref Control item) dg) {
+	override int opApply(int delegate(ref Control item) dg) {
 		return super.opApply(dg);
 	}
 	///
-	int opApply(int delegate(ref uint index, ref Control item) dg) {
+	override int opApply(int delegate(ref uint index, ref Control item) dg) {
 		return super.opApply(dg);
 	}
 }

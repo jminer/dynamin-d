@@ -81,7 +81,7 @@ static this() {
  */
 class WindowsTheme : Theme {
 version(Windows) {
-	static string defaultFont() { // TODO: rename
+	static mstring defaultFont() { // TODO: rename
 		NONCLIENTMETRICS ncMetrics;
 		ncMetrics.cbSize = NONCLIENTMETRICS.sizeof;
 		SystemParametersInfo(SPI_GETNONCLIENTMETRICS,
@@ -92,7 +92,7 @@ version(Windows) {
 }
 version(Windows) {
 	static void printSysColors() {
-		int[string] colors = [
+		int[mstring] colors = [
 		"COLOR_SCROLLBAR"[] : COLOR_SCROLLBAR,
 		"COLOR_BACKGROUND" : COLOR_BACKGROUND,
 		"COLOR_ACTIVECAPTION" : COLOR_ACTIVECAPTION,
@@ -153,12 +153,14 @@ version(Windows) {
 
 	//{{{ utility functions
 	int findUxState(Button c, int disabled, int normal, int hot, int pressed) {
-		if(c.state == ButtonState.Normal)
+		final switch(c.state) {
+		case ButtonState.Normal:
 			return normal;
-		else if(c.state == ButtonState.Hot)
+		case ButtonState.Hot:
 			return hot;
-		else if(c.state == ButtonState.Pressed)
+		case ButtonState.Pressed:
 			return pressed;
+		}
 	}
 
 	/// draws a classic check, which is 7 wide and 7 high
@@ -181,21 +183,21 @@ version(Windows) {
 	}
 	//}}}
 
-	string name() {
+	override string name() {
 		return "Windows";
 	}
 
-	void Window_paint(Window c, Graphics g) {
+	override void Window_paint(Window c, Graphics g) {
 		g.source = getColor(COLOR_3DFACE);
 		g.paint();
 	}
 	//{{{ Button
-	Size Button_bestSize(Button c) {
+	override Size Button_bestSize(Button c) {
 		// default button size is 17 points tall
 		return Size(75, 23);
 	}
 
-	void Button_paint(Button c, Graphics g) {
+	override void Button_paint(Button c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			auto uxState = findUxState(c, PBS_DISABLED, PBS_NORMAL, PBS_HOT, PBS_PRESSED);
@@ -231,7 +233,7 @@ version(Windows) {
 	//}}}
 
 	//{{{ CheckBox
-	void CheckBox_paint(CheckBox c, Graphics g) {
+	override void CheckBox_paint(CheckBox c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			int uxState;
@@ -277,7 +279,7 @@ version(Windows) {
 	//}}}
 
 	//{{{ RadioButton
-	void RadioButton_paint(CheckBox c, Graphics g) {
+	override void RadioButton_paint(CheckBox c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			int uxState;
@@ -305,11 +307,11 @@ version(Windows) {
 
 		g.rectangle(2, 2, 8, 8);
 		g.fill();
-		const double[][] outerLines = [
+		enum double[][] outerLines = [
 		[1.5, 8,   1.5, 10],  [0.5, 4,   0.5, 8],
 		[1.5, 2,   1.5, 4],   [2.0, 1.5,   4, 1.5],
 		[4.0, 0.5,   8, 0.5], [8.0, 1.5,   10, 1.5]];
-		const double[][] innerLines = [
+		enum double[][] innerLines = [
 		[2.5, 8,   2.5, 9],  [1.5, 4,   1.5, 8],
 		[2.5, 2,   2.5, 4],   [3.0, 2.5,   4, 2.5],
 		[4.0, 1.5,   8, 1.5], [8.0, 2.5,   10, 2.5]];
@@ -357,7 +359,7 @@ version(Windows) {
 	//}}}
 
 	//{{{ ScrollBar
-	void ScrollBarTrack_paint(ScrollBarTrack c, Graphics g) {
+	override void ScrollBarTrack_paint(ScrollBarTrack c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			auto uxState = findUxState(c, SCRBS_DISABLED, SCRBS_NORMAL, SCRBS_HOT, SCRBS_PRESSED);
@@ -380,7 +382,7 @@ version(Windows) {
 		c1, c2);
 	}
 
-	void ScrollBarThumb_paint(ScrollBarThumb c, Graphics g) {
+	override void ScrollBarThumb_paint(ScrollBarThumb c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			auto uxState = findUxState(c, SCRBS_DISABLED, SCRBS_NORMAL, SCRBS_HOT, SCRBS_PRESSED);
@@ -405,7 +407,7 @@ version(Windows) {
 			getColor(COLOR_3DHIGHLIGHT), getColor(COLOR_3DSHADOW));
 	}
 
-	double ScrollBar_size() {
+	override double ScrollBar_size() {
 		// TODO: all themes should get this from SystemGui.ScrollBarSize
 	version(Windows)
 		return GetSystemMetrics(SM_CXVSCROLL);
@@ -413,7 +415,7 @@ version(Windows) {
 		return 18;
 	}
 
-	void ArrowButton_paint(ArrowButton c, Graphics g) {
+	override void ArrowButton_paint(ArrowButton c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			int uxState;
@@ -446,11 +448,11 @@ version(Windows) {
 	//}}}
 
 	//{{{ Scrollable
-	BorderSize Scrollable_borderSize(Scrollable c) {
+	override BorderSize Scrollable_borderSize(Scrollable c) {
 		return BorderSize(2, 2, 2, 2);
 	}
 
-	void Scrollable_paint(Scrollable c, Graphics g) {
+	override void Scrollable_paint(Scrollable c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			Ux.drawBackground(g, Rect(0, 0, c.width, c.height), "EDIT", EP_EDITTEXT, ETS_NORMAL);
@@ -470,14 +472,14 @@ version(Windows) {
 	//}}}
 
 	//{{{ Notebook
-	BorderSize Notebook_borderSize(Notebook c) {
+	override BorderSize Notebook_borderSize(Notebook c) {
 version(Windows) {
 		if(Ux.isThemeActive())
 			return BorderSize(2, 2, 4, 4);
 }
 		return BorderSize(2, 2, 2, 2);
 	}
-	void Tab_paint(TabPage page, Notebook c, Graphics g) {
+	override void Tab_paint(TabPage page, Notebook c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			g.translate(page.tabLocation);
@@ -517,7 +519,7 @@ version(Windows) {
 		g.drawText(page.text, 5, (page.tabSize.height-g.getTextExtents(page.text).height)/2);
 		g.translate(-page.tabLocation);
 	}
-	void Notebook_paint(Notebook c, Graphics g) {
+	override void Notebook_paint(Notebook c, Graphics g) {
 version(Windows) {
 		if(Ux.isThemeActive()) {
 			//auto uxState = findUxState(c, PBS_DISABLED, PBS_NORMAL, PBS_HOT, PBS_PRESSED);

@@ -18,7 +18,7 @@ struct FileDialogFilter {
 	string name;
 	string[] extensions;
 	// ignored for now
-	bool delegate(string fileName) shouldShow;
+	bool delegate(cstring fileName) shouldShow;
 }
 
 /**
@@ -77,7 +77,7 @@ public:
 	 * returns true for.
 	 * BUG: not implemented
 	 */
-	void addFilter(string name, string ext, bool delegate(string fileName) shouldShow) {
+	void addFilter(string name, string ext, bool delegate(cstring fileName) shouldShow) {
 		// TODO:
 		throw new Exception("addFilter(string, string, delegate) not implemented");
 		FileDialogFilter filter;

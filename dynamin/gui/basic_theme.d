@@ -27,19 +27,19 @@ static this() {
  * - dark gray (70, 70, 70)
  */
 class BasicTheme : Theme {
-	string name() {
+	override string name() {
 		return "Basic";
 	}
 
-	void Window_paint(Window c, Graphics g) {
+	override void Window_paint(Window c, Graphics g) {
 		g.source = Color.White;
 		g.paint();
 	}
-	Size Button_bestSize(Button c) {
+	override Size Button_bestSize(Button c) {
 		return Size(60, 25);
 	}
 
-	void Button_paint(Button c, Graphics g) {
+	override void Button_paint(Button c, Graphics g) {
 		with(g) {
 			if(c.state == ButtonState.Pressed)
 				g.source = Color.Black;
@@ -62,7 +62,7 @@ class BasicTheme : Theme {
 		}
 	}
 
-	void CheckBox_paint(CheckBox c, Graphics g) {
+	override void CheckBox_paint(CheckBox c, Graphics g) {
 		with(g) {
 			Point box = Point(2, cast(int)(c.height/2-6));
 			fontSize = 13;
@@ -88,7 +88,7 @@ class BasicTheme : Theme {
 			}
 		}
 	}
-	void RadioButton_paint(CheckBox c, Graphics g) {
+	override void RadioButton_paint(CheckBox c, Graphics g) {
 		with(g) {
 			int radius = 6;
 			Point circle = Point(2, cast(int)(c.height/2-radius));
@@ -116,7 +116,7 @@ class BasicTheme : Theme {
 		}
 	}
 
-	void ScrollBarTrack_paint(ScrollBarTrack c, Graphics g) {
+	override void ScrollBarTrack_paint(ScrollBarTrack c, Graphics g) {
 		if(c.state == ButtonState.Pressed)
 			g.paint();
 		else if(isOdd(cast(int)round(c.x)) || isOdd(cast(int)round(c.y)))
@@ -127,7 +127,7 @@ class BasicTheme : Theme {
 				Color.Black, Color.White);
 	}
 
-	void ScrollBarThumb_paint(ScrollBarThumb c, Graphics g) {
+	override void ScrollBarThumb_paint(ScrollBarThumb c, Graphics g) {
 		with(g) {
 			source = Color.White;
 			paint();
@@ -137,20 +137,20 @@ class BasicTheme : Theme {
 		}
 	}
 
-	double ScrollBar_size() {
+	override double ScrollBar_size() {
 		// TODO: all themes should get this from SystemGui.ScrollBarSize
 		return 18;
 	}
 
-	void ArrowButton_paint(ArrowButton c, Graphics g) {
+	override void ArrowButton_paint(ArrowButton c, Graphics g) {
 		Button_paint(c, g);
 	}
 
-	BorderSize Scrollable_borderSize(Scrollable c) {
+	override BorderSize Scrollable_borderSize(Scrollable c) {
 		return BorderSize(1, 1, 1, 1);
 	}
 
-	void Scrollable_paint(Scrollable c, Graphics g) {
+	override void Scrollable_paint(Scrollable c, Graphics g) {
 		g.source = Color.White;
 		g.paint();
 		g.source = Color.Black;
@@ -158,11 +158,11 @@ class BasicTheme : Theme {
 		g.stroke();
 	}
 
-	BorderSize Notebook_borderSize(Notebook c) {
+	override BorderSize Notebook_borderSize(Notebook c) {
 		return BorderSize(1, 1, 1, 1);
 	}
-	void Tab_paint(TabPage page, Notebook c, Graphics g){}
-	void Notebook_paint(Notebook c, Graphics g){}
+	override void Tab_paint(TabPage page, Notebook c, Graphics g){}
+	override void Notebook_paint(Notebook c, Graphics g){}
 
 }
 

@@ -230,7 +230,7 @@ public:
 	 * Gets whether the horizontal scroll bar is currently shown.
 	 */
 	bool HScrollBarVisible() {
-		switch(_scrollBars) {
+		final switch(_scrollBars) {
 		case VisibleScrollBars.None:
 		case VisibleScrollBars.Vertical:
 			return false;
@@ -251,7 +251,7 @@ public:
 	 * Gets whether the vertical scroll bar is currently shown.
 	 */
 	bool VScrollBarVisible() {
-		switch(_scrollBars) {
+		final switch(_scrollBars) {
 		case VisibleScrollBars.None:
 		case VisibleScrollBars.Horizontal:
 			return false;

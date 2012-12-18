@@ -17,8 +17,8 @@ extern(Windows):
 
 alias char*  LPSTR;
 alias wchar* LPWSTR;
-alias char*  LPCSTR;
-alias wchar* LPCWSTR;
+alias const(char)*  LPCSTR;
+alias const(wchar)* LPCWSTR;
 // unicode
 alias wchar   TCHAR;
 alias LPWSTR  LPTSTR;
@@ -112,7 +112,7 @@ LONG MAKELONG(WORD a, WORD b) { return cast(WORD)a | cast(WORD)b << 16; }
 BYTE LOBYTE(WORD w) { return cast(BYTE)(w & 0xff); }
 BYTE HIBYTE(WORD w) { return cast(BYTE)(w >> 8); }
 LPWSTR MAKEINTRESOURCE(int i) { return cast(LPWSTR)cast(WORD)i; }
-BYTE GetRValue(DWORD rgb) { return LOBYTE(rgb); }
+BYTE GetRValue(DWORD rgb) { return LOBYTE(cast(WORD)rgb); }
 BYTE GetGValue(DWORD rgb) { return LOBYTE(cast(WORD)rgb >> 8); }
 BYTE GetBValue(DWORD rgb) { return LOBYTE(rgb >> 16); }
 
@@ -1366,7 +1366,7 @@ BOOL WriteConsoleW(
 	DWORD* lpNumberOfCharsWritten,
 	VOID* lpReserved);
 
-enum {
+enum : ushort {
 	FOREGROUND_BLUE      = 0x0001,
 	FOREGROUND_GREEN     = 0x0002,
 	FOREGROUND_RED       = 0x0004,

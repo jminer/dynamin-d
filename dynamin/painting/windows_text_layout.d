@@ -101,7 +101,7 @@ template TextLayoutBackend() {
 		KoreanHangul       = getUniscribeScript("갠흯㉡");
 	}
 	// returns the Uniscribe script number (SCRIPT_ANALYSIS.eScript) from the specified sample text
-	static int getUniscribeScript(wchar[] sample) {
+	static int getUniscribeScript(const(wchar)[] sample) {
 		SCRIPT_ITEM[5] items;
 		int itemsProcessed;
 		HRESULT r = ScriptItemize(sample.ptr,
@@ -117,9 +117,9 @@ template TextLayoutBackend() {
 	}
 
 	// adds fallback fonts to the specified fallbacks array
-	void getFontFallbacks(int script, wchar[][] fallbacks) {
+	void getFontFallbacks(int script, const(wchar)[][] fallbacks) {
 		int i = 0;
-		void addFallback(wchar[] str) {
+		void addFallback(const(wchar)[] str) {
 			fallbacks[i++] = str;
 		}
 		if(script == Latin || script == Greek || script == Cyrillic)
@@ -330,7 +330,7 @@ template TextLayoutBackend() {
 			if(items[itemIndex+1].iCharPos == wstart)
 				itemIndex++;
 
-			levels.add(items[itemIndex].a.s.uBidiLevel.get());
+			levels.add(cast(BYTE)items[itemIndex].a.s.uBidiLevel.get());
 
 			cairo_matrix_t ctm;
 			cairo_get_matrix(cr, &ctm);

@@ -238,24 +238,24 @@ class HScrollBar : ScrollBar {
 		_button2.direction = ArrowDirection.Right;
 	}
 protected:
-	void whenThumbMouseDown(MouseEventArgs e) {
+	override void whenThumbMouseDown(MouseEventArgs e) {
 		_thumbDragLoc = e.location.x;
 	}
-	void whenThumbMouseDragged(MouseEventArgs e) {
+	override void whenThumbMouseDragged(MouseEventArgs e) {
 		_thumb.state = ButtonState.Pressed;
 		thumbLocation = e.location.x + _thumb.location.x - _thumbDragLoc;
 	}
-	void putControl(Control c, double location, double size) {
+	override void putControl(Control c, double location, double size) {
 		c.location = [location, 0.0];
 		c.size = [size, height];
 	}
-	double breadth() { return height; }
-	double length() { return width; }
+	override double breadth() { return height; }
+	override double length() { return width; }
 	alias ScrollBar.thumbLocation thumbLocation;
-	double thumbLocation() { return _thumb.x; }
-	double thumbSize() { return _thumb.width; }
-	double trackStart() { return _track1.x; }
-	double trackEnd() { return _track2.x+_track2.width; }
+	override double thumbLocation() { return _thumb.x; }
+	override double thumbSize() { return _thumb.width; }
+	override double trackStart() { return _track1.x; }
+	override double trackEnd() { return _track2.x+_track2.width; }
 }
 ///
 class VScrollBar : ScrollBar {
@@ -264,23 +264,23 @@ class VScrollBar : ScrollBar {
 		_button2.direction = ArrowDirection.Down;
 	}
 protected:
-	void whenThumbMouseDown(MouseEventArgs e) {
+	override void whenThumbMouseDown(MouseEventArgs e) {
 		_thumbDragLoc = e.location.y;
 	}
-	void whenThumbMouseDragged(MouseEventArgs e) {
+	override void whenThumbMouseDragged(MouseEventArgs e) {
 		_thumb.state = ButtonState.Pressed;
 		thumbLocation = e.location.y + _thumb.location.y - _thumbDragLoc;
 	}
-	void putControl(Control c, double location, double size) {
+	override void putControl(Control c, double location, double size) {
 		c.location = [0.0, location];
 		c.size = [width, size];
 	}
-	double breadth() { return width; }
-	double length() { return height; }
+	override double breadth() { return width; }
+	override double length() { return height; }
 	alias ScrollBar.thumbLocation thumbLocation;
-	double thumbLocation() { return _thumb.y; }
-	double thumbSize() { return _thumb.height; }
-	double trackStart() { return _track1.y; }
-	double trackEnd() { return _track2.y+_track2.height; }
+	override double thumbLocation() { return _thumb.y; }
+	override double thumbSize() { return _thumb.height; }
+	override double trackStart() { return _track1.y; }
+	override double trackEnd() { return _track2.y+_track2.height; }
 }
 

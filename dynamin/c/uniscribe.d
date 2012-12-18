@@ -28,7 +28,7 @@ template BitField(uint start, uint count, alias data, type = uint) {
 
 extern(Windows):
 
-const int USPBUILD = 0400;
+//const int USPBUILD = octal!400;
 
 enum {
 	SCRIPT_UNDEFINED = 0
@@ -125,17 +125,17 @@ struct SCRIPT_ITEM {
 }
 
 HRESULT ScriptItemize(
-	/*const*/ WCHAR* pwcInChars,
+	const(WCHAR)* pwcInChars,
 	int cInChars,
 	int cMaxItems,
-	/*const*/ SCRIPT_CONTROL* psControl,
-	/*const*/ SCRIPT_STATE* psState,
+	const(SCRIPT_CONTROL)* psControl,
+	const(SCRIPT_STATE)* psState,
 	SCRIPT_ITEM* pItems,
 	int* pcItems);
 
 HRESULT ScriptLayout(
 	int cRuns,
-	/*const*/ BYTE* pbLevel,
+	const(BYTE)* pbLevel,
 	int* piVisualToLogical,
 	int* piLogicalToVisual);
 
@@ -180,7 +180,7 @@ struct SCRIPT_VISATTR { // 16 bits
 HRESULT ScriptShape(
 	HDC hdc,
 	SCRIPT_CACHE* psc,
-	/*const*/ WCHAR* pwcChars,
+	const(WCHAR)* pwcChars,
 	int cChars,
 	int cMaxGlyphs,
 	SCRIPT_ANALYSIS* psa,
@@ -197,33 +197,33 @@ struct GOFFSET {
 HRESULT ScriptPlace(
 	HDC hdc,
 	SCRIPT_CACHE* psc,
-	/*const*/ WORD* pwGlyphs,
+	const(WORD)* pwGlyphs,
 	int cGlyphs,
-	/*const*/ SCRIPT_VISATTR* psva,
+	const(SCRIPT_VISATTR)* psva,
 	SCRIPT_ANALYSIS* psa,
 	int* piAdvance,
 	GOFFSET* pGoffset,
 	ABC* pABC);
 
 HRESULT ScriptTextOut(
-	/*const*/ HDC hdc,
+	const(HDC) hdc,
 	SCRIPT_CACHE* psc,
 	int x,
 	int y,
 	UINT fuOptions,
-	/*const*/ RECT* lprc,
-	/*const*/ SCRIPT_ANALYSIS* psa,
-	/*const*/ WCHAR* pwcReserved,
+	const(RECT)* lprc,
+	const(SCRIPT_ANALYSIS)* psa,
+	const(WCHAR)* pwcReserved,
 	int iReserved,
-	/*const*/ WORD* pwGlyphs,
+	const(WORD)* pwGlyphs,
 	int cGlyphs,
-	/*const*/ int* piAdvance,
-	/*const*/ int* piJustify,
-	/*const*/ GOFFSET* pGoffset);
+	const(int)* piAdvance,
+	const(int)* piJustify,
+	const(GOFFSET)* pGoffset);
 
 HRESULT ScriptJustify(
-	/*const*/ SCRIPT_VISATTR* psva,
-	/*const*/ int* piAdvance,
+	const(SCRIPT_VISATTR)* psva,
+	const(int)* piAdvance,
 	int cGlyphs,
 	int iDx,
 	int iMinKashida,
@@ -249,9 +249,9 @@ struct SCRIPT_LOGATTR { // 8 bits
 }
 
 HRESULT ScriptBreak(
-	/*const*/ WCHAR* pwcChars,
+	const(WCHAR)* pwcChars,
 	int cChars,
-	/*const*/ SCRIPT_ANALYSIS* psa,
+	const(SCRIPT_ANALYSIS)* psa,
 	SCRIPT_LOGATTR* psla);
 
 HRESULT ScriptCPtoX(
@@ -259,40 +259,40 @@ HRESULT ScriptCPtoX(
 	BOOL fTrailing,
 	int cChars,
 	int cGlyphs,
-	/*const*/ WORD* pwLogClust,
-	/*const*/ SCRIPT_VISATTR* psva,
-	/*const*/ int* piAdvance,
-	/*const*/ SCRIPT_ANALYSIS* psa,
+	const(WORD)* pwLogClust,
+	const(SCRIPT_VISATTR)* psva,
+	const(int)* piAdvance,
+	const(SCRIPT_ANALYSIS)* psa,
 	int* piX);
 
 HRESULT ScriptXtoCP(
 	int iX,
 	int cChars,
 	int cGlyphs,
-	/*const*/ WORD* pwLogClust,
-	/*const*/ SCRIPT_VISATTR* psva,
-	/*const*/ int* piAdvance,
-	/*const*/ SCRIPT_ANALYSIS* psa,
+	const(WORD)* pwLogClust,
+	const(SCRIPT_VISATTR)* psva,
+	const(int)* piAdvance,
+	const(SCRIPT_ANALYSIS)* psa,
 	int* piCP,
 	int* piTrailing);
 
 HRESULT ScriptGetLogicalWidths(
-	/*const*/ SCRIPT_ANALYSIS* psa,
+	const(SCRIPT_ANALYSIS)* psa,
 	int cChars,
 	int cGlyphs,
-	/*const*/ int* piGlyphWidth,
-	/*const*/ WORD* pwLogClust,
-	/*const*/ SCRIPT_VISATTR* psva,
+	const(int)* piGlyphWidth,
+	const(WORD)* pwLogClust,
+	const(SCRIPT_VISATTR)* psva,
 	int* piDx);
 
 HRESULT ScriptApplyLogicalWidth(
-	/*const*/ int* piDx,
+	const(int)* piDx,
 	int cChars,
 	int cGlyphs,
-	/*const*/ WORD* pwLogClust,
-	/*const*/ SCRIPT_VISATTR* psva,
-	/*const*/ int* piAdvance,
-	/*const*/ SCRIPT_ANALYSIS* psa,
+	const(WORD)* pwLogClust,
+	const(SCRIPT_VISATTR)* psva,
+	const(int)* piAdvance,
+	const(SCRIPT_ANALYSIS)* psa,
 	ABC* pABC,
 	int* piJustify);
 
@@ -303,7 +303,7 @@ enum {
 HRESULT ScriptGetCMap(
 	HDC hdc,
 	SCRIPT_CACHE* psc,
-	/*const*/ WCHAR* pwcInChars,
+	const(WCHAR)* pwcInChars,
 	int cChars,
 	DWORD dwFlags,
 	WORD* pwOutGlyphs);
@@ -411,7 +411,7 @@ alias void* SCRIPT_STRING_ANALYSIS;
 
 HRESULT ScriptStringAnalyse(
 	HDC hdc,
-	/*const*/ void* pString,
+	const(void)* pString,
 	int cString,
 	int cGlyphs,
 	int iCharset,
@@ -419,9 +419,9 @@ HRESULT ScriptStringAnalyse(
 	int iReqWidth,
 	SCRIPT_CONTROL* psControl,
 	SCRIPT_STATE* psState,
-	/*const*/ int* piDx,
+	const(int)* piDx,
 	SCRIPT_TABDEF* pTabdef,
-	/*const*/ BYTE* pbInClass,
+	const(BYTE)* pbInClass,
 	SCRIPT_STRING_ANALYSIS* pssa);
 
 HRESULT ScriptStringFree(SCRIPT_STRING_ANALYSIS* pssa);
@@ -455,7 +455,7 @@ HRESULT ScriptStringOut(
 	int iX,
 	int iY,
 	UINT uOptions,
-	/*const*/ RECT* prc,
+	const(RECT)* prc,
 	int iMinSel,
 	int iMaxSel,
 	BOOL fDisabled);
@@ -467,7 +467,7 @@ enum {
 }
 
 HRESULT ScriptIsComplex(
-    /*const*/ WCHAR* pwcInChars,
+    const(WCHAR)* pwcInChars,
     int cInChars,
     DWORD dwFlags);
 
@@ -498,7 +498,7 @@ enum {
 }
 
 HRESULT ScriptApplyDigitSubstitution(
-	/*const*/ SCRIPT_DIGITSUBSTITUTE* psds,
+	const(SCRIPT_DIGITSUBSTITUTE)* psds,
 	SCRIPT_CONTROL* psc,
 	SCRIPT_STATE* pss);
 

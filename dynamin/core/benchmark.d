@@ -30,17 +30,17 @@ double benchmark(void delegate() dg) {
 /**
  * name can be null
  */
-double benchmarkAndWrite(string name, int repetitions, void delegate() dg) {
+double benchmarkAndWrite(cstring name, int repetitions, void delegate() dg) {
 	double time = benchmark(repetitions, dg);
 	Stdout.format("{} took {:.2}ms.", name, time).newline; // TODO: verify :.2
 	return time;
 }
-double benchmarkAndWrite(string name, void delegate() dg) {
+double benchmarkAndWrite(cstring name, void delegate() dg) {
 	return benchmarkAndWrite(name, 1, dg);
 }
 
 /**
- * As the constructor calls the Start() method, the only time one would need
+ * As the constructor calls the start() method, the only time one would need
  * to is when reusing a Benchmark object.
  */
 class Benchmark {
@@ -54,7 +54,7 @@ class Benchmark {
 	long time() {
 		return _startTime-Environment.runningTime;
 	}
-	void writeTime(string opName) {
+	void writeTime(cstring opName) {
 		if(opName is null)
 			opName = "Benchmark";
 		Stdout.format("{} took {}ms.", opName, time).newline;

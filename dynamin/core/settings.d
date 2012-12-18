@@ -35,15 +35,15 @@ version(BigEndian) {
 }
 }
 class Color2 {
-	Pixel32 ToPixel32() {
+	Pixel32 toPixel32() {
 		Pixel32 px;
 		return px;
 	}
-	string ToSetting() {
-		auto px = ToPixel32();
+	string toSetting() {
+		auto px = toPixel32();
 		return format("{}, {}, {}", px.R, px.G, px.B);
 	}
-	static Color2 FromSetting(string str) {
+	static Color2 fromSetting(cstring str) {
 		// allow "#AB00F2", "171, 0, 242"
 		return null;
 	}
@@ -64,7 +64,7 @@ unittest {
 	// test saving to the file
 	auto settings = new Settings;
 	settings.loadFromString(test);
-	test = settings.saveToString();
+	test = settings.saveToString().idup;
 
 	// test reading from the file
 	settings = new Settings;
@@ -100,7 +100,7 @@ protected:
 		string section = MainSectionName;
 		bool inStartComment = true;
 		int lineNum = 0;
-		foreach(string line; input) {
+		foreach(line; input) {
 			lineNum++;
 			// check for a line with just whitespace
 			if(line.trim().length == 0)
@@ -111,7 +111,7 @@ protected:
 					line.trimLeft().startsWith("#")) {
 				if(inStartComment) {
 					comment.length = comment.length + 1;
-					comment[$-1] = line.trimLeft()[1..$].dup;
+					comment[$-1] = line.trimLeft()[1..$].idup;
 				}
 				continue;
 			}
@@ -121,7 +121,7 @@ protected:
 			if(line.startsWith("[")) {
 				if(!line.endsWith("]") || line.length < 3)
 					throw new Exception("Invalid section on line " ~ to!(string)(lineNum));
-				section = line[1..$-1].dup;
+				section = line[1..$-1].idup;
 				continue;
 			}
 
@@ -132,8 +132,8 @@ protected:
 					break;
 			if(eqIndex == line.length)
 				throw new Exception("Invalid format on line " ~ to!(string)(lineNum));
-			string value = line[eqIndex+1..$].unescape();
-			sections[section][line[0..eqIndex].dup] = value;
+			string value = cast(immutable)(line[eqIndex+1..$].unescape());
+			sections[section][line[0..eqIndex].idup] = value;
 		}
 	}
 	void saveToStream(OutputStream stream) {
@@ -147,22 +147,22 @@ protected:
 		}
 	}
 public:
-	const string MainSectionName = "Main";
+	enum string MainSectionName = "Main";
 	/**
 	 * Parses the specified file.
 	 */
-	void load(string file) {
+	void load(cstring file) {
 		scope f = new File(file);
 		loadFromStream(f);
 	}
-	void loadFromString(string str) {
-		scope a = new Array(str);
+	void loadFromString(cstring str) {
+		auto a = new Array(cast(void[])str);
 		loadFromStream(a);
 	}
-	string saveToString() {
+	mstring saveToString() {
 		scope a = new Array(256, 80);
 		saveToStream(a);
-		return cast(string)a.slice(a.readable);
+		return cast(mstring)a.slice(a.readable);
 	}
 	/**
 	 *
@@ -172,7 +172,7 @@ public:
 	 * settings.get("TabSize", "RubyMode");
 	 * -----
 	 */
-	string get(string name, string section = MainSectionName) {
+	string get(cstring name, cstring section = MainSectionName) {
 		auto sect = section in sections;
 		if(sect) {
 			auto val = name in *sect;
@@ -226,7 +226,7 @@ T getSetting(T)(Settings settings,
 	else static if(is(T : long))
 		return cast(T)to!(T)(str);
 	else
-		return T.FromSetting(str);
+		return T.fromSetting(str);
 }
 
 /**
@@ -238,14 +238,14 @@ T getSetting(T)(Settings settings,
  */
 void setSetting(T)(Settings settings,
 		string name, T value, string section = Settings.MainSectionName) {
-	string str;
+	mstring str;
 	static if(is(T == bool))
 		str = value ? "true" : "false";
 	else static if(is(T : long))
-		str = to!(string)(value);
+		str = to!(mstring)(value);
 	else
-		str = T.ToSetting();
+		str = T.toSetting();
 
-	settings.Set(name, str, section);
+	settings.set(name, str, section);
 }
 

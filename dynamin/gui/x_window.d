@@ -185,7 +185,7 @@ static:
 		return x2 <= x1 + width1 && y2 <= y1 + height1 &&
 			x2 + width2 >= x1 && y2 + height2 >= y1;
 	}
-	void join(inout int x, inout int y, inout int width, inout int height,
+	void join(ref int x, ref int y, ref int width, ref int height,
 			int x2, int y2, int width2, int height2) {
 		auto minx = min(x, x2);
 		auto miny = min(y, y2);
@@ -695,7 +695,7 @@ template WindowBackend() {
 		backend_updateWM_NORMAL_HINTS();
 		backend_locationSizeToNative();
 	}
-	void backend_text(string str) {
+	void backend_text(mstring str) {
 		//auto tmp = str.ToCharPtr();
 		//XTextProperty strProperty;
 		//if(!XStringListToTextProperty(&tmp, 1, &strProperty))

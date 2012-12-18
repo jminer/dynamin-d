@@ -638,7 +638,7 @@ public:
 			return;
 		// NOTE: Do not use cropRight(). It is broken. It will cut off an ending code point even
 		// when it is a perfectly valid string. Thankfully, cropLeft() works.
-		if(cropLeft!(char)(text[index..$]).length != text.length-index)
+		if(cropLeft!(char)(cast(mstring)text[index..$]).length != text.length-index)
 			throw new Exception("index must be at a valid code point, not inside one");
 	}
 

@@ -25,7 +25,7 @@ private:
 	int _style = 0;
 	int _size;
 public:
-	this(string family_ = "", int size = 10, bool b = false, bool i = false, bool u = false) {
+	this(string family_ = null, int size = 10, bool b = false, bool i = false, bool u = false) {
 		this.family = family_;
 		this.size = size;
 		bold = b;
@@ -95,7 +95,7 @@ class Image {
 	Color* opIndex(int x, int y) {
 		return _data + x+y*_width;
 	}
-	static Image load(string file) {
+	static Image load(cstring file) {
 		static if(false) {
 		auto img = new Image;
 		lodepng.PngInfo info;
@@ -192,9 +192,9 @@ enum GraphicsLineCap {
 	Square
 }
 
-// cairo_copy_clip_rectangles  --> Rectangle[] ClipRectangles()
-// cairo_get_dash  --> Dashes()
-// cairo_get_color_stop_rgba  --> ColorStops()
+// cairo_copy_clip_rectangles  --> Rectangle[] clipRectangles()
+// cairo_get_dash  --> dashes()
+// cairo_get_color_stop_rgba  --> colorStops()
 /**
  * A Graphics object uses its source to draw on its target. Its target is set
  * when it is created, but its source can be changed whenever desired. For
@@ -382,12 +382,12 @@ public:
 	 * Draws the inside of the current path.
 	 * Example:
 	 * -----
-	 * graphics.MoveTo(12.5, 14.5);
-	 * graphics.LineTo(123.5, 22.5);
-	 * graphics.LineTo(139.5, 108.5);
-	 * graphics.LineTo(49.5, 86.5);
-	 * graphics.ClosePath();
-	 * graphics.Fill();
+	 * graphics.moveTo(12.5, 14.5);
+	 * graphics.lineTo(123.5, 22.5);
+	 * graphics.lineTo(139.5, 108.5);
+	 * graphics.lineTo(49.5, 86.5);
+	 * graphics.closePath();
+	 * graphics.fill();
 	 * -----
 	 * $(IMAGE ../web/example_fill.png)
 	 */
@@ -457,7 +457,7 @@ public:
 		cairo_select_font_face(cr, toCharPtr(f.family), f.italic, f.bold);
 	}
 	// TODO: if text is all ascii, do fast path with no uniscribe
-	void drawText(string text, double x, double y) {
+	void drawText(cstring text, double x, double y) {
 		auto extents = getFontExtents;
 		cairo_font_extents_t fextents;
 		cairo_font_extents(cr, &fextents);
@@ -466,7 +466,7 @@ public:
 		checkStatus();
 	}
 	///
-	Size getTextExtents(string text) {
+	Size getTextExtents(cstring text) {
 		cairo_text_extents_t textents;
 		cairo_text_extents(cr, toCharPtr(text), &textents);
 		cairo_font_extents_t fextents;
@@ -545,7 +545,7 @@ public:
 		cairo_set_fill_rule(cr, cast(cairo_fill_rule_t)rule);
 	}
 	/**
-	 * The temporary surface created will be the same size as the current clip. To speed up using this function, call Clip() to the area you will be drawing in.
+	 * The temporary surface created will be the same size as the current clip. To speed up using this function, call clip() to the area you will be drawing in.
 	 */
 	void pushGroup() {
 		cairo_push_group(cr);
@@ -554,8 +554,8 @@ public:
 	//	cairo_pop_group(cr);
 	//}
 	/**
-	 * Terminates the redirection begun by a call to PushGroup() or
-	 * PushGroupWithContent() and installs the resulting pattern as the
+	 * Terminates the redirection begun by a call to pushGroup() or
+	 * pushGroupWithContent() and installs the resulting pattern as the
 	 * source pattern.
 	 */
 	void popGroupToSource() {

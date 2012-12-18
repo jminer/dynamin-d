@@ -32,7 +32,7 @@ static:
 			Stdout.format("LoadImage() failed loading cursor {}", curRes).newline;
 		return new Cursor(hcur);
 	}
-	Cursor backend_getCursor(wchar[] name) {
+	Cursor backend_getCursor(const(wchar)[] name) {
 		HCURSOR hcur = LoadImage(GetModuleHandle(null), name.ptr,
 			IMAGE_CURSOR, 0, 0, LR_DEFAULTSIZE);
 		if(hcur is null)

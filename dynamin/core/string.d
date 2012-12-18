@@ -24,22 +24,24 @@ import tango.text.Unicode;
 import dynamin.core.global;
 import dynamin.core.math;
 
-/// Defined as a char[]
-alias char[] string;
+/// Defined as char[]
+alias char[]        mstring;
+/// Defined as const(char)[]
+alias const(char)[] cstring;
 
 ///
-char* toCharPtr(char[] str) {
-	return (str~'\0').ptr;
+char* toCharPtr(cstring str) {
+	return (str~'\0').dup.ptr;
 }
 ///
-wchar* toWcharPtr(char[] str) {
+wchar* toWcharPtr(cstring str) {
 	return toString16(str~'\0').ptr;
 }
 
 /*
-string ToString(ulong num, uint base = 10) {
+string toString(ulong num, uint base = 10) {
 	if(base > 16)
-		throw new Exception("ToString() - radix more than 16");
+		throw new Exception("toString() - radix more than 16");
 	char[] digits = "0123456789abcdef";
 	string str;
 	ulong div = base;
@@ -76,15 +78,21 @@ Layout!(char) formatter;
 static this() {
 	formatter = new Layout!(char);
 }
-string format(char[] str, ...) {
-	return formatter.convert(_arguments, _argptr, str);
+string format(cstring str, ...) {
+	return formatter.convert(_arguments, _argptr, str).idup;
 }
 unittest {
 	assert(format("I am {}", 20) == "I am 20");
 }
 
 /**
- * Converts all lowercase characters in the specified string to uppercase.
+ * Converts all lowercase characters in the specified string to uppercase. Obviously, the
+ * conversion is not done in place, but in-place conversion can be accomplished by passing
+ * the same string as `buffer`.
+ *
+ * Do not use this function to normalize strings to the same case (like to compare them). Instead,
+ * use toUppercase(). See http://msdn.microsoft.com/en-us/library/bb386042%28v=vs.90%29.aspx.
+ *
  * Examples:
  * -----
  * "Bounce the ball.".upcase() == "BOUNCE THE BALL."
@@ -92,16 +100,21 @@ unittest {
  * "æóëø".upcase() == "ÆÓËØ"
  * -----
  */
-string upcase(string str) {
+mstring upcase(cstring str, mstring buffer = null) { // TODO: use buffer
 	return toUpper(str);
 }
 unittest {
 	assert("Bounce the ball.".upcase() == "BOUNCE THE BALL.");
 	assert("Mañana".upcase() == "MAÑANA");
 	assert("æóëø".upcase() == "ÆÓËØ");
+	assert("σε".downcase() == "ΣΕ");
 }
+
 /**
- * Converts all uppercase characters in the specified string to lowercase.
+ * Converts all uppercase characters in the specified string to lowercase. Obviously, the
+ * conversion is not done in place, but in-place conversion can be accomplished by passing
+ * the same string as `buffer`.
+ *
  * Examples:
  * -----
  * "BoUnCe ThE BALL.".downcase() == "bounce the ball."
@@ -109,80 +122,87 @@ unittest {
  * "ÆÓËØ".downcase() == "æóëø"
  * -----
  */
-string downcase(string str) {
+mstring downcase(cstring str, mstring buffer = null) { // TODO: use buffer
 	return toLower(str);
 }
 unittest {
 	assert("BoUnCe ThE BALL.".downcase() == "bounce the ball.");
 	assert("MAÑANA".downcase() == "mañana");
 	assert("ÆÓËØ".downcase() == "æóëø");
+	assert("ΣΕ".downcase() == "σε");
 }
 
 // TODO: make more use of delegates in these?
 // TODO; use templates so that these work with wchar and dchar?
-bool startsWith(string str, string subStr, int start = 0) {
+bool startsWith(cstring str, cstring subStr, int start = 0) {
 	if(start+subStr.length > str.length)
 		return false;
 	return str[start..start+subStr.length] == subStr;
 }
-bool endsWith(string str, string subStr) {
+bool endsWith(cstring str, cstring subStr) {
 	return endsWith(str, subStr, str.length);
 }
-bool endsWith(string str, string subStr, int start) {
+bool endsWith(cstring str, cstring subStr, int start) {
 	if(start-subStr.length < 0)
 		return false;
 	return str[str.length-subStr.length..str.length] == subStr;
 }
-int findLast(string str, string subStr) {
+int findLast(cstring str, cstring subStr) {
 	return findLast(str, subStr, str.length);
 }
-int findLast(string str, string subStr, int start) {
+int findLast(cstring str, cstring subStr, int start) {
 	for(int i = start-subStr.length; i >= 0; --i)
 		if(str[i..i+subStr.length] == subStr)
 			return i;
 	return -1;
 }
-int find(string str, string subStr, int start = 0) {
+int find(cstring str, cstring subStr, int start = 0) {
 	for(int i = start; i < str.length-subStr.length; ++i)
 		if(str[i..i+subStr.length] == subStr)
 			return i;
 	return -1;
 }
 
-string remove(string str, int start, int count = 1) {
-	return str[0..start] ~ str[start+count..str.length];
+mstring remove(cstring str, int start, int count = 1, mstring buffer = null) { // TODO: use buffer
+	// can't use concatenation because const(char)[] ~ const(char)[] is const(char)[]
+	//return str[0..start] ~ str[start+count..str.length];
+
+	mstring str2 = new char[str.length - count];
+	str2[0..start] = str[0..start];
+	str2[start..start + count] = str[start+count..str.length];
+	return str2;
 }
 // TODO: ?
 // split(string str, int delegate(string s) func)
 //string[] split(string str, string subStr) {
 //	return split(str, (string s) { return s.startsWith(subStr) ? subStr.length, : -1; };
 //}
-// TODO: return slices to string
+
+/// Returns slices.
 //split1("50=20=10", "=") -> ["50", "20=10"]
-string[] split1(string str, string subStr) {
+inout(char)[][] split1(inout(char)[] str, cstring subStr) {
 	if(subStr.length == 0)
 		return [str];
 	int index = find(str, subStr);
 	if(index == -1)
 		return [str];
-	string[] strs = new string[2];
-	strs[0] = str[0..index].dup;
-	strs[1] = str[index+subStr.length..str.length].dup;
+	auto strs = new inout(char)[][2];
+	strs[0] = str[0..index];
+	strs[1] = str[index+subStr.length..str.length];
 	return strs;
 }
-// TODO: return slices to string
 //split("50=20=10", "=") -> ["50", "20", "10"]
-string[] split(string str, string subStr) {
+inout(char)[][] split(inout(char)[] str, cstring subStr) {
 	if(subStr.length == 0)
 		return [str];
-	string[] strs;
+	inout(char)[][] strs;
 	int index, searchFrom;
 	int i = 0;
 	while(searchFrom < str.length) {
 		index = find(str, subStr, searchFrom);
 		if(index == -1) index = str.length;
 		strs.length = strs.length+1;
-		strs[i] = str[searchFrom..index].dup;
+		strs[i] = str[searchFrom..index];
 		++i;
 		searchFrom = index+subStr.length;
 	}
@@ -212,9 +232,9 @@ enum Newline {
  * "\n\r\n".convertNewlines(Newline.Macintosh) == "\r\r"
  * -----
  */
-string convertNewlines(string str, Newline nl) {
+mstring convertNewlines(cstring str, Newline nl, mstring buffer = null) { // TODO: use buffer
 	string lineSep;
-	switch(nl) {
+	final switch(nl) {
 	case Newline.Cr:   lineSep = "\r";   break;
 	case Newline.Lf:   lineSep = "\n";   break;
 	case Newline.Crlf: lineSep = "\r\n"; break;
@@ -237,15 +257,15 @@ unittest {
  * join(["aol.com", "join", "intro.html"], "/") == "aol.com/join/intro.html"
  * -----
  */
-string join(string[] strs, string sep) {
+mstring join(string[] strs, cstring sep) {
 	if(strs.length == 0)
-		return "";
+		return "".dup;
 	int len;
 	foreach(string s; strs)
 		len += s.length;
 	len += sep.length*(strs.length-1);
 
-	string newStr = new char[len];
+	mstring newStr = new char[len];
 	newStr[0..strs[0].length] = strs[0];
 	int start = strs[0].length;
 	for(int i = 1; i < strs.length; ++i) {
@@ -258,10 +278,10 @@ string join(string[] strs, string sep) {
 	return newStr;
 }
 unittest {
-	// TODO: remove cast(string) when D has bugs fixed
+	// TODO: remove cast(mstring) when D has bugs fixed
 	assert(join(["10", "15", "17"], " - ") == "10 - 15 - 17");
 	assert(join(["789", "672", "484"], ",") == "789,672,484");
-	assert(join([cast(string)"aol.com", "join", "intro.html"], "/") == "aol.com/join/intro.html");
+	assert(join(["aol.com", "join", "intro.html"], "/") == "aol.com/join/intro.html");
 }
 
 /**
@@ -275,8 +295,8 @@ unittest {
  * "Hi".times(0) == ""
  * -----
  */
-string times(string str, int n) {
-	string newStr = new char[n * str.length];
+mstring times(cstring str, int n) {
+	mstring newStr = new char[n * str.length];
 	for(int i = 0; i < newStr.length; i += str.length)
 		newStr[i..i+str.length] = str;
 	return newStr;
@@ -290,22 +310,22 @@ unittest {
 
 // TODO: flesh out and make public
 struct sbuilder {
-	int Count;
-	string Data;
-	void Add(char c) {
-		if(Count + 1 > Data.length)
-			Data.length = (Data.length + 1) * 2;
-		Data[Count] = c;
-		++Count;
+	int count;
+	mstring data;
+	void add(char c) {
+		if(count + 1 > data.length)
+			data.length = (data.length + 1) * 2;
+		data[count] = c;
+		++count;
 	}
-	void Add(string str) {
-		if(Count + str.length > Data.length)
-			Data.length = max((Data.length + 1) * 2, Count + str.length);
-		Data[Count..Count+str.length] = str;
-		Count += str.length;
+	void add(cstring str) {
+		if(count + str.length > data.length)
+			data.length = max((data.length + 1) * 2, count + str.length);
+		data[count..count+str.length] = str;
+		count += str.length;
 	}
-	string ToString() {
-		return Data[0..Count].dup;
+	mstring toString() {
+		return data[0..count].dup;
 	}
 }
 /**
@@ -329,12 +349,12 @@ struct sbuilder {
  * -----
  * Bug: If a search string has a length of zero, this method will go into an infinite loop.
  */
-string replace(string str, string[] searchStrs, string[] replacements) {
+mstring replace(cstring str, string[] searchStrs, string[] replacements) {
 	if(replacements.length == 1 && searchStrs.length > 1) {
 		string tmp = replacements[0];
 		replacements = new string[searchStrs.length];
-			foreach(i, dummy; searchStrs)
-				replacements[i] = tmp;
+		foreach(i, dummy; searchStrs)
+			replacements[i] = tmp;
 	}
 	if(searchStrs.length != replacements.length)
 		throw new IllegalArgumentException(
@@ -346,30 +366,30 @@ string replace(string str, string[] searchStrs, string[] replacements) {
 			if(i+subStr.length <= str.length && str[i..i+subStr.length] == subStr) {
 				// skip the part of string that matched
 				i += subStr.length;
-				builder.Add(replacements[j]);
+				builder.add(replacements[j]);
 				continue loop;
 			}
 		}
-		builder.Add(str[i]);
+		builder.add(str[i]);
 		++i;
 	}
-	return builder.ToString();
+	return builder.toString();
 }
 /// ditto
-string replace(string str, string[] searchStrs, string replacement) {
+mstring replace(cstring str, string[] searchStrs, string replacement) {
 	return str.replace(searchStrs, [replacement]);
 }
 /// ditto
-string replace(string str, string searchStr, string replacement) {
+mstring replace(cstring str, string searchStr, string replacement) {
 	return str.replace([searchStr], [replacement]);
 }
 unittest {
-	assert("Mississippi".replace([cast(string)"is", "i"], [cast(string)"..", "*"]) == "M..s..s*pp*");
+	assert("Mississippi".replace(["is", "i"], ["..", "*"]) == "M..s..s*pp*");
 	assert("Mississippi".replace("ss", "...") == "Mi...i...ippi");
 	assert("Hello".replace("ll", "y") == "Heyo");
-	//assert("Hi".Replace(cast(string[])[], cast(string[])[]) == "Hi");
-	assert("Speaker".replace([cast(string)"ea", "e"], ":") == "Sp:k:r");
-	assert("Speaker".replace([cast(string)"e", "ea"], ":") == "Sp:ak:r");
+	//assert("Hi".replace(cast(mstring[])[], cast(mstring[])[]) == "Hi");
+	assert("Speaker".replace(["ea", "e"], ":") == "Sp:k:r");
+	assert("Speaker".replace(["e", "ea"], ":") == "Sp:ak:r");
 }
 
 /**
@@ -382,30 +402,30 @@ unittest {
  * "Part1|Part2\r\n".escape("|\r\n", "|rn") == "Part1\\|Part2\\r\\n"
  * -----
  */
-string escape(string str, char[] chars, char[] escChars) {
+mstring escape(cstring str, const(char)[] chars, const(char)[] escChars) {
 	if(chars.length != escChars.length)
-		throw new IllegalArgumentException("Escape(): chars and escChars must be same length");
+		throw new IllegalArgumentException("escape(): chars and escChars must be same length");
 	sbuilder builder;
 	loop:
 	foreach(i, c; str) {
 		foreach(j, c2; chars) {
 			if(c == '\\') {   // always escape backslash
-				builder.Add('\\');
-				builder.Add('\\');
+				builder.add('\\');
+				builder.add('\\');
 				continue loop;
 			}
 			if(c == c2) {
-				builder.Add('\\');
-				builder.Add(escChars[j]);
+				builder.add('\\');
+				builder.add(escChars[j]);
 				continue loop;
 			}
 		}
-		builder.Add(c);
+		builder.add(c);
 	}
-	return builder.ToString();
+	return builder.toString();
 }
 /// ditto
-string escape(string str) {
+mstring escape(cstring str) {
 	return str.escape("\t\r\n", "trn");
 }
 unittest {
@@ -425,35 +445,35 @@ unittest {
  * "test\\".unescape()
  * -----
  */
-string unescape(string str, char[] escChars, char[] chars) {
+mstring unescape(cstring str, const(char)[] escChars, const(char)[] chars) {
 	if(escChars.length != chars.length)
-		throw new IllegalArgumentException("Unescape(): escChars and chars must be same length");
+		throw new IllegalArgumentException("unescape(): escChars and chars must be same length");
 	sbuilder builder;
 	loop:
 	foreach(i, c; str) {
 		if(c == '\\') {
 			if(i == str.length-1)
-				throw new IllegalArgumentException("Unescape(): partial escape sequence at end of string");
+				throw new IllegalArgumentException("unescape(): partial escape sequence at end of string");
 			if(str[i+1] == '\\') {
-				builder.Add('\\');
+				builder.add('\\');
 				++i;
 				continue loop;
 			}
 			foreach(j, c2; escChars) {
 				if(str[i+1] == c2) {
-					builder.Add(chars[j]);
+					builder.add(chars[j]);
 					++i;
 					continue loop;
 				}
 			}
-			throw new IllegalArgumentException("Unescape(): invalid escape sequence");
+			throw new IllegalArgumentException("unescape(): invalid escape sequence");
 		}
-		builder.Add(str[i]);
+		builder.add(str[i]);
 	}
-	return builder.ToString();
+	return builder.toString();
 }
 /// ditto
-string unescape(string str) {
+mstring unescape(cstring str) {
 	return str.unescape("trn", "\t\r\n");
 }
 unittest {
@@ -475,12 +495,12 @@ unittest {
  * "\t \n\r\f\v".removeWhitespace() == ""
  * -----
  */
-string removeWhitespace(string str) {
+mstring removeWhitespace(cstring str) {
 	sbuilder builder;
 	foreach(c; str)
 		if(!" \t\n\r\v\f".contains(c))
-			builder.Add(c);
-	return builder.ToString();
+			builder.add(c);
+	return builder.toString();
 }
 unittest {
 	assert("4a d2  7c 3f".removeWhitespace() == "4ad27c3f");
@@ -500,12 +520,12 @@ unittest {
  * "".trim() == ""
  * -----
  */
-string trim(string str) {
+inout(char)[] trim(inout(char)[] str) {
 	int start = -1, end = str.length;
 	while( --end >= 0 && " \t\n\r\v\f".contains(str[end]) ) { }
 	end++;
 	if(end == 0) // means all whitespace
-		return "";
+		return str[0..0];
 	while(" \t\n\r\v\f".contains(str[++start])) { }
 	return str[start..end];
 }
@@ -528,7 +548,7 @@ unittest {
  * "".trimLeft() == ""
  * -----
  */
-string trimLeft(string str) {
+cstring trimLeft(cstring str) {
 	int start = -1;
 	while(++start < str.length && " \t\n\r\v\f".contains(str[start])) { }
 	return str[start..$];
@@ -552,7 +572,7 @@ unittest {
  * "".trimRight() == ""
  * -----
  */
-string trimRight(string str) {
+cstring trimRight(cstring str) {
 	int end = str.length;
 	while( --end >= 0 && " \t\n\r\v\f".contains(str[end]) ) { }
 	end++;
@@ -576,9 +596,9 @@ unittest {
 	assert(".NET Framework".find("") == 0);
 	assert("Mississippi".findLast("ss") == 5);
 	assert("Mississippi".findLast("ss", 4) == 2);
-	assert("Jordan=20".split("=") == [cast(string)"Jordan", "20"]);
-	assert("Jordan".split("") == [cast(string)"Jordan"]);
-	assert("Jordan".split1("=") == [cast(string)"Jordan"]);
+	assert("Jordan=20".split("=") == ["Jordan", "20"]);
+	assert("Jordan".split("") == ["Jordan"]);
+	assert("Jordan".split1("=") == ["Jordan"]);
 }
 
 /*class Encoding {

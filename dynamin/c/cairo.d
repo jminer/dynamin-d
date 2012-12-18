@@ -19,9 +19,9 @@ char* cairo_version_string();
 
 alias int cairo_bool_t;
 
-typedef void cairo_t;
+alias void cairo_t;
 
-typedef void cairo_surface_t;
+alias void cairo_surface_t;
 
 struct cairo_matrix_t {
 	double xx; double yx;
@@ -29,9 +29,9 @@ struct cairo_matrix_t {
 	double x0; double y0;
 }
 
-typedef void cairo_pattern_t;
+alias void cairo_pattern_t;
 
-typedef void function(void* data) cairo_destroy_func_t;
+alias void function(void* data) cairo_destroy_func_t;
 
 struct cairo_user_data_key_t {
 	int unused;
@@ -71,9 +71,9 @@ enum {
 	CAIRO_CONTENT_COLOR_ALPHA = 0x3000
 }
 
-typedef cairo_status_t function(void* closure, char* data, uint length) cairo_write_func_t;
+alias cairo_status_t function(void* closure, char* data, uint length) cairo_write_func_t;
 
-typedef cairo_status_t function(void* closure, char* data, uint length) cairo_read_func_t;
+alias cairo_status_t function(void* closure, char* data, uint length) cairo_read_func_t;
 
 cairo_t* cairo_create(cairo_surface_t* target);
 
@@ -284,9 +284,9 @@ cairo_rectangle_list_t* cairo_copy_clip_rectangle_list(cairo_t* cr);
 
 void cairo_rectangle_list_destroy(cairo_rectangle_list_t* rectangle_list);
 
-typedef void cairo_scaled_font_t;
+alias void cairo_scaled_font_t;
 
-typedef void cairo_font_face_t;
+alias void cairo_font_face_t;
 
 struct cairo_glyph_t {
 	uint index;
@@ -349,7 +349,7 @@ enum {
 	CAIRO_HINT_METRICS_ON
 }
 
-typedef void cairo_font_options_t;
+alias void cairo_font_options_t;
 
 cairo_font_options_t* cairo_font_options_create();
 

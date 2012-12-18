@@ -45,7 +45,7 @@ protected:
 	uint _count;
 	static if(changeNotification)
 		void delegate(ListChangeType, T, T, uint) whenChanged;
-	const int DefaultCapacity = 16;
+	enum int DefaultCapacity = 16;
 public:
 	/**
 	 * Creates a list with the specified capacity.
@@ -112,12 +112,12 @@ public:
 		return _data[0.._count];
 	}
 	/*string toString() {
-		string str = "[";
+		mstring str = "[";
 		if(Count > 0)
-			str ~= ToString(this[0]);
+			str ~= toString(this[0]);
 		foreach(item; this) {
 			str ~= ", ";
-			str ~= ToString(item);
+			str ~= toString(item);
 		}
 		str ~= "]";
 		return str;
@@ -127,7 +127,7 @@ public:
 			return;
 		_data.length = max(neededCap, (capacity+1)*2);
 	}
-	T opIndex(uint index) {
+	ref T opIndex(uint index) {
 		return _data[0.._count][index];
 	}
 	void opIndexAssign(T item, uint index) {
@@ -198,7 +198,7 @@ public:
 	//opEquals
 	//opSlice
 	//opSliceAssign
-	int opApply(int delegate(inout T item) dg) {
+	int opApply(int delegate(ref T item) dg) {
 		for(uint i = 0; i < _count; ++i) {
 			if(int result = dg(_data[i]))
 				return result;
@@ -207,7 +207,7 @@ public:
 	}
 	//so you can do:
 	//foreach(i, item; list)
-	int opApply(int delegate(inout uint index, inout T item) dg) {
+	int opApply(int delegate(ref uint index, ref T item) dg) {
 		for(uint i = 0; i < _count; ++i) {
 			if(int result = dg(i, _data[i]))
 				return result;
@@ -217,7 +217,7 @@ public:
 
 }
 unittest {
-	auto list = List!(char).fromArray("Hello, Mat");
+	auto list = List!(char).fromArray("Hello, Mat".dup);
 	list.add('t');
 	assert(list.data == "Hello, Matt");
 	assert(list.pop() == 't');

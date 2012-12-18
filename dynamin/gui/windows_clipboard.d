@@ -14,7 +14,7 @@ import dynamin.c.windows;
 import Utf = tango.text.convert.Utf;
 
 template ClipboardBackend() {
-	void backend_setText(string text) {
+	void backend_setText(cstring text) {
 		if(!OpenClipboard(msgWnd))
 			return;
 		EmptyClipboard();
@@ -27,7 +27,7 @@ template ClipboardBackend() {
 		SetClipboardData(CF_UNICODETEXT, data);
 		CloseClipboard();
 	}
-	string backend_getText() {
+	mstring backend_getText() {
 		if(!OpenClipboard(msgWnd))
 			return null;
 		wchar* data = cast(wchar*)GetClipboardData(CF_UNICODETEXT);
@@ -48,9 +48,9 @@ template ClipboardBackend() {
 
 // Windows only has one clipboard
 template SelectionBackend() {
-	void backend_setText(string text) {
+	void backend_setText(cstring text) {
 	}
-	string backend_getText() {
+	mstring backend_getText() {
 		return null;
 	}
 	bool backend_containsText() {

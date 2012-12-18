@@ -64,7 +64,7 @@ void drawCheckerboard(Graphics g, Rect rect,
 	for(int i = 0; i < height; ++i) {
 		oddRow = i % squareSize2 < squareSize;
 		for(int j = 0; j < width; ++j) {
-			if(oddRow ^ j % squareSize2 < squareSize)
+			if(oddRow ^ (j % squareSize2 < squareSize))
 				data[j+i*width] = pixel1;
 			else
 				data[j+i*width] = pixel2;

@@ -41,7 +41,7 @@ extern(C) XBool isRequestOrNotify(XDisplay* d, XEvent* e, XPointer arg) {
 
 }
 
-string backend_getSelText(XAtom sel, ref ClipboardData data) {
+mstring backend_getSelText(XAtom sel, ref ClipboardData data) {
 	XConvertSelection(display, sel, XA.UTF8_STRING, XA.DYNAMIN_SELECTION, msgWin, CurrentTime);
 	XSync(display, false);
 	auto start = Environment.runningTime;
@@ -66,7 +66,7 @@ string backend_getSelText(XAtom sel, ref ClipboardData data) {
 		scope(exit) XFree(propData);
 		XDeleteProperty(display, msgWin, selEv.property);
 
-		string str = new char[count];
+		mstring str = new char[count];
 		str[] = propData[0..count];
 		return str;
 	}
@@ -77,7 +77,7 @@ struct ClipboardData {
 	uint length; // number of bytes in data
 }
 // always called from the event thread...don't have to avoid static data
-void backend_setSelText(XAtom sel, string text, ref ClipboardData data) {
+void backend_setSelText(XAtom sel, cstring text, ref ClipboardData data) {
 	XSetSelectionOwner(display, sel, msgWin, CurrentTime);
 	data.target = XA.UTF8_STRING;
 	data.data = text.ptr;
@@ -88,10 +88,10 @@ void backend_setSelText(XAtom sel, string text, ref ClipboardData data) {
 
 template ClipboardBackend() {
 	ClipboardData data; // make array when supporting multiple types (PNG & BMP)
-	void backend_setText(string text) {
+	void backend_setText(cstring text) {
 		backend_setSelText(XA.CLIPBOARD, text, data);
 	}
-	string backend_getText() {
+	mstring backend_getText() {
 		return backend_getSelText(XA.CLIPBOARD, data);
 	}
 	bool backend_containsText() {
@@ -101,10 +101,10 @@ template ClipboardBackend() {
 
 template SelectionBackend() {
 	ClipboardData data; // make array when supporting multiple types (PNG & BMP)
-	void backend_setText(string text) {
+	void backend_setText(cstring text) {
 		backend_setSelText(XA.PRIMARY, text, data);
 	}
-	string backend_getText() {
+	mstring backend_getText() {
 		return backend_getSelText(XA.PRIMARY, data);
 	}
 	bool backend_containsText() {

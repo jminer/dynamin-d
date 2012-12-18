@@ -41,7 +41,7 @@ public:
 	/**
 	 * Sets the data on the clipboard to the specified _text.
 	 */
-	void setText(string text) {
+	void setText(cstring text) {
 		backend_setText(text);
 	}
 	alias setText copyText;
@@ -49,7 +49,7 @@ public:
 	 * Gets text from the clipboard. If the clipboard does not have any text
 	 * or has an empty string, null is returned.
 	 */
-	string getText() {
+	mstring getText() {
 		return backend_getText();
 	}
 	alias getText pasteText;
@@ -75,11 +75,11 @@ private:
 	mixin SelectionBackend;
 public:
 	///
-	void setText(string text) {
+	void setText(cstring text) {
 		backend_setText(text);
 	}
 	///
-	string getText() {
+	mstring getText() {
 		return backend_getText();
 	}
 	///

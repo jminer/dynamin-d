@@ -49,7 +49,7 @@ bool checkWindowsVersion(WindowsVersion ver) {
 	info.dwOSVersionInfoSize = OSVERSIONINFO.sizeof;
 	GetVersionEx(&info);
 	DWORD major, minor;
-	switch(ver) {
+	final switch(ver) {
 	case WindowsVersion.Windows95:    major = 4; minor = 0; break;
 	case WindowsVersion.Windows98:    major = 4; minor = 10; break;
 	case WindowsVersion.WindowsMe:    major = 4; minor = 90; break;
@@ -338,7 +338,7 @@ private:
 				GetProcAddress(uxLib, "DrawThemeBackground");
 		}
 	}
-	HTHEME[string] cache;
+	HTHEME[mstring] cache;
 	// opens an HTHEME for the specified controlName and caches it
 	// next time, just returns the HTHEME from the cache
 	HTHEME getHTHEME(string controlName) {
@@ -515,15 +515,15 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 			cast(short)HIWORD(lParam)+c.borderSize.top, button);
 		func(args);
 	}
-	void snapSide(inout int sideToSnap, float side1, float side2) {
+	void snapSide(ref int sideToSnap, float side1, float side2) {
 		if(sideToSnap >= side1-c.snapDistance && sideToSnap <= side1+c.snapDistance)
 			sideToSnap = cast(int)side1;
 		if(sideToSnap >= side2-c.snapDistance && sideToSnap <= side2+c.snapDistance)
 			sideToSnap = cast(int)side2;
 	}
-	auto emptyFunc = (Rect snapRect) {};
+	void delegate(Rect snapRect) emptyFunc = (Rect snapRect) { };
 	// used to snap vertical sides, left and right
-	void snapVSide(inout int side, RECT* rect, void delegate(Rect snapRect) func = emptyFunc) {
+	void snapVSide(ref int side, RECT* rect, void delegate(Rect snapRect) func = emptyFunc) {
 		if(c.snapRects is null)
 			return;
 		foreach(snapRect; c.snapRects) {
@@ -534,7 +534,7 @@ LRESULT dynaminWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		}
 	}
 	// used to snap horizontal sides, top and bottom
-	void snapHSide(inout int side, RECT* rect, void delegate(Rect snapRect) func = emptyFunc) {
+	void snapHSide(ref int side, RECT* rect, void delegate(Rect snapRect) func = emptyFunc) {
 		if(c.snapRects is null)
 			return;
 		foreach(snapRect; c.snapRects) {

@@ -43,21 +43,21 @@ static if((void*).sizeof == 4) {
  * The string used to separate lines.
  * This is "\r\n" under Windows and "\n" under Linux.
  */
-const string LineSeparator = FileConst.NewlineString;
+enum string LineSeparator = FileConst.NewlineString;
 /**
  * The string used to separate directories in a path.
  * This is "\\" under Windows and "/" under Linux.
  */
-const string DirSeparator = FileConst.PathSeparatorString;
+enum string DirSeparator = FileConst.PathSeparatorString;
 ///
-const char DirSeparatorChar = FileConst.PathSeparatorChar;
+enum char DirSeparatorChar = FileConst.PathSeparatorChar;
 /**
  * The string used to separate paths.
  * This is ";" under Windows and ":" under Linux
  */
-const string PathSeparator = FileConst.SystemPathString;
+enum string PathSeparator = FileConst.SystemPathString;
 ///
-const char PathSeparatorChar = FileConst.SystemPathChar;
+enum char PathSeparatorChar = FileConst.SystemPathChar;
 
 /**
  * Tests whether num1 and num2 are equal. They are considered equal
@@ -181,14 +181,14 @@ unittest {
  * toRomanNumerals(194) == "CXCIV"
  * -----
  */
-string toRomanNumerals(int num) {
+mstring toRomanNumerals(int num) {
 	if(num > 3999 || num < 0)
-		throw new IllegalArgumentException("ToRomanNumerals():" ~
+		throw new IllegalArgumentException("toRomanNumerals():" ~
 			"highest convertable roman numeral is 3999");
 	static combos = [[0][0..0], [0], [0,0], [0,0,0], [0,1],
 	[1], [1,0], [1,0,0], [1,0,0,0], [0,2]];
 	static letters = "IVXLCDM";
-	string str = "";
+	mstring str;
 	int letterOffset = 0;
 	while(num > 0) {
 		foreach_reverse(int c; combos[num % 10])
@@ -211,7 +211,7 @@ unittest {
 	assert(toRomanNumerals(3949) == "MMMCMXLIX");
 }
 
-int numeralToValue(char c) {
+private int numeralToValue(char c) {
 	switch(c) {
 	case 'I': case 'i': return 1;
 	case 'V': case 'v': return 5;
@@ -235,7 +235,7 @@ int numeralToValue(char c) {
  * parseRomanNumerals("xxxxviiii") == 49
  * -----
  */
-int parseRomanNumerals(string str) {
+int parseRomanNumerals(cstring str) {
 	int num = 0;
 	int largestSoFar = 1;
 	foreach_reverse(c; str) {
@@ -250,7 +250,7 @@ int parseRomanNumerals(string str) {
 		}
 	}
 	if(num > 3999 || num < 0)
-		throw new IllegalArgumentException("ParseRomanNumerals():" ~
+		throw new IllegalArgumentException("parseRomanNumerals():" ~
 			"highest convertable roman numeral is 3999");
 	return num;
 }
@@ -283,10 +283,10 @@ unittest {
  * byteCountToString(620_705_792) == "591 MB"
  * -----
  */
-string byteCountToString(ulong num) {
-	const factor = 1024;
+mstring byteCountToString(ulong num) {
+	enum factor = 1024;
 	//kilo, mega, giga, tera, peta, exa, zetta, yotta
-	char[][] units = [
+	string[] units = [
 	" bytes", " KB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB"];
 	uint unitIndex = 0;
 	ulong div = factor;
@@ -297,9 +297,9 @@ string byteCountToString(ulong num) {
 		++unitIndex;
 	}
 	//rem/1024 equals the fraction of unit
-	string str = to!(string)(num);
+	mstring str = to!(mstring)(num);
 	if(str.length < 3) {
-		str ~= "." ~ to!(string)(rem*10/factor);
+		str ~= "." ~ to!(mstring)(rem*10/factor);
 	}
 	str ~= units[unitIndex];
 	return str;

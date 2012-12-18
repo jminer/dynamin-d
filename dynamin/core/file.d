@@ -14,12 +14,12 @@ import dynamin.core.string;
 import tango.io.device.File;
 import tango.io.UnicodeFile;
 
-ubyte[] readFileBytes(string file) {
+ubyte[] readFileBytes(cstring file) {
 	return cast(ubyte[])File.get(file);
 	//scope f = new File(file);
 	//return cast(ubyte[])f.read();
 }
-string readFileText(string file) {
+mstring readFileText(cstring file) {
 	scope f = new UnicodeFile!(char)(file, Encoding.UTF_8);
 	return f.read();
 }

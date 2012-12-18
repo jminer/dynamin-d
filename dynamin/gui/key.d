@@ -95,7 +95,7 @@ enum Key {
 	Alt     = 0x40000
 }
 
-const string[] keyStringTable = [
+enum string[] keyStringTable = [
 	"None", "Escape", "Tab", "Backspace", "Enter", "Space",
 	"Left Arrow", "Right Arrow", "Up Arrow", "Down Arrow",
 	"Insert", "Delete", "Home", "End", "Page Up", "Page Down",
@@ -122,7 +122,7 @@ string keyToString(Key key) {
 		return "Alt";
 	return keyStringTable[key];
 }
-Key toKey(string str) {
+Key toKey(mstring str) {
 	if(!str)
 		return Key.None;
 	foreach(i, s; keyStringTable)

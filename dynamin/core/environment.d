@@ -102,7 +102,7 @@ unittest {
 	auto startTime = Environment.runningTime;
 	assert(startTime > 0);
 	auto time = startTime;
-	const SAMPLE = 50;
+	enum SAMPLE = 50;
 	// makes sure that RunningTime does not go backwards
 	for(int i = 0; i < SAMPLE;) {
 		auto time2 = Environment.runningTime;

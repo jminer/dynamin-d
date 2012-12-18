@@ -19,7 +19,7 @@ template FileDialogBackend() {
 		// gdk_x11_get_server_time             (GdkWindow *window)
 		// could be used in clipboard
 
-		string title = text ? text : (fileDialogType == Open ? "Open" : "Save");
+		mstring title = text ? text : (fileDialogType == Open ? "Open" : "Save");
 		auto dialog = gtk_file_chooser_dialog_new(toCharPtr(title), null,
 			fileDialogType == Open ?
 			GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -63,7 +63,7 @@ template FileDialogBackend() {
 			g_slist_free(gfilters);
 
 			auto list = gtk_file_chooser_get_filenames(dialog);
-			_files = new string[g_slist_length(list)];
+			_files = new mstring[g_slist_length(list)];
 			for(int i = 0; i < _files.length; ++i) {
 				auto d = cast(char*)list.data;
 				_files[i] = d[0..strlen(d)].dup;

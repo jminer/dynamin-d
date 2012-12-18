@@ -36,7 +36,7 @@ template EnvironmentBackend() {
 	long backend_runningTime() {
 		// NOTE: might be a faster way to do this...ProcessorTime is slow
 		// Use ProcessorTime to fix when timeGetTime() rolls over
-		const strayMs = 18_000_000; // 5 hours
+		enum strayMs = 18_000_000; // 5 hours
 		long pNow = processorTime;
 		long tNow = timeGetTime();
 		// pNow-startDiff would equal tNow except that:

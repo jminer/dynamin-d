@@ -20,13 +20,13 @@ template FileDialogBackend() {
 		//ofn.hwndOwner = ;
 
 		ensureAllFilesFilter();
-		string filterStr;
+		mstring filterStr;
 		foreach(filter; _filters) {
 			if(filter.shouldShow)
 				continue;
 			string[] exts = filter.extensions.dup;
 			if(exts.length == 0)
-				exts = [cast(string)"*.*"];
+				exts = ["*.*"];
 			else
 				for(int i = 0; i < exts.length; ++i)
 					exts[i] = "*." ~ exts[i];
@@ -71,8 +71,7 @@ template FileDialogBackend() {
 		for(index = filesBufferW.length; index > 0; --index)
 			if(filesBufferW[index-1] != 0)
 				break;
-		auto filesBuffer = Utf.toString(filesBufferW[0..index]);
-		scope(exit) delete filesBuffer;
+		auto filesBuffer = cast(immutable)Utf.toString(filesBufferW[0..index]);
 		if(filesBuffer.contains('\0')) { // multiple files
 			auto arr = filesBuffer.split("\0");
 			_folder = arr[0];
@@ -90,8 +89,8 @@ template FileDialogBackend() {
 			}
 		} else { //single file
 			assert(filesBuffer.contains('\\'));
-			_folder = filesBuffer[0..filesBuffer.findLast("\\")].dup;
-			_files = [filesBuffer.dup];
+			_folder = filesBuffer[0..filesBuffer.findLast("\\")];
+			_files = [filesBuffer];
 			maybeAddExt(_files[0]);
 		}
 

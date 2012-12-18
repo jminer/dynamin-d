@@ -34,7 +34,7 @@ V(	whatLabel
 */
 
 enum LayoutType {
-	None, Table, Control, Filler, Spacer
+	Table, Control, Filler, Spacer
 }
 enum Elasticity {
 	No, Semi, Yes
@@ -84,7 +84,7 @@ struct LayoutGroup {
 
 	//{{{ _elasticX()
 	private Elasticity _elasticX() {
-		switch(type) {
+		final switch(type) {
 		case LayoutType.Control:
 			return control.elasticX ? Elasticity.Yes : Elasticity.No;
 		case LayoutType.Table:
@@ -108,7 +108,7 @@ struct LayoutGroup {
 	//}}}
 	//{{{ _elasticY()
 	private Elasticity _elasticY() {
-		switch(type) {
+		final switch(type) {
 		case LayoutType.Control:
 			return control.elasticY ? Elasticity.Yes : Elasticity.No;
 		case LayoutType.Table:
@@ -133,7 +133,7 @@ struct LayoutGroup {
 
 	//{{{ _bestSize()
 	private Size _bestSize() {
-		switch(type) {
+		final switch(type) {
 		case LayoutType.Control:
 			return control.bestSize;
 		case LayoutType.Table:
@@ -150,7 +150,7 @@ struct LayoutGroup {
 	//}}}
 	//{{{ _baseline()
 	private int _baseline() {
-		switch(type) {
+		final switch(type) {
 		case LayoutType.Control:
 			return control.baseline;
 		case LayoutType.Table:
@@ -170,7 +170,7 @@ struct LayoutGroup {
 
 	//{{{ layout()
 	void layout(Rect rect) {
-		switch(type) {
+		final switch(type) {
 		case LayoutType.Control:
 			control.location = Point(rect.x, rect.y);
 			control.size = Size(rect.width, rect.height);
@@ -379,7 +379,7 @@ class LayoutPanel : Panel {
  * pretty sure it is a DMD bug, but I don't have time to make a testcase
  * for a bug that does not bother me.) This will work correctly:
  * -----
- * const char[] s = createLayout("V( b1 H(b2 b3) )");
+ * enum char[] s = createLayout("V( b1 H(b2 b3) )");
  * -----
  * Because then the function is interpreted at compile time with CTFE.
  */
@@ -427,11 +427,11 @@ string getToken(string str) {
 }
 
 // {{{ copied from Phobos
-char[] ctfeUintToString(uint u) {
+string ctfeUintToString(uint u) {
 	char[uint.sizeof * 3] buffer = void;
 	int ndigits;
-	char[] result;
-	char[] digits = "0123456789";
+	string result;
+	string digits = "0123456789";
 
 	ndigits = 0;
 	if (u < 10)
@@ -446,12 +446,11 @@ char[] ctfeUintToString(uint u) {
 			ndigits++;
 			buffer[buffer.length - ndigits] = cast(char)c;
 		}
-		result = new char[ndigits];
-		result[] = buffer[buffer.length - ndigits .. buffer.length];
+		result = buffer[$ - ndigits .. $].idup;
 	}
 	return result;
 }
-uint ctfeStringToUint(char[] s)
+uint ctfeStringToUint(string s)
 {
 	int length = s.length;
 
@@ -568,28 +567,28 @@ return panel;
 
 unittest {
 	class FakeButton : Control {
-		Size bestSize() { return Size(80, 30); }
-		bool elasticX() { return false; }
-		bool elasticY() { return false; }
-		int baseline() { return 20; }
+		override Size bestSize() { return Size(80, 30); }
+		override bool elasticX() { return false; }
+		override bool elasticY() { return false; }
+		override int baseline() { return 20; }
 	}
 	class FakeTextBox : Control {
-		Size bestSize() { return Size(100, 20); }
-		bool elasticX() { return true; }
-		bool elasticY() { return false; }
-		int baseline() { return 18; }
+		override Size bestSize() { return Size(100, 20); }
+		override bool elasticX() { return true; }
+		override bool elasticY() { return false; }
+		override int baseline() { return 18; }
 	}
 	class FakeListBox : Control {
-		Size bestSize() { return Size(100, 300); }
-		bool elasticX() { return false; }
-		bool elasticY() { return true; }
-		int baseline() { return 15; }
+		override Size bestSize() { return Size(100, 300); }
+		override bool elasticX() { return false; }
+		override bool elasticY() { return true; }
+		override int baseline() { return 15; }
 	}
 	class FakeLabel : Control {
-		Size bestSize() { return Size(70, 15); }
-		bool elasticX() { return false; }
-		bool elasticY() { return false; }
-		int baseline() { return 13; }
+		override Size bestSize() { return Size(70, 15); }
+		override bool elasticX() { return false; }
+		override bool elasticY() { return false; }
+		override int baseline() { return 13; }
 	}
 	auto button1 = new FakeButton();
 	auto tb1 = new FakeTextBox();

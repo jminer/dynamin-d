@@ -50,7 +50,7 @@ template FolderDialogBackend() {
 				}
 				break;
 			}
-		_folder = Utf.toString(dirBuffer[0..index]);
+		_folder = cast(immutable)Utf.toString(dirBuffer[0..index]);
 		return DialogResult.OK;
 	}
 }

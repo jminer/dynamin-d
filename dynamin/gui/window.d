@@ -443,7 +443,7 @@ public:
 	}
 
 	alias Control.repaint repaint;
-	void repaint(Rect rect) {
+	override void repaint(Rect rect) {
 		if(!handleCreated)
 			return;
 		backend_repaint(rect);
@@ -485,7 +485,7 @@ public:
 
 	// TODO: 1.0  MinSize -> contentMinSize  MaxSize -> contentMaxSize
 	alias Control.location location;
-	void location(Point pt) {
+	override void location(Point pt) {
 		super.location(pt);
 		if(!handleCreated)
 			return;
@@ -493,7 +493,7 @@ public:
 	}
 
 	alias Control.size size;
-	void size(Size size) {
+	override void size(Size size) {
 		super.size(size);
 		_content.size = size - _borderSize;
 		if(!handleCreated)
@@ -502,7 +502,7 @@ public:
 	}
 
 	alias Control.text text;
-	void text(string str) {
+	override void text(string str) {
 		super.text(str);
 		if(!handleCreated)
 			return;
@@ -529,7 +529,7 @@ public:
 			rect = desktopRect;
 		}
 		Point newLoc = Point();
-		switch(pos) {
+		final switch(pos) {
 		case Position.TopLeft:
 		case Position.Left:
 		case Position.BottomLeft:
@@ -546,7 +546,7 @@ public:
 			newLoc.x = rect.x + rect.width - width;
 			break;
 		}
-		switch(pos) {
+		final switch(pos) {
 		case Position.TopLeft:
 		case Position.Top:
 		case Position.TopRight:

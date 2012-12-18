@@ -29,7 +29,7 @@ template ConsoleBackend() {
 	void backend_buffered(bool b) {
 		buffered = b;
 	}
-	void backend_write(string s) {
+	void backend_write(mstring s) {
 		// the reasons for this function being slower than writef():
 		//  - partly the conversion overhead (UTF-8 -> UTF16 -> CP)
 		//  - partly because it is not buffered
@@ -51,7 +51,7 @@ template ConsoleBackend() {
 			printf("WriteFile() failed, error %d\n", GetLastError());+/
 
 	}
-	string backend_readLineRaw() {/+
+	mstring backend_readLineRaw() {/+
 		auto stdIn = GetStdHandle(-10);
 		// TODO: does not work if input is from a file!
 		// if reading from a file, a line can be very long...
@@ -69,24 +69,24 @@ template ConsoleBackend() {
 		return ToUtf8(wbuffer[0..numUsed]);+/
 		return null;
 	}
-	string backend_read() {
+	mstring backend_read() {
 		return null;
 	}
-	string backend_readLineHidden() {
+	mstring backend_readLineHidden() {
 		return null;
 	}
-	string backend_readHidden() {
+	mstring backend_readHidden() {
 		return null;
 	}
 	void backend_clear() {
 		system("cls");
 	}
-	uint backend_getColorFlags(ConsoleColor c, bool fore) {
-		uint i = fore ? FOREGROUND_INTENSITY : BACKGROUND_INTENSITY;
-		uint r = fore ? FOREGROUND_RED : BACKGROUND_RED;
-		uint g = fore ? FOREGROUND_GREEN : BACKGROUND_GREEN;
-		uint b = fore ? FOREGROUND_BLUE : BACKGROUND_BLUE;
-		switch(c) {
+	ushort backend_getColorFlags(ConsoleColor c, bool fore) {
+		ushort i = fore ? FOREGROUND_INTENSITY : BACKGROUND_INTENSITY;
+		ushort r = fore ? FOREGROUND_RED : BACKGROUND_RED;
+		ushort g = fore ? FOREGROUND_GREEN : BACKGROUND_GREEN;
+		ushort b = fore ? FOREGROUND_BLUE : BACKGROUND_BLUE;
+		final switch(c) {
 		case c.Black:      return 0;
 		case c.Silver:     return r | g | b;
 		case c.Maroon:     return r;
@@ -103,7 +103,6 @@ template ConsoleBackend() {
 		case c.Pink:       return r | b | i;
 		case c.Yellow:     return r | g | i;
 		case c.Cyan:       return g | b | i;
-		default: assert(0);
 		}
 	}
 	void backend_foreColor(ConsoleColor color) {

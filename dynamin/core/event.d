@@ -94,7 +94,7 @@ struct Event(alias mainHandler_) {
 	void opAddAssign(Handler handler) {
 		if(!handler.funcptr) throw new Exception("handler cannot be null");
 		handlers.length = handlers.length + 1;
-		handlers[length-1] = handler;
+		handlers[$-1] = handler;
 		// TODO: use a list?
 		//handlers.add(handler);
 	}
@@ -106,7 +106,7 @@ struct Event(alias mainHandler_) {
 		}
 		Foo* f = new Foo;
 		f.handler = handler;
-		*this += &f.wrapper;
+		this += &f.wrapper;
 		// I really wish D could do this:
 		//this += (ArgsType e) { handler(); };
 	}

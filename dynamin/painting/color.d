@@ -95,7 +95,7 @@ version(BigEndian) {
 		B = 255 - B;
 	}
 	string toUtf8() {
-		return format("Color [R={,3}, G={,3}, B={,3}]", R, G, B);
+		return format("Color [R={,3}, G={,3}, B={,3}]", R, G, B).idup;
 	}
 static:
 	Color opCall(ubyte a, ubyte r, ubyte g, ubyte b) {
