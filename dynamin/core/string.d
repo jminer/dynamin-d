@@ -107,7 +107,7 @@ unittest {
 	assert("Bounce the ball.".upcase() == "BOUNCE THE BALL.");
 	assert("Mañana".upcase() == "MAÑANA");
 	assert("æóëø".upcase() == "ÆÓËØ");
-	assert("σε".downcase() == "ΣΕ");
+	assert("ΣΕ".downcase() == "σε");
 }
 
 /**
