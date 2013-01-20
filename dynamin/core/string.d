@@ -217,9 +217,9 @@ enum Newline {
 	///
 	Crlf = 2,
 	///
-	Macintosh = 0,
+	ClassicMacOS = 0,
 	///
-	Linux = 1,
+	Unix = 1,
 	///
 	Windows = 2
 }
@@ -229,7 +229,7 @@ enum Newline {
  * -----
  * "\r\n\n\r".convertNewlines(Newline.Lf) == "\n\n\n"
  * "\r\n\n\r".convertNewlines(Newline.Windows) == "\r\n\r\n\r\n"
- * "\n\r\n".convertNewlines(Newline.Macintosh) == "\r\r"
+ * "\n\r\n".convertNewlines(Newline.ClassicMacOS) == "\r\r"
  * -----
  */
 mstring convertNewlines(cstring str, Newline nl, mstring buffer = null) { // TODO: use buffer
@@ -244,7 +244,7 @@ mstring convertNewlines(cstring str, Newline nl, mstring buffer = null) { // TOD
 unittest {
 	assert("\r\n\n\r".convertNewlines(Newline.Lf) == "\n\n\n");
 	assert("\r\n\n\r".convertNewlines(Newline.Windows) == "\r\n\r\n\r\n");
-	assert("\n\r\n".convertNewlines(Newline.Macintosh) == "\r\r");
+	assert("\n\r\n".convertNewlines(Newline.ClassicMacOS) == "\r\r");
 }
 
 /**
