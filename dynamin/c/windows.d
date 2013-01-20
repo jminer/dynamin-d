@@ -1049,32 +1049,32 @@ SHORT GetKeyState(int nVirtKey);
 //}}}
 
 //{{{ system functions
-//const LPTSTR IDC_ARROW       = cast(LPTSTR)32512u;
-//const LPTSTR IDC_IBEAM       = cast(LPTSTR)32513u;
-//const LPTSTR IDC_WAIT        = cast(LPTSTR)32514u;
-//const LPTSTR IDC_CROSS       = cast(LPTSTR)32515u;
-//const LPTSTR IDC_UPARROW     = cast(LPTSTR)32516u;
-//const LPTSTR IDC_SIZE        = cast(LPTSTR)32640u;
-//const LPTSTR IDC_ICON        = cast(LPTSTR)32641u;
-//const LPTSTR IDC_SIZENWSE    = cast(LPTSTR)32642u;
-//const LPTSTR IDC_SIZENESW    = cast(LPTSTR)32643u;
-//const LPTSTR IDC_SIZEWE      = cast(LPTSTR)32644u;
-//const LPTSTR IDC_SIZENS      = cast(LPTSTR)32645u;
-//const LPTSTR IDC_SIZEALL     = cast(LPTSTR)32646u;
-//const LPTSTR IDC_NO          = cast(LPTSTR)32648u;
-//const LPTSTR IDC_HAND        = cast(LPTSTR)32649u;
-//const LPTSTR IDC_APPSTARTING = cast(LPTSTR)32650u;
-//const LPTSTR IDC_HELP        = cast(LPTSTR)32651u;
+enum LPTSTR IDC_ARROW       = cast(LPTSTR)32512u;
+enum LPTSTR IDC_IBEAM       = cast(LPTSTR)32513u;
+enum LPTSTR IDC_WAIT        = cast(LPTSTR)32514u;
+enum LPTSTR IDC_CROSS       = cast(LPTSTR)32515u;
+enum LPTSTR IDC_UPARROW     = cast(LPTSTR)32516u;
+enum LPTSTR IDC_SIZE        = cast(LPTSTR)32640u;
+enum LPTSTR IDC_ICON        = cast(LPTSTR)32641u;
+enum LPTSTR IDC_SIZENWSE    = cast(LPTSTR)32642u;
+enum LPTSTR IDC_SIZENESW    = cast(LPTSTR)32643u;
+enum LPTSTR IDC_SIZEWE      = cast(LPTSTR)32644u;
+enum LPTSTR IDC_SIZENS      = cast(LPTSTR)32645u;
+enum LPTSTR IDC_SIZEALL     = cast(LPTSTR)32646u;
+enum LPTSTR IDC_NO          = cast(LPTSTR)32648u;
+enum LPTSTR IDC_HAND        = cast(LPTSTR)32649u;
+enum LPTSTR IDC_APPSTARTING = cast(LPTSTR)32650u;
+enum LPTSTR IDC_HELP        = cast(LPTSTR)32651u;
 
-//const LPTSTR IDI_APPLICATION = cast(LPTSTR)32512;
-//const LPTSTR IDI_HAND        = cast(LPTSTR)32513;
-//const LPTSTR IDI_QUESTION    = cast(LPTSTR)32514;
-//const LPTSTR IDI_EXCLAMATION = cast(LPTSTR)32515;
-//const LPTSTR IDI_ASTERISK    = cast(LPTSTR)32516;
-//const LPTSTR IDI_WINLOGO     = cast(LPTSTR)32517;
-//const LPTSTR IDI_WARNING     = IDI_EXCLAMATION;
-//const LPTSTR IDI_ERROR       = IDI_HAND;
-//const LPTSTR IDI_INFORMATION = IDI_ASTERISK;
+enum LPTSTR IDI_APPLICATION = cast(LPTSTR)32512;
+enum LPTSTR IDI_HAND        = cast(LPTSTR)32513;
+enum LPTSTR IDI_QUESTION    = cast(LPTSTR)32514;
+enum LPTSTR IDI_EXCLAMATION = cast(LPTSTR)32515;
+enum LPTSTR IDI_ASTERISK    = cast(LPTSTR)32516;
+enum LPTSTR IDI_WINLOGO     = cast(LPTSTR)32517;
+enum LPTSTR IDI_WARNING     = IDI_EXCLAMATION;
+enum LPTSTR IDI_ERROR       = IDI_HAND;
+enum LPTSTR IDI_INFORMATION = IDI_ASTERISK;
 
 enum {
 	OIC_SAMPLE      = 32512,
@@ -1134,11 +1134,15 @@ HANDLE LoadImageW(
 	int cy,
 	UINT fuLoad);
 
+HICON CreateIconIndirect(PICONINFO piconinfo);
+
 HICON CreateIconFromResource(
 	BYTE* presbits,
 	DWORD dwResSize,
 	BOOL fIcon,
 	DWORD dwVer);
+
+BOOL GetIconInfo(HICON hIcon, PICONINFO piconinfo);
 
 enum {
 	SPI_GETNONCLIENTMETRICS = 0x0029,
@@ -1753,6 +1757,17 @@ struct BITMAP {
 	WORD  bmBitsPixel;
 	VOID* bmBits;
 }
+
+struct ICONINFO {
+	BOOL fIcon;
+	DWORD xHotspot;
+	DWORD yHotspot;
+	HBITMAP hbmMask;
+	HBITMAP hbmColor;
+}
+
+alias ICONINFO* PICONINFO;
+
 struct MSG {
 	HWND hWnd;
 	UINT message;
