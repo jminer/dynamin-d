@@ -4,6 +4,11 @@ Dynamin
 
 Dynamin is a GUI library written in D. It is not a binding to a GUI library written in another language, instead implementing controls in D. The [cairo graphics library](http://www.cairographics.org/) is used for 2D graphics. Dynamin currently depends on [Tango](https://github.com/SiegeLord/Tango-D2).
 
+Issues
+------
+
+Issues are tracked at [Dynamin's project page](http://dsource.org/projects/dynamin) at dsource.
+
 Non-Native Controls
 -------------------
 
