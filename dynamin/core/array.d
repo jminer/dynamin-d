@@ -10,7 +10,6 @@
 
 module dynamin.core.array;
 
-import dynamin.core.test;
 import dynamin.core.string;
 
 /**

@@ -12,7 +12,6 @@ module dynamin.core.format;
 
 import dynamin.core.global;
 import dynamin.core.string;
-import dynamin.core.test;
 
 private:
 
