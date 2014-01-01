@@ -39,6 +39,23 @@ static if((void*).sizeof == 4) {
 	alias ulong uword;
 }
 
+version(Windows) {
+	// The C `long` type is 32-bit in both 32 and 64-bit Windows.
+	alias int c_long;
+	alias uint c_ulong;
+} else {
+	// These sizes are right for most systems.
+	// http://en.wikipedia.org/wiki/64-bit_computing#64-bit_data_models
+	// http://stackoverflow.com/questions/384502/what-is-the-bit-size-of-long-on-64-bit-windows
+	version(D_LP64) {
+		alias long c_long;
+		alias ulong c_ulong;
+	} else {
+		alias int c_long;
+		alias uint c_ulong;
+	}
+}
+
 /**
  * The string used to separate lines.
  * This is "\r\n" under Windows and "\n" under Linux.

@@ -23,6 +23,7 @@ import tango.text.convert.Layout;
 import tango.text.Unicode;
 import dynamin.core.global;
 import dynamin.core.math;
+import core.vararg;
 
 /// Defined as char[]
 alias char[]        mstring;
@@ -134,7 +135,7 @@ unittest {
 
 // TODO: make more use of delegates in these?
 // TODO; use templates so that these work with wchar and dchar?
-bool startsWith(cstring str, cstring subStr, int start = 0) {
+bool startsWith(cstring str, cstring subStr, word start = 0) {
 	if(start+subStr.length > str.length)
 		return false;
 	return str[start..start+subStr.length] == subStr;
@@ -142,22 +143,22 @@ bool startsWith(cstring str, cstring subStr, int start = 0) {
 bool endsWith(cstring str, cstring subStr) {
 	return endsWith(str, subStr, str.length);
 }
-bool endsWith(cstring str, cstring subStr, int start) {
+bool endsWith(cstring str, cstring subStr, word start) {
 	if(start-subStr.length < 0)
 		return false;
 	return str[str.length-subStr.length..str.length] == subStr;
 }
-int findLast(cstring str, cstring subStr) {
+word findLast(cstring str, cstring subStr) {
 	return findLast(str, subStr, str.length);
 }
-int findLast(cstring str, cstring subStr, int start) {
-	for(int i = start-subStr.length; i >= 0; --i)
+word findLast(cstring str, cstring subStr, word start) {
+	for(word i = start-subStr.length; i >= 0; --i)
 		if(str[i..i+subStr.length] == subStr)
 			return i;
 	return -1;
 }
-int find(cstring str, cstring subStr, int start = 0) {
-	for(int i = start; i < str.length-subStr.length; ++i)
+word find(cstring str, cstring subStr, word start = 0) {
+	for(word i = start; i < str.length-subStr.length; ++i)
 		if(str[i..i+subStr.length] == subStr)
 			return i;
 	return -1;
@@ -183,7 +184,7 @@ mstring remove(cstring str, int start, int count = 1, mstring buffer = null) { /
 inout(char)[][] split1(inout(char)[] str, cstring subStr) {
 	if(subStr.length == 0)
 		return [str];
-	int index = find(str, subStr);
+	auto index = find(str, subStr);
 	if(index == -1)
 		return [str];
 	auto strs = new inout(char)[][2];
@@ -196,8 +197,8 @@ inout(char)[][] split(inout(char)[] str, cstring subStr) {
 	if(subStr.length == 0)
 		return [str];
 	inout(char)[][] strs;
-	int index, searchFrom;
-	int i = 0;
+	word index, searchFrom;
+	word i = 0;
 	while(searchFrom < str.length) {
 		index = find(str, subStr, searchFrom);
 		if(index == -1) index = str.length;
@@ -267,8 +268,8 @@ mstring join(string[] strs, cstring sep) {
 
 	mstring newStr = new char[len];
 	newStr[0..strs[0].length] = strs[0];
-	int start = strs[0].length;
-	for(int i = 1; i < strs.length; ++i) {
+	word start = strs[0].length;
+	for(word i = 1; i < strs.length; ++i) {
 		auto str = strs[i];
 		newStr[start..start+sep.length] = sep;
 		start += sep.length;
@@ -521,7 +522,7 @@ unittest {
  * -----
  */
 inout(char)[] trim(inout(char)[] str) {
-	int start = -1, end = str.length;
+	word start = -1, end = str.length;
 	while( --end >= 0 && " \t\n\r\v\f".contains(str[end]) ) { }
 	end++;
 	if(end == 0) // means all whitespace
@@ -573,7 +574,7 @@ unittest {
  * -----
  */
 cstring trimRight(cstring str) {
-	int end = str.length;
+	word end = str.length;
 	while( --end >= 0 && " \t\n\r\v\f".contains(str[end]) ) { }
 	end++;
 	return str[0..end];

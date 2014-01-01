@@ -29,7 +29,7 @@ template ConsoleBackend() {
 	void backend_buffered(bool b) {
 		buffered = b;
 	}
-	void backend_write(mstring s) {
+	void backend_write(cstring s) {
 		// the reasons for this function being slower than writef():
 		//  - partly the conversion overhead (UTF-8 -> UTF16 -> CP)
 		//  - partly because it is not buffered

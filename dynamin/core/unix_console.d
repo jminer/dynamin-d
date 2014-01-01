@@ -29,7 +29,7 @@ template ConsoleBackend() {
 	void backend_buffered(bool b) {
 		buffered = b;
 	}
-	void backend_write(mstring s) {
+	void backend_write(cstring s) {
 		/*fwrite(s.ptr, 1, s.length, stdout);
 		if(!buffered)
 			fflush(stdout);*/
@@ -65,7 +65,7 @@ template ConsoleBackend() {
 	void backend_clear() {
 		system("clear");
 	}
-	mstring backend_getColorStr(ConsoleColor c, bool fore) {
+	string backend_getColorStr(ConsoleColor c, bool fore) {
 		final switch(c) {
 		case c.Black:      return fore ? "\x1b[30m" : "\x1b[40m";
 		case c.Silver:     return fore ? "\x1b[37m" : "\x1b[47m";

@@ -14,6 +14,7 @@ import dynamin.core.string;
 import dynamin.core_backend;
 import tango.io.Stdout;
 import tango.io.Console;
+import core.vararg;
 
 ///
 enum ConsoleColor {

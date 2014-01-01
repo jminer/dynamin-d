@@ -12,11 +12,15 @@ module dynamin.core.unix_environment;
 
 public import tango.stdc.posix.sys.time;
 public import tango.io.Stdout;
+public import dynamin.core.global;
 
 // TODO: v1.0 make a binding to these
 extern(C) {
-	int get_nprocs_conf();
-	int get_nprocs();
+	version(OSX) {
+		enum _SC_NPROCESSORS_ONLN = 58;
+	}
+
+	c_long sysconf(int name);
 	int getitimer(int which, itimerval* value);
 	int setitimer(int which, itimerval* value,
 		itimerval* ovalue);
@@ -56,7 +60,7 @@ template EnvironmentBackend() {
 		return backend_timevalToMs(&tv);
 	}
 	int backend_processorCount() {
-		return get_nprocs();
+		return cast(int)sysconf(_SC_NPROCESSORS_ONLN);
 	}
 	long backend_processorTime() {
 		return 0;
