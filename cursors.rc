@@ -1,0 +1,5 @@
+rDragCur              CURSOR MouseDrag.cur
+rReversedArrowCur     CURSOR MouseReversedArrow.cur
+rAeroDragCur          CURSOR AeroMouseDrag.cur
+rAeroReversedArrowCur CURSOR AeroMouseReversedArrow.cur
+

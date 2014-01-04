@@ -5,7 +5,13 @@ module dynamin.c.cairo;
  * the cairo graphics library version 1.3.16.
  */
 
-version(build) { pragma(link, cairo); }
+version(Windows) {
+	pragma(lib, "cairo.lib");
+}
+version(Posix) {
+	static assert(false); // TODO: fix lib name
+	pragma(lib, "cairo.a");
+}
 
 extern(C):
 

@@ -2,11 +2,11 @@
 
 call build-paths
 
-set ARGS=-DCPATH%DMD_DIR%\bin -T%OUT_FILE% -od%CD%\obj -full -D -Dd%CD%/docs standard.ddoc -I%TANGO_DIR%
-set MODE_ARGS=-gui4.0 -release -inline -O
+set ARGS=-allinst -of%OUT_FILE% -od%CD%\obj -D -Dd%CD%\docs -I%TANGO_DIR% %TANGO_DIR%\libtango-dmd.lib cursors.res -L/EXETYPE:NT -L/SUBSYSTEM:WINDOWS:4.0
+set MODE_ARGS=-release -inline -O
 
 @echo on
-%BUD_DIR%\bud -Xtango %TANGO_DIR%\libtango-dmd.lib %MAIN_FILE% cursors.res %ARGS% %MODE_ARGS%
+%DMD_DIR%\windows\bin\rdmd --build-only %ARGS% %MODE_ARGS% %MAIN_FILE% standard.dd
 @echo off
 if errorlevel 1 goto end
 

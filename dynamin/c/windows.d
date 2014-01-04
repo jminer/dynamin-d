@@ -11,7 +11,11 @@ version(Windows) {
 	static assert(0);
 }
 
-version(build) { pragma(link, gdi32, comdlg32, shell32, ole32, winmm); }
+pragma(lib, "gdi32.lib");
+pragma(lib, "comdlg32.lib");
+pragma(lib, "shell32.lib");
+pragma(lib, "ole32.lib");
+pragma(lib, "winmm.lib");
 
 extern(Windows):
 

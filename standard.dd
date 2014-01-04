@@ -1,0 +1,72 @@
+IMAGE =
+<img src="$0" />
+EM = <em>$0</em>
+STRONG = <strong>$0</strong>
+DDOC =
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>$(TITLE)</title>
+	<link rel="stylesheet" type="text/css" href="../web/docs.css" />
+</head>
+<body>
+	<h1>$(TITLE)</h1>
+	$(BODY)
+</body>
+</html>
+BR     = <br />
+B      = $0
+I      = $0
+U      = $0
+BIG    = $0
+SMALL  = $0
+RED    = $0
+BLUE   = $0
+GREEN  = $0
+YELLOW = $0
+BLACK  = $0
+WHITE  = $0
+D_COMMENT = <span class="code_comment">$0</span>
+D_STRING  = <span class="code_string">$0</span>
+D_KEYWORD = <span class="code_keyword">$0</span>
+D_PSYMBOL = <span class="code_psymbol">$0</span>
+D_PARAM   = <span class="code_param">$0</span>
+DDOC_COMMENT   = <!-- $0 -->
+DDOC_DECL = $(DT $(DDOC_COMMENT DrDocDecl)<pre>$0</pre>)
+DDOC_DECL_DD   = $(DD $0)
+DDOC_DITTO     = $0
+DDOC_SECTIONS  = $0
+DDOC_SUMMARY   = $(P $0)
+
+DDOC_DESCRIPTION = $(P $0)
+DDOC_AUTHORS   = $(P $(STRONG Authors:)) $0
+DDOC_BUGS      = $(P $(STRONG BUGS:)) $0
+DDOC_COPYRIGHT = $(P $(STRONG Copyright:)) $0
+DDOC_DATE      = $(P $(STRONG Date:)) $0
+DDOC_DEPRECATED = $(P $(STRONG Deprecated:)) $0
+DDOC_EXAMPLES  = $(P $(STRONG Examples:)) $0
+DDOC_HISTORY   = $(P $(STRONG History:)) $0
+DDOC_LICENSE   = $(P $(STRONG License:)) $0
+DDOC_RETURNS   = $(P $(STRONG Returns:)) $0
+DDOC_SEE_ALSO  = $(P $(STRONG See Also:)) $0
+DDOC_STANDARDS = $(P $(STRONG Standards:)) $0
+DDOC_THROWS    = $(P $(STRONG Throws:)) $0
+DDOC_VERSION   = $(P $(STRONG Version:)) $0
+DDOC_SECTION_H = $(P $(STRONG $0))
+DDOC_SECTION   = $0
+DDOC_MEMBERS   = $(DL $0)
+DDOC_MODULE_MEMBERS   = $(DDOC_MEMBERS $0)
+DDOC_CLASS_MEMBERS    = $(DDOC_MEMBERS $0) $(DDOC_COMMENT DrDocAggEnd)
+DDOC_STRUCT_MEMBERS   = $(DDOC_MEMBERS $0) $(DDOC_COMMENT DrDocAggEnd)
+DDOC_ENUM_MEMBERS     = $(DDOC_MEMBERS $0) $(DDOC_COMMENT DrDocAggEnd)
+DDOC_TEMPLATE_MEMBERS = $(DDOC_MEMBERS $0) $(DDOC_COMMENT DrDocAggEnd)
+DDOC_PARAMS    = $(B Params:)$(BR)\n$(TABLE $0)$(BR)
+DDOC_PARAM_ROW = $(TR $0)
+DDOC_PARAM_ID  = $(TD $0)
+DDOC_PARAM_DESC  = $(TD $0)
+DDOC_BLANKLINE	= </p><p>
+
+DDOC_PSYMBOL = $0
+DDOC_KEYWORD = $0
+DDOC_PARAM = $0
