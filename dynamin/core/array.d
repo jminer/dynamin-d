@@ -50,8 +50,11 @@ unittest {
  *
  */
 void reverse(T)(T[] arr) {
+	T tmp;
 	for(int i = 0; i < arr.length / 2; ++i) {
-		arr[i] = arr[$ - i];
+		tmp = arr[i];
+		arr[i] = arr[$ - 1 - i];
+		arr[$ - 1 - i] = tmp;
 	}
 }
 
