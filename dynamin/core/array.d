@@ -11,6 +11,7 @@
 module dynamin.core.array;
 
 import dynamin.core.string;
+import dynamin.core.test;
 
 /**
  * Returns true if the specified item is in the specified array and false otherwise.

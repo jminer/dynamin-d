@@ -451,7 +451,7 @@ mstring unescape(cstring str, const(char)[] escChars, const(char)[] chars) {
 		throw new IllegalArgumentException("unescape(): escChars and chars must be same length");
 	sbuilder builder;
 	loop:
-	foreach(i, c; str) {
+	foreach(ref i, c; str) {
 		if(c == '\\') {
 			if(i == str.length-1)
 				throw new IllegalArgumentException("unescape(): partial escape sequence at end of string");
