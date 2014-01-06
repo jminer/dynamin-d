@@ -1,6 +1,6 @@
 #!/bin/bash
-DMD_DIR=~/dmd
-BUD_DIR=~/bin
-MAIN_FILE=tester.d
-OUT_FILE=tester
+DMD_DIR=~/dmd2
+TANGO_DIR=~/Projects/Tango-D2
+MAIN_FILE=app.d
+OUT_FILE=app
 
