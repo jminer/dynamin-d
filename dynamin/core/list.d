@@ -42,10 +42,10 @@ enum ListChangeType {
 class List(T, bool changeNotification = false) {
 protected:
 	T[] _data;
-	uint _count;
+	word _count;
 	static if(changeNotification)
-		void delegate(ListChangeType, T, T, uint) whenChanged;
-	enum int DefaultCapacity = 16;
+		void delegate(ListChangeType, T, T, word) whenChanged;
+	enum word DefaultCapacity = 16;
 public:
 	/**
 	 * Creates a list with the specified capacity.
@@ -75,7 +75,7 @@ public:
 	 *
 	 * Only available if changeNotification is true.
 	 */
-	this(void delegate(ListChangeType type, T oldItem, T newItem, uint index) whenChanged) {
+	this(void delegate(ListChangeType type, T oldItem, T newItem, word index) whenChanged) {
 		static if(changeNotification) {
 			this(DefaultCapacity, whenChanged);
 		} else {
@@ -84,7 +84,7 @@ public:
 	}
 	/// ditto
 	this(uint capacity,
-		 void delegate(ListChangeType type, T oldItem, T newItem, uint index) whenChanged) {
+		 void delegate(ListChangeType type, T oldItem, T newItem, word index) whenChanged) {
 		static if(changeNotification) {
 			_data = new T[capacity];
 			this.whenChanged = whenChanged;
@@ -99,10 +99,10 @@ public:
 		list._count = arr.length;
 		return list;
 	}
-	uint count() {
+	word count() {
 		return _count;
 	}
-	uint capacity() {
+	word capacity() {
 		return _data.length;
 	}
 	T[] toArray() {
@@ -122,15 +122,15 @@ public:
 		str ~= "]";
 		return str;
 	}*/
-	protected void maybeEnlarge(uint neededCap) {
+	protected void maybeEnlarge(word neededCap) {
 		if(neededCap <= capacity)
 			return;
 		_data.length = max(neededCap, (capacity+1)*2);
 	}
-	ref T opIndex(uint index) {
+	ref T opIndex(word index) {
 		return _data[0.._count][index];
 	}
-	void opIndexAssign(T item, uint index) {
+	void opIndexAssign(T item, word index) {
 		T oldItem = _data[0.._count][index];
 		_data[0.._count][index] = item;
 		static if(changeNotification)
@@ -154,15 +154,15 @@ public:
 		insert(item, _count);
 	}
 	void remove(T item) {
-		uint i = find(item);
+		auto i = find(item);
 		if(i == -1)
 			return;
 		removeAt(i);
 	}
-	void removeAt(uint index) {
+	void removeAt(word index) {
 		T item = _data[index];
 
-		for(uint i = index + 1; i < _count; ++i)
+		for(word i = index + 1; i < _count; ++i)
 			_data[i-1] = _data[i];
 		// must null out to allow to be collected
 		_data[_count-1] = T.init;
@@ -171,7 +171,7 @@ public:
 		static if(changeNotification)
 			whenChanged(ListChangeType.Removed, item, T.init, index);
 	}
-	void insert(T item, uint index) {
+	void insert(T item, word index) {
 		maybeEnlarge(_count+1);
 		arrayCopy!(T)(_data, index, _data, index+1, _count - index);
 		_data[index] = item;
@@ -187,7 +187,7 @@ public:
 			data[_count-1] = T.init;
 		}
 	}
-	uint find(T item) {
+	word find(T item) {
 		foreach(i, item2; _data)
 			if(item == item2) // if(item2 == item) would crash on a null item
 				return i;
@@ -199,7 +199,7 @@ public:
 	//opSlice
 	//opSliceAssign
 	int opApply(int delegate(ref T item) dg) {
-		for(uint i = 0; i < _count; ++i) {
+		for(word i = 0; i < _count; ++i) {
 			if(int result = dg(_data[i]))
 				return result;
 		}
@@ -207,8 +207,8 @@ public:
 	}
 	//so you can do:
 	//foreach(i, item; list)
-	int opApply(int delegate(ref uint index, ref T item) dg) {
-		for(uint i = 0; i < _count; ++i) {
+	int opApply(int delegate(ref word index, ref T item) dg) {
+		for(word i = 0; i < _count; ++i) {
 			if(int result = dg(i, _data[i]))
 				return result;
 		}
@@ -236,7 +236,7 @@ unittest {
 	assert(list.data == "");
 
 	int a = 0, r = 0, r2 = 0;
-	void changed(ListChangeType t, string o, string n, uint) {
+	void changed(ListChangeType t, string o, string n, word) {
 		if(t == ListChangeType.Added) {
 			a++;
 			assert(o == "" && n != "");

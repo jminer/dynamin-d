@@ -100,16 +100,16 @@ unittest {
  * in destData. Data is copied as if srcData and destData are two separate
  * arrays, even if they are the same.
  */
-void arrayCopy(T)(T[] srcData, uint srcStart, T[] destData, uint destStart, uint length) {
+void arrayCopy(T)(T[] srcData, word srcStart, T[] destData, word destStart, word length) {
 	if((srcData is destData && srcStart == destStart) || length == 0)
 		return;
 	if(srcStart > destStart) {
 		//copy forward
-		for(int i = 0; i < length; ++i)
+		for(word i = 0; i < length; ++i)
 		  destData[destStart + i] = srcData[srcStart + i];
 	} else {
 		//copy reverse
-		for(int i = length-1; i >= 0; --i)
+		for(word i = length-1; i >= 0; --i)
 			destData[destStart + i] = srcData[srcStart + i];
 	}
 }
