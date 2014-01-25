@@ -15,6 +15,7 @@ public import dynamin.core.benchmark;
 public import dynamin.core.console;
 public import dynamin.core.environment;
 public import dynamin.core.event;
+public import dynamin.core.exceptions;
 public import dynamin.core.file;
 public import dynamin.core.format;
 public import dynamin.core.global;
