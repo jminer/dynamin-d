@@ -24,4 +24,5 @@ public import dynamin.core.math;
 public import dynamin.core.queue;
 public import dynamin.core.settings;
 public import dynamin.core.string;
+public import dynamin.core.util;
 
