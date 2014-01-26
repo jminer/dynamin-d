@@ -12,7 +12,6 @@ module dynamin.core.global;
 
 import std.math : abs;
 import std.traits;
-import tango.io.model.IFile;
 
 public import tango.util.Convert;
 
@@ -55,25 +54,51 @@ version(Windows) {
 	}
 }
 
-/**
- * The string used to separate lines.
- * This is "\r\n" under Windows and "\n" under Linux.
- */
-enum string LineSeparator = FileConst.NewlineString;
-/**
- * The string used to separate directories in a path.
- * This is "\\" under Windows and "/" under Linux.
- */
-enum string DirSeparator = FileConst.PathSeparatorString;
-///
-enum char DirSeparatorChar = FileConst.PathSeparatorChar;
-/**
- * The string used to separate paths.
- * This is ";" under Windows and ":" under Linux
- */
-enum string PathSeparator = FileConst.SystemPathString;
-///
-enum char PathSeparatorChar = FileConst.SystemPathChar;
+version(Windows) {
+	/**
+	 * The string used to separate lines.
+	 * This is "\r\n" under Windows and "\n" everywhere else.
+	 */
+	enum string LineSeparator = "\r\n";
+
+	/**
+	 * The string used to separate directories in a path.
+	 * This is "\\" under Windows and "/" under Linux.
+	 */
+	enum string DirSeparator = "\\";
+	///
+	enum char DirSeparatorChar = '\\';
+
+	/**
+	 * The string used to separate paths.
+	 * This is ";" under Windows and ":" under Linux
+	 */
+	enum string PathSeparator = ";";
+	///
+	enum char PathSeparatorChar = ';';
+} else {
+	/**
+	 * The string used to separate lines.
+	 * This is "\r\n" under Windows and "\n" everywhere else.
+	 */
+	enum string LineSeparator = "\n";
+
+	/**
+	 * The string used to separate directories in a path.
+	 * This is "\\" under Windows and "/" under Linux.
+	 */
+	enum string DirSeparator = "/";
+	///
+	enum char DirSeparatorChar = '/';
+
+	/**
+	 * The string used to separate paths.
+	 * This is ";" under Windows and ":" under Linux
+	 */
+	enum string PathSeparator = ":";
+	///
+	enum char PathSeparatorChar = ':';
+}
 
 /**
  * Tests whether num1 and num2 are equal. They are considered equal
