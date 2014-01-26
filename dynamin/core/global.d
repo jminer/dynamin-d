@@ -189,11 +189,11 @@ unittest {
 	assert(buff == "Longer text text");
 }
 
-///
+/// Returns the smallest of the specified values.
 T min(T)(T a, T b) {
 	return a < b ? a : b;
 }
-///
+/// ditto
 CommonType!T min(T...)(T params) {
 	CommonType!T result = params[0];
 	foreach(i, p; params) {
@@ -203,11 +203,11 @@ CommonType!T min(T...)(T params) {
 	return result;
 }
 
-///
+/// Returns the largest of the specified values.
 T max(T)(T a, T b) {
 	return a > b ? a : b;
 }
-///
+/// ditto
 CommonType!T max(T...)(T params) {
 	CommonType!T result = params[0];
 	foreach(i, p; params) {
