@@ -126,15 +126,17 @@ unittest {
 	assert(c == "ii");
 }
 
+
+extern(C) {
+	void* memmove(void* dest, const void* src, uword n);
+	void* memset(void* s, int c, uword n);
+}
+
 /**
  * Sets every byte of the specified memory block to value.
  */
 void memoryFill(void* mem, uword count, ubyte value) {
-	ubyte* memB = cast(ubyte*)mem;
-	while(count != 0) {
-		*memB++ = value;
-		--count;
-	}
+	memset(mem, value, count);
 }
 unittest {
 	char[] buff = "jEdit".dup;
@@ -156,29 +158,12 @@ unittest {
 
 /**
  * Copies the specified number of bytes from srcMem to destMem. The source
- * and destination should not overlap, or the results will be undefined.
+ * and destination may overlap.
  * Note that the source and destination parameters are opposite in
- * order from the C function memcpy(). If count is a multiple of the
- * native pointer size, the copy will be done in blocks of that size.
+ * order from the C function memcpy().
  */
 void memoryCopy(void* srcMem, void* destMem, uword count) {
-	// copy in blocks of the pointer size, if possible
-	if(count % word.sizeof == 0) {
-		count /= word.sizeof;
-		uword* src = cast(uword*)srcMem;
-		uword* dest = cast(uword*)destMem;
-		while(count != 0) {
-			*dest++ = *src++;
-			--count;
-		}
-	} else {
-		ubyte* src = cast(ubyte*)srcMem;
-		ubyte* dest = cast(ubyte*)destMem;
-		while(count != 0) {
-			*dest++ = *src++;
-			--count;
-		}
-	}
+	memmove(destMem, srcMem, count);
 }
 unittest {
 	char[] buff = "Hello".dup;
