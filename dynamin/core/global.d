@@ -11,7 +11,8 @@
 module dynamin.core.global;
 
 import dynamin.core.string;
-import tango.math.Math;
+import std.math : abs;
+import std.traits;
 import tango.io.model.IFile;
 import tango.core.Exception;
 
@@ -186,6 +187,46 @@ unittest {
 	buff = "Longer text here".dup;
 	memoryCopy(buff.ptr+7, buff.ptr+12, 4);
 	assert(buff == "Longer text text");
+}
+
+///
+T min(T)(T a, T b) {
+	return a < b ? a : b;
+}
+///
+CommonType!T min(T...)(T params) {
+	CommonType!T result = params[0];
+	foreach(i, p; params) {
+		if(params[i] < result)
+			result = params[i];
+	}
+	return result;
+}
+
+///
+T max(T)(T a, T b) {
+	return a > b ? a : b;
+}
+///
+CommonType!T max(T...)(T params) {
+	CommonType!T result = params[0];
+	foreach(i, p; params) {
+		if(params[i] > result)
+			result = params[i];
+	}
+	return result;
+}
+
+unittest {
+	assert(min(5.5, 8) == 5.5);
+	assert(min(8, 5.5) == 5.5);
+
+	assert(max(8.5, 5) == 8.5);
+	assert(max(5, 8.5) == 8.5);
+
+	assert(min(6, 4.5, 8.5) == 4.5);
+
+	assert(max(6, 4.5, 8.5) == 8.5);
 }
 
 /**
