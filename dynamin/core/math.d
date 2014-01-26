@@ -10,7 +10,7 @@
 
 module dynamin.core.math;
 
-public import tango.math.Math;
+public import std.math;
 
 ///
 alias PI Pi; // about 3
