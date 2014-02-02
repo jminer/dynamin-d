@@ -73,7 +73,7 @@ protected:
 	}
 
 	// not an event
-	void whenChildrenChanged(ListChangeType, Control oldChild, Control newChild, uint) {
+	void whenChildrenChanged(ListChangeType, Control oldChild, Control newChild, word) {
 		if(oldChild) {
 			oldChild.parent = null;
 			repaint();

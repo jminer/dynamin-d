@@ -68,7 +68,7 @@ public:
 	/// This event occurs after the selection has changed.
 	Event!(whenSelectionChanged) selectionChanged;
 
-	void whenListItemsChanged(ListChangeType, mstring, mstring, uint) {
+	void whenListItemsChanged(ListChangeType, mstring, mstring, word) {
 		super.layout();
 		repaint();
 	}

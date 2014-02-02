@@ -10,6 +10,7 @@
 
 module dynamin.painting.coordinates;
 
+import dynamin.core.global;
 import dynamin.core.string;
 import dynamin.core.math;
 

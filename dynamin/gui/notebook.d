@@ -10,6 +10,7 @@
 
 module dynamin.gui.notebook;
 
+import dynamin.core.global;
 import dynamin.core.event;
 import dynamin.core.list;
 import dynamin.all_gui;
@@ -76,7 +77,7 @@ protected:
 		}
 		Theme.current.Tab_paint(selectedTabPage, this, e.graphics);
 	}
-	void whenTabPagesChanged(ListChangeType, TabPage oldPage, TabPage newPage, uint) {
+	void whenTabPagesChanged(ListChangeType, TabPage oldPage, TabPage newPage, word) {
 		if(_tabPages.count == 0)
 			selectedIndex = -1;
 		else if(selectedIndex == -1)
