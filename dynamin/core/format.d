@@ -11,6 +11,7 @@
 module dynamin.core.format;
 
 import dynamin.core.global;
+import dynamin.core.meta;
 import dynamin.core.string;
 import dynamin.core.test;
 
@@ -182,5 +183,66 @@ unittest {
 	assertThrows!Exception(parseFormatString(	"test{0x12}ing",
 		delegate (i, f) { },
 		delegate (scope str) { }));
+}
+
+// 32-bit integers in base 10 require 10 characters (11 if negative)
+// 64-bit integers in base 10 require 20 characters
+// worst case: a 64-bit integer in base 2: 65 characters
+public string toString(T)(T num, int base = 10, bool uppercase = true, mstring buffer = null)
+if(Meta.isTypeIntegral!(T)) {
+	string digits;
+
+	static if(Meta.areTypesEqual!(T, long)) {
+		if(num == long.min)
+			return "-9223372036854775808";
+	} else static if(Meta.areTypesEqual!(T, int)) {
+		if(num == int.min)
+			return toString!long(num, base, uppercase, buffer);
+	} else static if(Meta.areTypesEqual!(T, short)) {
+		if(num == short.min)
+			return toString!int(num, base, uppercase, buffer);
+	} else static if(Meta.areTypesEqual!(T, byte)) {
+		if(num == byte.min)
+			return toString!short(num, base, uppercase, buffer);
+	}
+
+	if(uppercase)
+		digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	else
+		digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+	int requiredLength;
+	if(base >= 10)
+		requiredLength = T.sizeof <= 4 ? 11 : 20;
+	else
+		requiredLength = 65;
+
+	if(!buffer || buffer.length < requiredLength)
+		buffer = new char[requiredLength];
+
+	bool negative = num < 0;
+	if(negative)
+		num = -num;
+	int i = buffer.length;
+	while(num != 0) {
+		buffer[--i] = digits[cast(word)(num % base)];
+		num /= base;
+	}
+	if(negative)
+		buffer[--i] = '-';
+	return cast(immutable)buffer[i..$];
+}
+
+unittest {
+	char[20] buff;
+	assertEqual(toString(15), "15");
+	assertEqual(toString(-15), "-15");
+	assertEqual(toString(-2_147_483_648), "-2147483648");
+	assertEqual(toString(684, 16), "2AC");
+	assertEqual(toString(684, 16, false), "2ac");
+	assertEqual(toString(684, 2), "1010101100");
+	auto str = toString(150, 10, true, buff);
+	assertEqual(str, "150");
+	assert(str.ptr == buff[$-3..$].ptr);
 }
 
