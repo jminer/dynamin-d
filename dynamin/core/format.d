@@ -223,7 +223,7 @@ if(Meta.isTypeIntegral!(T)) {
 	bool negative = num < 0;
 	if(negative)
 		num = -num;
-	int i = buffer.length;
+	auto i = buffer.length;
 	while(num != 0) {
 		buffer[--i] = digits[cast(word)(num % base)];
 		num /= base;
