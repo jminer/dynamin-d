@@ -12,6 +12,7 @@ module dynamin.core.windows_environment;
 
 import dynamin.c.windows;
 public import core.atomic;
+public import core.sync.mutex;
 
 template EnvironmentBackend() {
 	long pStart;    // processor time in milliseconds
@@ -48,14 +49,18 @@ template EnvironmentBackend() {
 		monotonicMutex = new Mutex;
 	}
 	long backend_monotonicTime() {
+		// see http://www.tech-archive.net/Archive/Development/microsoft.public.win32.programmer.kernel/2009-02/msg00147.html
+		// for testing this with App Verifier
 		uint time32 = timeGetTime();
+		long time;
 		synchronized(monotonicMutex) {
 			// Won't detect a rollover if called more than 49.7 days apart,
 			// but I think that's fine.
-			if(time32 < lastMonotonicTime32) // rolled over
+			if(time32 < lastMonotonicTime32) { // rolled over
 				monotonicTimeSum += uint.max;
+			}
 			lastMonotonicTime32 = time32;
-			long time = time32 + monotonicTimeSum;
+			time = time32 + monotonicTimeSum;
 		}
 
 		cas(&firstMonotonicTime, 0L, time);
