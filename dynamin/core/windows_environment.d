@@ -11,12 +11,24 @@
 module dynamin.core.windows_environment;
 
 import dynamin.c.windows;
+public import core.atomic;
 
 template EnvironmentBackend() {
 	long pStart;    // processor time in milliseconds
 	long tStart;    // computer uptime in milliseconds
 	long startDiff; // pStart-tStart
+
+	static shared long firstMonotonicTime = 0;
+
+	static __gshared Mutex monotonicMutex;
+	static __gshared uint lastMonotonicTime32 = 0;
+	static __gshared long monotonicTimeSum = 0;
+
 	static this() {
+		// TODO: should not do this to all programs by default
+		// need an API that programs can use to request more accurate times
+		// Still need to re-increase the resolution when coming out of sleep, if
+		// the program has requested more accuracy.
 		backend_increaseTimerRes();
 		QueryPerformanceFrequency(&freq);
 		freq /= 1000;
@@ -32,19 +44,23 @@ template EnvironmentBackend() {
 		timeGetDevCaps(&tc, TIMECAPS.sizeof);
 		period = tc.wPeriodMin > 0 ? tc.wPeriodMin : 1;
 		timeBeginPeriod(period);
+
+		monotonicMutex = new Mutex;
 	}
-	long backend_runningTime() {
-		// NOTE: might be a faster way to do this...ProcessorTime is slow
-		// Use ProcessorTime to fix when timeGetTime() rolls over
-		enum strayMs = 18_000_000; // 5 hours
-		long pNow = processorTime;
-		long tNow = timeGetTime();
-		// pNow-startDiff would equal tNow except that:
-		// - tNow has possibly rolled over
-		// - pNow has strayed because it runs at a slightly different speed
-		while(pNow-startDiff > tNow+strayMs)
-			tNow += 0xFFFF_FFFF;   // tNow has rolled over, so fix it
-		return tNow-tStart;
+	long backend_monotonicTime() {
+		uint time32 = timeGetTime();
+		synchronized(monotonicMutex) {
+			// Won't detect a rollover if called more than 49.7 days apart,
+			// but I think that's fine.
+			if(time32 < lastMonotonicTime32) // rolled over
+				monotonicTimeSum += uint.max;
+			lastMonotonicTime32 = time32;
+			long time = time32 + monotonicTimeSum;
+		}
+
+		cas(&firstMonotonicTime, 0L, time);
+		time = time - firstMonotonicTime;
+		return time;
 	}
 	long backend_systemTime() {
 		long t;

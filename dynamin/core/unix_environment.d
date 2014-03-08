@@ -12,46 +12,49 @@ module dynamin.core.unix_environment;
 
 public import tango.stdc.posix.sys.time;
 public import tango.io.Stdout;
+public import core.atomic;
 public import dynamin.core.global;
+version(OSX) {
+	public import dynamin.c.mach_time;
+}
 
 // TODO: v1.0 make a binding to these
 extern(C) {
 	version(OSX) {
 		enum _SC_NPROCESSORS_ONLN = 58;
+
 	}
 
 	c_long sysconf(int name);
-	int getitimer(int which, itimerval* value);
-	int setitimer(int which, itimerval* value,
-		itimerval* ovalue);
-}
-
-enum {
-	ITIMER_REAL    = 0,
-	ITIMER_VIRTUAL = 1,
-	ITIMER_PROF    = 2
-}
-
-struct itimerval {
-	timeval it_interval;
-	timeval it_value;
 }
 
 template EnvironmentBackend() {
 	long backend_timevalToMs(timeval* tv) {
 		return tv.tv_sec*1000L+tv.tv_usec/1000;
 	}
-	enum long timerSec = 31_536_000*5; // 31,536,000 seconds in 365 days
-	static this() {
-		itimerval itv;
-		itv.it_value.tv_sec = timerSec;
-		if(setitimer(ITIMER_REAL, &itv, null))
-			Stdout("setitimer() failed").newline;
+
+	static shared long firstMonotonicTime = 0;
+	version(OSX) {
+		static mach_timebase_info_data_t timebaseInfo;
 	}
-	long backend_runningTime() {
-		itimerval itv;
-		getitimer(ITIMER_REAL, &itv);
-		return timerSec*1000-backend_timevalToMs(&itv.it_value);
+
+	long backend_monotonicTime() {
+		version(linux) {
+			timespec ts;
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			long time = ts.tv_sec * 1000 + tv_nsec / 1000 / 1000;
+		}
+		version(OSX) {
+			long time = cast(long)mach_absolute_time();
+			if(timebaseInfo.denom == 0)
+				mach_timebase_info(&timebaseInfo);
+			time = time * timebaseInfo.numer / timebaseInfo.denom;
+			time /= 1000000;
+		}
+
+		cas(&firstMonotonicTime, 0L, time);
+		time = time - firstMonotonicTime;
+		return time;
 	}
 	long backend_systemTime() {
 		timeval tv;

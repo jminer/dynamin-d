@@ -23,27 +23,18 @@ private:
 	mixin EnvironmentBackend;
 public:
 	/**
-	 * Returns the time in milliseconds since the program was started.
-	 * On Windows XP, this time is updated every millisecond.
-	 * On Linux, this time is usually updated every millisecond, but
-	 * occasionally may take 5 to 10 milliseconds.
-	 * This is the author's dream time function because
+	 * Returns the time in milliseconds since the first time this method
+	 * was called.
 	 *
-	 * $(OL
-	 * $(LI It is accurate to 1 millisecond.)
-	 * $(LI It works correctly on multiple core computers.)
-	 * $(LI It is unaffected by changes to the system time.)
-	 * $(LI It never wraps to zero.)
-	 * )
+	 * - It is unaffected by changes to the system time.
+	 * - It never wraps to zero.
+	 * - It works correctly on multiple core computers.
+	 * - If requested, it can be accurate to 1 millisecond.
 	 *
-	 * On my 1.3 GHz celeron, this function can be called about 480 times
-	 * in one millisecond under Windows and about 380 times in one millisecond
-	 * under Linux.
-	 *
-	 * TODO: make sure it works with multiple cores, although I'm sure it does
+	 * TODO: retest that it works with multiple cores, although I'm sure it does
 	 */
-	long runningTime() {
-		return backend_runningTime;
+	long monotonicTime() {
+		return backend_monotonicTime;
 	}
 	/**
 	 * Returns the system time in milliseconds since January 1, 1970 UTC.
@@ -99,13 +90,13 @@ public:
 }
 
 unittest {
-	auto startTime = Environment.runningTime;
-	assert(startTime > 0);
+	auto startTime = Environment.monotonicTime;
+	assert(startTime >= 0);
 	auto time = startTime;
 	enum SAMPLE = 50;
-	// makes sure that RunningTime does not go backwards
+	// makes sure that monotonicTime does not go backwards
 	for(int i = 0; i < SAMPLE;) {
-		auto time2 = Environment.runningTime;
+		auto time2 = Environment.monotonicTime;
 		assert(time2 >= time);
 		if(time2 > time) {
 			time = time2;

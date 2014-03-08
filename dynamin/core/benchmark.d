@@ -19,10 +19,10 @@ import tango.io.Stdout;
  *          delegate took.
  */
 double benchmark(int repetitions, void delegate() dg) { // use static opCall()?
-	long time = Environment.runningTime;
+	long time = Environment.monotonicTime;
 	for(int i = 0; i < repetitions; ++i)
 		dg();
-	return (Environment.runningTime-time)/cast(double)repetitions;
+	return (Environment.monotonicTime-time)/cast(double)repetitions;
 }
 double benchmark(void delegate() dg) {
 	return benchmark(1, dg);
@@ -49,10 +49,10 @@ class Benchmark {
 		start();
 	}
 	void start() {
-		_startTime = Environment.runningTime;
+		_startTime = Environment.monotonicTime;
 	}
 	long time() {
-		return _startTime-Environment.runningTime;
+		return _startTime-Environment.monotonicTime;
 	}
 	void writeTime(cstring opName) {
 		if(opName is null)
@@ -65,9 +65,9 @@ class Benchmark {
 	 * returns the average time one call took
 	 */
 	static long measure(int times, void delegate() d) {
-		long time = Environment.runningTime;
+		long time = Environment.monotonicTime;
 		for(int i = 0; i < times; ++i)
 			d();
-		return (Environment.runningTime-time)/times;
+		return (Environment.monotonicTime-time)/times;
 	}
 }
