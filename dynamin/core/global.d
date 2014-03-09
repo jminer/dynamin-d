@@ -124,7 +124,7 @@ unittest {
  * in destData. Data is copied as if srcData and destData are two separate
  * arrays, even if they are the same.
  */
-void arrayCopy(T)(T[] srcData, word srcStart, T[] destData, word destStart, word length) {
+void arrayCopy(T, U)(T[] srcData, word srcStart, U[] destData, word destStart, word length) {
 	if((srcData is destData && srcStart == destStart) || length == 0)
 		return;
 	if(srcStart > destStart) {

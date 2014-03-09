@@ -10,6 +10,7 @@
 
 module dynamin.core.array;
 
+import dynamin.core.global;
 import dynamin.core.string;
 import dynamin.core.test;
 
@@ -52,7 +53,7 @@ unittest {
  */
 void reverse(T)(T[] arr) {
 	T tmp;
-	for(int i = 0; i < arr.length / 2; ++i) {
+	for(word i = 0; i < arr.length / 2; ++i) {
 		tmp = arr[i];
 		arr[i] = arr[$ - 1 - i];
 		arr[$ - 1 - i] = tmp;
@@ -72,3 +73,18 @@ unittest {
 	assertEqual(str, "");
 }
 
+/**
+ * Sets `count` items starting at `index` in the specified array to `item`.
+ *
+ */
+void fill(T, U)(T[] arr, U item, word index, word count) {
+	word end = index + count;
+	for(word i = index; i < end; ++i) {
+		arr[i] = item;
+	}
+}
+
+/// ditto
+void fill(T, U)(T[] arr, U item) {
+	fill(arr, item, 0, arr.length);
+}
