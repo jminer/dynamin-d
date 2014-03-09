@@ -64,10 +64,31 @@ class Benchmark {
 	 * calls the specified delegate the specified number of times and
 	 * returns the average time one call took
 	 */
-	static long measure(int times, void delegate() d) {
+	static double measure(int repetitions, void delegate() d) {
 		long time = Environment.monotonicTime;
-		for(int i = 0; i < times; ++i)
+		for(int i = 0; i < repetitions; ++i)
 			d();
-		return (Environment.monotonicTime-time)/times;
+		return (Environment.monotonicTime - time) / cast(double)repetitions;
+	}
+
+	/**
+	* Calls the specified delegate until the specified time has elapsed and
+	* returns the average time in milliseconds that one call took.
+	*
+	* The time will be checked every `2^checkN` iterations (to reduce the overhead
+	* of checking the time). For example, a value of 4 for `checkN` will cause the
+	* time to be checked every 16 iterations, and the number of iterations
+	* performed would be a multiple of 16.
+	*/
+	static double measureFor(int time, int checkN, void delegate() d) {
+		checkN = 1 << checkN;
+		long iterations;
+		auto startTime = Environment.monotonicTime;
+		for(iterations = 0; ; ++iterations) {
+			if((iterations & checkN) && (Environment.monotonicTime - startTime) > time)
+				break;
+			d();
+		}
+		return (Environment.monotonicTime - startTime)/cast(double)iterations;
 	}
 }
