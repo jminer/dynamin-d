@@ -14,7 +14,11 @@ import dynamin.core.global;
 import dynamin.core.exceptions;
 import core.memory;
 import std.exception;
+
 import tango.io.Stdout;
+import dynamin.core.benchmark;
+import dynamin.core.array;
+import dynamin.core.meta;
 
 //version = DebugQueue;
 
@@ -24,6 +28,10 @@ private:
 	word _start;
 	word _end;
 
+	// Ideally, types that don't contain a reference type, like bool, char, int,
+	// float, and structs without reference types would not be cleared, but every
+	// other type would. Clearing chars is handy for testing the clearing code...
+	enum _needsCleared = !Meta.isTypeIntegral!T && !Meta.isTypeFloatingPoint!T;
 public:
 	@property
 	word capacity() {
@@ -36,14 +44,8 @@ public:
 
 		auto oldLength = _data.length;
 
-		word prefCapacity = max(minCapacity, (_data.length + 2) * 2);
-		word newSize = GC.extend(_data.ptr,
-			(minCapacity - _data.length) * T.sizeof,
-			(prefCapacity - _data.length) * T.sizeof);
-		if(newSize != 0) // extend succeeded
-			_data = _data.ptr[0..newSize / T.sizeof];
-		else
-			_data.length = prefCapacity;
+		_data.reserve(max(minCapacity, (_data.length + 2) * 2));
+		_data.length = _data.capacity;
 
 		if(_end < _start) {
 			auto part1Length = oldLength - _start;
@@ -76,8 +78,8 @@ public:
 		auto newStart = wrapStartIndex(start + amount, data.length);
 		auto newEnd = wrapEndIndex(end + amount, data.length);
 		version(DebugQueue) {
-			Stdout.format("start: {}, end: {}, amount: {}", start, end, amount).newline;
-			Stdout.format("newStart: {}, newEnd: {}", newStart, newEnd).newline;
+			Stdout.format("slideItems()  start: {}, end: {}, amount: {}", start, end, amount).newline;
+			Stdout.format("slideItems()  newStart: {}, newEnd: {}", newStart, newEnd).newline;
 		}
 		static if(false) {
 			if(amount < 0) {
@@ -146,13 +148,81 @@ public:
 
 	}
 
+	private static void clearItems(T[] data, word start, word end) {
+		if(!_needsCleared)
+			return;
+
+		version(DebugQueue) {
+			Stdout.format("clearItems()  start: {}, end: {}", start, end).newline;
+		}
+		if(end < start) {
+			data.fill(T.init, start, data.length - start);
+			data.fill(T.init, 0, end);
+		} else {
+			data.fill(T.init, start, end - start);
+		}
+	}
+
 	@property
 	word count() {
 		return _end < _start ? _data.length - (_start - _end) : _end - _start;
 	}
 
+	void splice(word index, word count, const(T)[] items) {
+		enforceEx!ArgumentError(index >= 0, "index >= 0 failed");
+		enforceEx!ArgumentError(count >= 0, "count >= 0 failed");
+		enforceEx!ArgumentError(index + count <= this.count,
+								"index + count <= this.count failed");
+
+		word countDelta = items.length - count;
+		ensureCapacity(this.count + countDelta);
+		word end = index + count;
+		version(DebugQueue) {
+			Stdout.format("splice()  index: {}, end: {}, items.length: {}", index, end, items.length).newline;
+		}
+
+		auto wrappedStart = wrapStartIndex(_start + index, _data.length);
+		auto wrappedEnd = wrapEndIndex(_start + end, _data.length);
+		version(DebugQueue) {
+			Stdout.format("splice()  wrappedStart: {}, wrappedEnd: {}", wrappedStart, wrappedEnd).newline;
+		}
+		if(index < (this.count - end)) {
+			// make room by moving left side
+			slideItems(_data, _start, wrappedStart, -countDelta);
+			auto newStart = wrapStartIndex(_start - countDelta, _data.length);
+			if(countDelta < 0)
+				clearItems(_data, _start, newStart);
+			_start = newStart;
+			wrappedStart = wrapStartIndex(wrappedStart - countDelta, _data.length);
+		} else {
+			// make room by moving right side
+			slideItems(_data, wrappedEnd, _end, countDelta);
+			auto newEnd = wrapEndIndex(_end + countDelta, _data.length);
+			if(countDelta < 0)
+				clearItems(_data, newEnd, _end);
+			_end = newEnd;
+			wrappedEnd = wrapEndIndex(wrappedEnd + countDelta, _data.length);
+		}
+
+		version(DebugQueue) {
+			Stdout.format("splice()  new wrappedStart: {}, wrappedEnd: {}", wrappedStart, wrappedEnd).newline;
+		}
+		if(wrappedEnd < wrappedStart) { // if items will be split
+			auto firstPart = _data.length - wrappedStart;
+			arrayCopy(items, 0, _data, wrappedStart, firstPart);
+			arrayCopy(items, firstPart, _data, 0, items.length - firstPart);
+		} else {
+			arrayCopy(items, 0, _data, wrappedStart, items.length);
+		}
+	}
+
+	void insert(T item, word index) {
+		splice(index, 0, (&item)[0..1]);
+	}
+
 	void add(T item) {
-		ensureCapacity(_data.length + 1);
+		// could use splice(count, 0, (&item)[0..1]), but this is 1.9x the speed
+		ensureCapacity(this.count + 1);
 		_data[_end] = item;
 		_end = wrapEndIndex(_end + 1, _data.length);
 	}
@@ -166,7 +236,10 @@ public:
 
 		auto oldEnd = _end;
 		_end = wrapEndIndex(_end - 1, _data.length);
-		return _data[oldEnd - 1];
+		auto item = _data[oldEnd - 1];
+		if(_needsCleared)
+			_data[oldEnd - 1] = T.init;
+		return item;
 	}
 
 	void enqueue(T item) {
@@ -178,28 +251,22 @@ public:
 
 		auto oldStart = _start;
 		_start = wrapStartIndex(_start + 1, _data.length);
-		return _data[oldStart];
-
-		// TODO: need to zero references in unused part of _data
-		// could be a struct holding references/pointers...
+		auto item = _data[oldStart];
+		if(_needsCleared)
+			_data[oldStart] = T.init;
+		return item;
 	}
 
 	void remove(word index, word count = 1) {
-		if(count == 0)
-			return;
-		enforceEx!ArgumentError(index >= 0, "index >= 0 failed");
-		enforceEx!ArgumentError(index <= this.count, "index <= this.count failed");
-		enforceEx!ArgumentError(count >= 0, "count >= 0 failed");
-		enforceEx!ArgumentError(index + count <= this.count,
-			"index + count <= this.count failed");
+		splice(index, count, (cast(T*)null)[0..0]);
+	}
 
-		auto start = wrapStartIndex(_start + index + count, _data.length);
-		slideItems(_data, start, _end, -count);
-		_end = wrapEndIndex(_end - count, _data.length);
+	ref T opIndex(word index) {
+		return _data[wrapStartIndex(_start + index, _data.length)];
+	}
 
-		// TODO: need to zero references in unused part of _data
-		// could be a struct holding references/pointers...
-
+	void opIndexAssign(T item, word index) {
+		_data[wrapStartIndex(_start + index, _data.length)] = item;
 	}
 }
 
@@ -248,3 +315,73 @@ unittest {
 
 }
 
+unittest {
+	Queue!char queue;
+
+	queue = new Queue!char;
+	queue.splice(0, 0, "Test");
+	assert(queue.count == 4);
+	assert(queue._start == 0 && queue._end == 4);
+	assert(queue.dequeue == 'T');
+	assert(queue._start == 1 && queue._end == 4);
+
+	auto reset1 = {
+		queue._data = "89    01234567".dup;
+		queue._start = 6;
+		queue._end = 2;
+	};
+
+	// test that left side is copied
+	reset1();
+	queue.splice(2, 1, "AB");
+	assert(queue._data == "89   01AB34567");
+	assert(queue._start == 5);
+	assert(queue._end == 2);
+
+	// test that right side is copied
+	reset1();
+	queue.splice(6, 1, "AB");
+	assert(queue._data == "789   012345AB");
+	assert(queue._start == 6);
+	assert(queue._end == 3);
+
+	// test that items will be copied split
+	reset1();
+	queue.splice(7, 1, "ABCDE");
+	assert(queue._data == "BCDE890123456A");
+	assert(queue._start == 6);
+	assert(queue._end == 6);
+
+	// test moving left side right
+	reset1();
+	queue.splice(1, 4, "AB");
+	assert(queue._data == "89    \xff\xff0AB567");
+	assert(queue._start == 8);
+	assert(queue._end == 2);
+
+	// test moving right side left
+	reset1();
+	queue.splice(5, 4, "AB");
+	assert(queue._data == "\xff\xff    01234AB9");
+	assert(queue._start == 6);
+	assert(queue._end == 14);
+
+	reset1();
+	queue.remove(2);
+	assert(queue._data == "89    \xff0134567");
+
+	/*
+	double speed;
+	queue = new Queue!char;
+	speed = Benchmark.measureFor(2000, 4, {
+		queue.splice(queue.count, 0, "H");
+	});
+	Stdout.format("splice time: {0:8.7}ms, queue.count: {1}", speed, queue.count).newline;
+
+	queue = new Queue!char;
+	speed = Benchmark.measureFor(2000, 4, {
+		queue.add('H');
+	});
+	Stdout.format("add time: {0:8.7}ms, queue.count: {1}", speed, queue.count).newline;
+	*/
+}
