@@ -10,9 +10,11 @@
 
 module dynamin.core.util;
 
+import dynamin.core.global;
 import dynamin.core.string;
 import dynamin.core.exceptions;
 import std.exception;
+import dynamin.core.test;
 
 import tango.util.Convert;
 
@@ -113,6 +115,92 @@ unittest {
 unittest {
 	for(int i = 0; i < 4000; ++i)
 		assert(toRomanNumerals(i).parseRomanNumerals() == i);
+}
+
+// Base 32 according to Wikipedia uses uppercase A-Z and 2-7
+// So should only support base 2, 8, 10, 16, 32, and 64
+int digitValue(int Base : 16)(char digit) {
+	if(digit >= 'a' && digit <= 'f')
+		return 10 + digit - 'a';
+	if(digit >= 'A' && digit <= 'F')
+		return 10 + digit - 'A';
+	if(digit >= '0' && digit <= '9')
+		return digit - '0';
+	return -1;
+}
+
+/**
+ * Converts the specified string of hexadecimal characters into a byte array.
+ *
+ * Any whitespace in the string is ignored.
+ *
+ * Throws [FormatException] if the string does not contain an even number of
+ * hex characters, or if there is a non-hex character in the string.
+ *
+ * Examples:
+ *
+ *     assert("0424AF".parseHex() == [cast(ubyte)0x04, 0x24, 0xAF]);
+ *     assert(" 0\t4   24\nAF ".parseHex() == [cast(ubyte)0x04, 0x24, 0xAF]);
+ *     assert("0D24ef".parseHex() == [cast(ubyte)0x0D, 0x24, 0xEF]);
+ */
+ubyte[] parseHex(cstring str) {
+	auto arr = new ubyte[str.length / 2];
+
+	word j = 0;
+	bool inByte = false;
+	ubyte firstNibble;
+	for(word i = 0; i < str.length; ++i) {
+		if(" \t\r\n".contains(str[i]))
+			continue;
+		int val = digitValue!16(str[i]);
+		if(val == -1)
+			throw new FormatException("Invalid hex digit " ~ str[i] ~ " in the string.");
+		if(inByte) {
+			arr[j++] = cast(ubyte)(firstNibble << 4 | val);
+		} else {
+			firstNibble = cast(ubyte)val;
+		}
+		inByte = !inByte;
+	}
+	if(inByte)
+		throw new FormatException("The string must contain an even number of hex digits.");
+	arr = arr[0..j];
+
+	return arr;
+}
+
+unittest {
+	ubyte[] none = new ubyte[0];
+	assert("".parseHex() == none);
+	assert("0424AF".parseHex() == [cast(ubyte)0x04, 0x24, 0xAF]);
+	assert(" 0\t4   24\nAF ".parseHex() == [cast(ubyte)0x04, 0x24, 0xAF]);
+	assert("0D24ef".parseHex() == [cast(ubyte)0x0D, 0x24, 0xEF]);
+	assertThrows!FormatException("20A".parseHex());
+	assertThrows!FormatException("24G2".parseHex());
+	assertThrows!FormatException("24g2".parseHex());
+}
+
+/**
+ * Converts the specified byte array into a string of hexadecimal characters.
+ * 
+ * Example:
+ *
+ *     assert([cast(ubyte)0x02, 0x50, 0xAB].toHex() == "0250AB");
+ */
+string toHex(ubyte[] arr) {
+	auto str = new char[arr.length * 2];
+	auto digits = "0123456789ABCDEF";
+	for(word i = 0; i < arr.length; ++i) {
+		str[i * 2]     = digits[arr[i] >> 4];
+		str[i * 2 + 1] = digits[arr[i] & 0xF];
+	}
+	return cast(string)str;
+}
+
+unittest {
+	ubyte[] none = new ubyte[0];
+	assert(none.toHex() == "");
+	assert([cast(ubyte)0x02, 0x50, 0xAB].toHex() == "0250AB");
 }
 
 /**
