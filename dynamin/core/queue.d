@@ -168,6 +168,11 @@ public:
 		return _end < _start ? _data.length - (_start - _end) : _end - _start;
 	}
 
+	@property
+	bool empty() {
+		return _start == _end;
+	}
+
 	void splice(word index, word count, const(T)[] items) {
 		enforceEx!ArgumentError(index >= 0, "index >= 0 failed");
 		enforceEx!ArgumentError(count >= 0, "count >= 0 failed");
