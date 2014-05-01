@@ -19,6 +19,7 @@ import tango.io.Stdout;
 import dynamin.core.benchmark;
 import dynamin.core.array;
 import dynamin.core.meta;
+import dynamin.core.test;
 
 //version = DebugQueue;
 
@@ -32,13 +33,23 @@ private:
 	// float, and structs without reference types would not be cleared, but every
 	// other type would. Clearing chars is handy for testing the clearing code...
 	enum _needsCleared = !Meta.isTypeIntegral!T && !Meta.isTypeFloatingPoint!T;
+
+	invariant() {
+		assert(_start >= 0 && _start <= _data.length);
+		assert(_end >= 0 && _end <= _data.length);
+	}
 public:
 	@property
 	word capacity() {
-		return _data.length;
+		// Need to always have one unused item in _data.
+		return _data.length - 1;
 	}
 
 	void ensureCapacity(word minCapacity) {
+		// Need to always have one unused item in _data.
+		// Otherwise, when every item in _data was filled, _start would equal
+		// _end. However, _start being equal to _end means the queue is empty.
+		minCapacity += 1;
 		if(_data.length >= minCapacity)
 			return;
 
@@ -228,8 +239,10 @@ public:
 	void add(T item) {
 		// could use splice(count, 0, (&item)[0..1]), but this is 1.9x the speed
 		ensureCapacity(this.count + 1);
+		if(_end >= _data.length)
+			_end = 0;
 		_data[_end] = item;
-		_end = wrapEndIndex(_end + 1, _data.length);
+		++_end;
 	}
 
 	void push(T item) {
@@ -239,11 +252,12 @@ public:
 	T pop() {
 		enforceEx!StateError(_start != _end, "There are no items to pop.");
 
-		auto oldEnd = _end;
-		_end = wrapEndIndex(_end - 1, _data.length);
-		auto item = _data[oldEnd - 1];
+		--_end;
+		if(_end < 0)
+			_end = _data.length;
+		auto item = _data[_end];
 		if(_needsCleared)
-			_data[oldEnd - 1] = T.init;
+			_data[_end] = T.init;
 		return item;
 	}
 
@@ -254,11 +268,12 @@ public:
 	T dequeue() {
 		enforceEx!StateError(_start != _end, "There are no items to return.");
 
-		auto oldStart = _start;
-		_start = wrapStartIndex(_start + 1, _data.length);
-		auto item = _data[oldStart];
+		if(_start >= _data.length)
+			_start = 0;
+		auto item = _data[_start];
 		if(_needsCleared)
-			_data[oldStart] = T.init;
+			_data[_start] = T.init;
+		++_start;
 		return item;
 	}
 
@@ -352,10 +367,10 @@ unittest {
 
 	// test that items will be copied split
 	reset1();
-	queue.splice(7, 1, "ABCDE");
-	assert(queue._data == "BCDE890123456A");
+	queue.splice(7, 1, "ABCD");
+	assert(queue._data == "BCD89 0123456A");
 	assert(queue._start == 6);
-	assert(queue._end == 6);
+	assert(queue._end == 5);
 
 	// test moving left side right
 	reset1();
@@ -389,4 +404,14 @@ unittest {
 	});
 	Stdout.format("add time: {0:8.7}ms, queue.count: {1}", speed, queue.count).newline;
 	*/
+
+	Queue!int queue2;
+
+	queue2 = new Queue!int;
+	for(int i = 0; i < 10000; ++i) {
+		queue2.enqueue(i);
+		if(i % 5 == 0)
+			assertEqual(queue2.dequeue(), i / 5);
+	}
+	assertEqual(queue2.count, 8000);
 }
