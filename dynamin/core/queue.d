@@ -407,6 +407,7 @@ unittest {
 
 	Queue!int queue2;
 
+	// Test the queue getting full and needing to reallocate.
 	queue2 = new Queue!int;
 	for(int i = 0; i < 10000; ++i) {
 		queue2.enqueue(i);
@@ -414,4 +415,16 @@ unittest {
 			assertEqual(queue2.dequeue(), i / 5);
 	}
 	assertEqual(queue2.count, 8000);
+
+	// Test wrapping around while enqueuing and dequeuing.
+	queue2 = new Queue!int;
+	queue2.ensureCapacity(20);
+	queue2.enqueue(5);
+	for(int i = 0; i < queue2._data.length * 3; ++i) {
+		queue2.enqueue(7);
+		assertEqual(queue2.dequeue(), 5);
+		queue2.enqueue(5);
+		assertEqual(queue2.dequeue(), 7);
+	}
+	assertEqual(queue2.dequeue(), 5);
 }
